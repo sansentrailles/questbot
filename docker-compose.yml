@@ -1,0 +1,117 @@
+services:
+  traefik:
+    image: traefik:2.10
+    command:
+      # --log.level=DEBUG
+      --api.insecure=true
+      --providers.docker=true
+      --providers.docker.exposedbydefault=false
+      --entrypoints.web.address=:80
+      --entrypoints.websocket.address=:3000
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "3000:3000"
+    networks:
+      - shininvest-promo-traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=shininvest-promo-traefik-public
+      - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
+      - traefik.http.routers.traefik.entrypoints=web
+
+  api:
+    build:
+      context: docker
+      dockerfile: development/nginx/Dockerfile
+    volumes:
+      - ./:/app
+    networks:
+      - shininvest-promo-traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=shininvest-promo-traefik-public
+      - >
+        traefik.http.routers.api.rule=Host(`api.app.localhost`) ||
+        (Host(`app.localhost`) &&
+        (PathPrefix(`/api`) || PathPrefix(`/admin`) || PathPrefix(`/assets`) || PathPrefix(`/files`) || PathPrefix(`/js/plugins`)))
+      - traefik.http.routers.api.entryPoints=web
+      - traefik.http.services.api.loadBalancer.server.port=80
+
+  api-php-fpm:
+    build:
+      context: docker
+      dockerfile: development/php-fpm/Dockerfile
+    volumes:
+      - ./:/app
+
+  api-php-cli:
+    build:
+      context: docker
+      dockerfile: development/php-cli/Dockerfile
+    volumes:
+      - ./:/app
+
+  frontend-nginx:
+    build:
+      context: frontend
+      dockerfile: docker/development/nginx/Dockerfile
+    volumes:
+      - ./frontend:/app
+    networks:
+      - shininvest-promo-traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=shininvest-promo-traefik-public
+      - >
+          traefik.http.routers.frontend-nginx.rule=Host(`app.localhost`) && PathPrefix(`/images/seq`)
+      - traefik.http.routers.frontend-nginx.entryPoints=web
+      - traefik.http.services.frontend-nginx.loadBalancer.server.port=80
+
+  frontend-node:
+    build:
+      context: frontend
+      dockerfile: docker/development/node/Dockerfile
+    volumes:
+      - ./frontend:/app
+    networks:
+      - shininvest-promo-traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=shininvest-promo-traefik-public
+      - >
+          traefik.http.routers.frontend-node.rule=Host(`app.localhost`)
+      - traefik.http.routers.frontend-node.entryPoints=web,websocket
+      - traefik.http.services.frontend-node.loadBalancer.server.port=3000
+
+  mysql:
+    image: mariadb:10.11.2
+    volumes:
+      - db-mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+
+  permissions:
+    image: alpine
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: sh -c "chmod 777 runtime public_html/assets public_html/files && chmod 755 yii"
+
+volumes:
+  db-mysql:
+
+networks:
+  shininvest-promo-traefik-public:
+    name: shininvest-promo-traefik-public
+

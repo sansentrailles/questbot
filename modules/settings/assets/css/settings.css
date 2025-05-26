@@ -1,0 +1,19 @@
+.hidden {
+    display: none;
+}
+
+.input-group-btn {
+    visibility: hidden;
+}
+
+.multiple .input-group-btn {
+    visibility: visible;
+}
+
+.input-group-addon {
+    padding: 0 !important;
+}
+
+.value-item .btn {
+    padding: 6px 12px 5px !important;
+}

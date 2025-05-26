@@ -1,0 +1,13 @@
+.image-widget .progress {
+    margin: 10px 0;
+    display: none;
+}
+
+.image-widget .image-widget-manager {
+    display: none;
+    margin: 10px 0;
+}
+
+.image-widget .info-parameter {
+    font-weight: bold;
+}

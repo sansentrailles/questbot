@@ -1,0 +1,12 @@
+class_name: AcceptanceTester
+modules:
+    enabled:
+        #- PhpBrowser:
+        #    url: http://base_engine.localhost/
+        - WebDriver:
+            url: http://base_engine.localhost/
+            browser: firefox
+        - Yii2:
+            part: orm
+            entryScript: index-test.php
+            cleanup: false

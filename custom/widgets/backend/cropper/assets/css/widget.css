@@ -1,0 +1,16 @@
+.image-widget-manager {
+    display: none;
+    margin: 10px 0;
+}
+
+.original-image-container {
+    margin-bottom: 10px;
+}
+
+.original-image-container img {
+    max-width: 100%;
+}
+
+.image-widget .info-parameter {
+    font-weight: bold;
+}

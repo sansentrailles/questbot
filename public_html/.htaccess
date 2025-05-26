@@ -1,0 +1,17 @@
+Options -MultiViews +FollowSymlinks -Indexes
+RewriteEngine on
+
+DirectoryIndex index.html index.htm index.php
+DefaultLanguage ru-RU
+AddDefaultCharset UTF-8
+
+ErrorDocument 404 /static/html/404.html
+
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^(.*[^/])$ /$1/ [L,R=301]
+
+RewriteCond %{REQUEST_FILENAME}       !-f
+#RewriteRule ^(.*[^/])$ /$1/ [L,R=301]
+RewriteCond %{REQUEST_FILENAME}       !-d
+RewriteRule .* /index.php [L,QSA]
+RewriteRule ^$ /index.php [L,QSA]
