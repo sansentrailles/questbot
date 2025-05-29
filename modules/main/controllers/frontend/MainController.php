@@ -13,6 +13,7 @@ class MainController extends Controller
 {
     public function actionIndex()
     {
+        $this->view->title = "Городской Квест Бот (в разработке)";
         $this->layout = '@app/views/layouts/frontend/dummy';
         return $this->render('index');
     }
