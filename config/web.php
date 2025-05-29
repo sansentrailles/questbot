@@ -22,6 +22,7 @@ $config = [
         'app\modules\admin\Bootstrap',
         'app\modules\user\Bootstrap',
         'app\modules\settings\Bootstrap',
+        'app\modules\quests\Bootstrap',
     ],
     'language' => 'ru',
     'timezone' => 'Asia/Yekaterinburg',

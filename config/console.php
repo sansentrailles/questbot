@@ -89,49 +89,13 @@ $config = [
         'migrate-guide' => [
             'class' => 'yii\console\controllers\MigrateController',
             'migrationNamespaces' => ['app\modules\guide\migrations'],
-            'migrationTable' => 'migration_guide',
-        ],
+            'migrationTable' => 'migration_guide',        ],
 
-        'migrate-main' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\main\migrations'],
-            'migrationTable' => 'migration_main',
-        ],
 
-        'migrate-tyres' => [
+        'migrate-quests' => [
             'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\tyres\migrations'],
-            'migrationTable' => 'migration_tyres',
-        ],
-
-        'migrate-feedback' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\feedback\migrations'],
-            'migrationTable' => 'migration_feedback',
-        ],
-
-        'migrate-about' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\about\migrations'],
-            'migrationTable' => 'migration_about',
-        ],
-
-        'migrate-social' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\social\migrations'],
-            'migrationTable' => 'migration_social',
-        ],
-
-        'migrate-pages' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\pages\migrations'],
-            'migrationTable' => 'migration_pages',
-        ],
-
-        'migrate-seo' => [
-            'class' => 'yii\console\controllers\MigrateController',
-            'migrationNamespaces' => ['app\modules\seo\migrations'],
-            'migrationTable' => 'migration_seo',
+            'migrationNamespaces' => ['app\modules\quests\migrations'],
+            'migrationTable' => 'migration_quests',
         ],
     ],
 ];

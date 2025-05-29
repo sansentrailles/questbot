@@ -8,7 +8,7 @@ use app\modules\tyres\Module as TyresModule;
 use app\modules\about\Module as AboutModule;
 use app\modules\social\Module as SocialModule;
 use app\modules\pages\Module as PageModule;
-use app\modules\seo\Module as SeoModule;
+use app\modules\quests\Module as QuestModule;
 
 ?>
 
@@ -51,6 +51,22 @@ use app\modules\seo\Module as SeoModule;
                                 'icon' => 'user-secret',
                                 'url' => ['/admin/user/roles'],
                                 'active'=> RouteHelper::isRoute('user/roles/index'),
+                            ],
+                        ],
+                    ],
+
+                    [
+                        'label' => QuestModule::t('common', 'QUESTS'),
+                        'icon' => 'question',
+                        'url' => '#',
+                        'active'=> RouteHelper::isModule('quests'),
+                        'items' => [
+                            [
+                                'label' => QuestModule::t('common', 'QUESTS_LIST'),
+                                'icon' => 'bars',
+                                'url' => ['/admin/quests/quests'],
+                                'active'=> RouteHelper::isRoute('quests/quests'),
+                                // 'visible' => Yii::$app->user->can('dev'),
                             ],
                         ],
                     ],

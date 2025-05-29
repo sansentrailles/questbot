@@ -70,10 +70,10 @@ return [
                 'layout' => $layoutBackend,
             ],
 
-            'seo' => [
-                'class' => 'app\modules\seo\Module',
-                'controllerNamespace' => 'app\modules\seo\controllers\backend',
-                'viewPath' => '@app/modules/seo/views/backend',
+            'quests' => [
+                'class' => 'app\modules\quests\Module',
+                'controllerNamespace' => 'app\modules\quests\controllers\backend',
+                'viewPath' => '@app/modules/quests/views/backend',
                 'layout' => $layoutBackend,
             ],
 
