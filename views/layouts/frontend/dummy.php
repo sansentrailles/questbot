@@ -47,8 +47,6 @@ use yii\helpers\Html;
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white min-h-screen flex items-center justify-center p-6 transition-all duration-500">
-
-<body>
     <?php $this->beginBody(); ?>
         <?php echo $content; ?>
     <?php $this->endBody(); ?>
