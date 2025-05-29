@@ -14,6 +14,24 @@ use yii\helpers\Html;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?php echo Html::encode($this->title); ?></title>
+
+    <!-- Описание сайта -->
+    <meta name="description" content="Платформа для увлекательных квестов, путешествий по городу и командных испытаний.">
+
+    <!-- Open Graph / Facebook / Telegram мета-теги -->
+    <meta property="og:title" content="Городской Квест Бот">
+    <meta property="og:description" content="Платформа для увлекательных квестов, путешествий по городу и командных испытаний.">
+    <meta property="og:image" content="https://quest.aroundcity.club/images/og2.png">
+    <meta property="og:url" content="https://quest.aroundcity.club/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Городской Квест Бот">
+
+    <!-- Twitter Card (дополнительно) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Городской Квест Бот">
+    <meta name="twitter:description" content="Платформа для увлекательных квестов, путешествий по городу и командных испытаний.">
+    <meta name="twitter:image" content="https://quest.aroundcity.club/images/og2.png">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script> 
     <style>
