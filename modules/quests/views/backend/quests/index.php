@@ -52,14 +52,14 @@ $seoSection = 'quests';
             ],
 
             [
-                    'headerOptions' => ['width' => '10%'],
-                    'label' => Module::t('common', 'TASKS'),
-                    'format' => 'raw',
-                    'value' => static function ($model) {
-                        $url = Url::to(['/admin/quests/tasks', 'questId' => $model->id]);
-                        return Html::a(Module::t('common', 'TASKS'), $url);
-                    },
-                ],
+                'headerOptions' => ['width' => '10%'],
+                'label' => Module::t('common', 'TASKS'),
+                'format' => 'raw',
+                'value' => static function ($model) {
+                    $url = Url::to(['/admin/quests/tasks', 'questId' => $model->id]);
+                    return Html::a(Module::t('common', 'TASKS'), $url);
+                },
+            ],
 
             [
                 'headerOptions' => ['width' => '5%'],

@@ -18,7 +18,6 @@ return [
     'BUTTON_SAVE' => 'Сохранить',
     'BUTTON_UPDATE' => 'Обновить',
     'BUTTON_CREATE' => 'Создать',
-    'IS_VISIBLE' => 'Видимость',
     'ORD' => 'Порядок',
     'VIDEO_QUALITY' => 'Качество видео',
     'ADDRESS_SEARCH' => 'Искать по адресу',

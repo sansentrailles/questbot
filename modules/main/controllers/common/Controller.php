@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace app\modules\main\controllers\common;
 
-use app\modules\catalog\services\CategoryService;
 use Yii;
 
 abstract class Controller extends \app\custom\controllers\Controller

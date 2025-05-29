@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -59,6 +60,16 @@ $seoSection = 'quests';
                     'attribute' => 'place',
                     'class' => LinkColumn::class,
                     'action' => 'update',
+                ],
+
+                [
+                    'headerOptions' => ['width' => '10%'],
+                    'label' => Module::t('common', 'TASK_ANSWERS'),
+                    'format' => 'raw',
+                    'value' => static function ($model) {
+                        $url = Url::to(['/admin/quests/answers', 'taskId' => $model->id]);
+                        return Html::a(Module::t('common', 'TASK_ANSWERS'), $url);
+                    },
                 ],
 
                 [

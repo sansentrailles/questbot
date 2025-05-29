@@ -22,6 +22,8 @@ $cityName = '';
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
+        <?php echo $form->field($model, 'quest_id')->hiddenInput()->label(false); ?>
+    
         <?php echo $form->field($model, 'is_visible')->checkbox(); ?>
 
         <?php echo $form->field($model, 'question')->textarea(['rows' => 5]); ?>
