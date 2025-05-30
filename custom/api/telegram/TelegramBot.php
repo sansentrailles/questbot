@@ -226,6 +226,10 @@ class TelegramBot
                     $this->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
                     break;
 
+                case 'quests':
+                    $this->sendQuests($chatId);
+                    break;
+
                 case 'quest_questions':
                     $this->getQuestTasks($chatId, (int) $buttonData['value']);
                     // $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");

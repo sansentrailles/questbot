@@ -80,7 +80,7 @@ class QuestService extends BaseService
         }
 
         $lines[] = [
-                'text' => 'К списку квестов',
+                'text' => '⬅️ К списку квестов',
                 'callback_data' => 'quests',
             ];
 
