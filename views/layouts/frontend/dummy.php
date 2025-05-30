@@ -14,6 +14,7 @@ use yii\helpers\Html;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?php echo Html::encode($this->title); ?></title>
+    <?= Html::csrfMetaTags() ?>
 
     <!-- Описание сайта -->
     <meta name="description" content="Платформа для увлекательных квестов, путешествий по городу и командных испытаний.">

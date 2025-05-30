@@ -10,6 +10,8 @@ use app\modules\quests\controllers\common\Controller;
 
 class DefaultController extends Controller
 {
+    public $enableCsrfValidation = false;
+
     // public function actionIndex(): void
     // {
     //     echo 123;
@@ -25,6 +27,7 @@ class DefaultController extends Controller
         // Пример обработки входящих сообщений (для webhook)
         // $update = $bot->getWebhookUpdate();
         $update = json_decode(file_get_contents('php://input'), true);
+        print_r($update);
         // $bot->handleUpdate($update);
 
         $bot->sendMessage(215488627, print_r($update, true));
