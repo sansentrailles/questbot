@@ -10,11 +10,11 @@ use app\modules\quests\controllers\common\Controller;
 
 class DefaultController extends Controller
 {
-    public function actionIndex(): void
-    {
-        echo 123;
-        exit;
-    }
+    // public function actionIndex(): void
+    // {
+    //     echo 123;
+    //     exit;
+    // }
 
     public function actionHandler()
     {
@@ -32,7 +32,6 @@ class DefaultController extends Controller
         //     if (isset($update['message'])) {
         //         $chatId = $update['message']['chat']['id'];
         //         $text = $update['message']['text'];
-                
         //         if ($text == '/start') {
         //             $bot->sendMessage($chatId, 'Добро пожаловать!');
         //         } elseif ($text == '/getid') {
