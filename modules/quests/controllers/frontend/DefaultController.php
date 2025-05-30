@@ -23,7 +23,8 @@ class DefaultController extends Controller
         $bot = new TelegramBot($token);
 
         // Пример обработки входящих сообщений (для webhook)
-        $update = $bot->getWebhookUpdate();
+        // $update = $bot->getWebhookUpdate();
+        $update = json_decode(file_get_contents('php://input'), true);
         // $bot->handleUpdate($update);
 
         $bot->sendMessage(215488627, print_r($update, true));
