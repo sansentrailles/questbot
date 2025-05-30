@@ -369,7 +369,7 @@ class TelegramBot
             $this->sendMessage($chatId, 'К сожалению квест не найден 😟');
         }
 
-        $questions = $quest->visiblleQuestions();
+        $questions = $quest->visibleQuestions();
         if (count($questions) > 0) {
             $this->sendMessage($chatId, 'Данный квест не содержит вопросов 😟');
         }
