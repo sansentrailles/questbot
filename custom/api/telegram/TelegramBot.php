@@ -227,7 +227,8 @@ class TelegramBot
                     break;
 
                 case 'quest_questions':
-                    $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
+                    $this->getQuestQuestions($chatId, (int) $buttonData['value']);
+                    // $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
                     break;
                     
                 case 'delete_message':
