@@ -1,10 +1,21 @@
 <?php
 
 /**
- * File Uploader Server package
- * Developer: N1ED
- * Website: https://n1ed.com/
+ *
+ * Flmngr server package for PHP.
+ *
+ * This file is a part of the server side implementation of Flmngr -
+ * the JavaScript/TypeScript file manager widely used for building apps and editors.
+ *
+ * Comes as a standalone package for custom integrations,
+ * and as a part of N1ED web content builder.
+ *
+ * Flmngr file manager:       https://flmngr.com
+ * N1ED web content builder:  https://n1ed.com
+ * Developer website:         https://edsdk.com
+ *
  * License: GNU General Public License Version 3 or later
+ *
  **/
 
 namespace EdSDK\FlmngrServer\lib\file;
@@ -12,7 +23,6 @@ namespace EdSDK\FlmngrServer\lib\file;
 use EdSDK\FlmngrServer\model\Message;
 use EdSDK\FlmngrServer\lib\MessageException;
 use EdSDK\FlmngrServer\model\ImageInfo;
-use Exception;
 
 class Utils {
 
@@ -97,7 +107,7 @@ class Utils {
     $exts = ['gif', 'jpg', 'jpeg', 'png', 'svg', 'webp', 'bmp'];
     $ext = Utils::getExt($name);
     for ($i = 0; $i < count($exts); $i++) {
-      if ($exts[$i] === strtolower($ext)) {
+      if ($ext !== NULL && $exts[$i] === strtolower($ext)) {
         return TRUE;
       }
     }
@@ -162,7 +172,6 @@ class Utils {
   }
 
   public static function writeImageContents($ext, $image, $jpegQuality) {
-    ob_clean();
     ob_start();
     switch (strtolower($ext)) {
       case 'gif':

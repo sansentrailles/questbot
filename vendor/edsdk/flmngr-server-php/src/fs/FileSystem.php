@@ -1,16 +1,28 @@
 <?php
 
 /**
- * Flmngr Server package
- * Developer: N1ED
- * Website: https://n1ed.com/
+ *
+ * Flmngr server package for PHP.
+ *
+ * This file is a part of the server side implementation of Flmngr -
+ * the JavaScript/TypeScript file manager widely used for building apps and editors.
+ *
+ * Comes as a standalone package for custom integrations,
+ * and as a part of N1ED web content builder.
+ *
+ * Flmngr file manager:       https://flmngr.com
+ * N1ED web content builder:  https://n1ed.com
+ * Developer website:         https://edsdk.com
+ *
  * License: GNU General Public License Version 3 or later
+ *
  **/
 
 namespace EdSDK\FlmngrServer\fs;
 
 use EdSDK\FlmngrServer\model\Message;
 use EdSDK\FlmngrServer\lib\file\Utils;
+use EdSDK\FlmngrServer\lib\Profile;
 use EdSDK\FlmngrServer\lib\MessageException;
 use EdSDK\FlmngrServer\model\FMDir;
 use EdSDK\FlmngrServer\model\FMFile;
@@ -22,11 +34,11 @@ class FileSystem {
 
   private $driverCache;
 
-  public $embedPreviews = FALSE;
-
   function __construct($config) {
     $dirFiles = in_array('dirFiles', array_keys($config)) ? $config['dirFiles'] : NULL; // NULL will cause exception later
     $dirCache = in_array('dirCache', array_keys($config)) ? $config['dirCache'] : ($dirFiles === NULL ? NULL : $dirFiles . '/.cache');
+    $dirFiles = str_replace("\\", "/", $dirFiles);
+    $dirCache = str_replace("\\", "/", $dirCache);
     $this->driverFiles = in_array('driverFiles', array_keys($config)) ? $config['driverFiles'] : new DriverLocal(['dir' => $dirFiles]);
     $this->driverCache = in_array('driverCache', array_keys($config)) ? $config['driverCache'] : new DriverLocal(['dir' => $dirCache], TRUE);
     $this->driverFiles->setDriverCache($this->driverCache);
@@ -179,6 +191,7 @@ class FileSystem {
   public function reqGetFilesPaged($request) {
     $dirPath = $request->post['dir'];
     $maxFiles = $request->post['maxFiles'];
+    $alwaysInclude = isset($request->post['alwaysInclude']) ? $request->post['alwaysInclude'] : []; // does not affect to filters, only for paged files
     $lastFile = isset($request->post['lastFile']) ? $request->post['lastFile'] : NULL;
     $lastIndex = isset($request->post['lastIndex']) ? $request->post['lastIndex'] : NULL;
     $whiteList = isset($request->post['whiteList']) ? $request->post['whiteList'] : [];
@@ -192,8 +205,6 @@ class FileSystem {
     // Convert /root_dir/1/2/3 to 1/2/3
     $dirPath = $this->getRelativePath($dirPath);
 
-    $now = microtime(TRUE);
-    $start = $now;
 
     $files = []; // file name to sort values (like [filename, date, size])
     $formatFiles = []; // format to array(owner file name to file name)
@@ -202,7 +213,7 @@ class FileSystem {
     }
 
     $fFiles = $this->driverFiles->files($dirPath);
-    $now = $this->profile("Scan dir", $now);
+    $profile = new Profile("reqGetFilesPaged()");
 
     foreach ($fFiles as $file) {
 
@@ -212,7 +223,7 @@ class FileSystem {
         for ($i = 0; $i < count($formatIds); $i++) {
           $isFormatFile = Utils::endsWith($name, $formatSuffixes[$i]);
           if ($isFormatFile) {
-            $format = $formatSuffixes[$i];
+            $format = $formatIds[$i];
             $name = substr($name, 0, -strlen($formatSuffixes[$i]));
             break;
           }
@@ -254,7 +265,7 @@ class FileSystem {
         $formatFiles[$format][$name] = $file['name'];
       }
     }
-    $now = $this->profile("Fill image formats", $now);
+    $profile->profile("Scan dir finished");
 
     // Remove files outside of white list, and their formats too
     if (count($whiteList) > 0) { // only if whitelist is set
@@ -262,7 +273,7 @@ class FileSystem {
 
         $isMatch = FALSE;
         foreach ($whiteList as $mask) {
-          if (fnmatch($mask, $file) === TRUE) {
+          if (fnmatch($mask, $file, FNM_CASEFOLD) === TRUE) {
             $isMatch = TRUE;
           }
         }
@@ -278,14 +289,14 @@ class FileSystem {
       }
     }
 
-    $now = $this->profile("White list", $now);
+    $profile->profile("White list finished");
 
     // Remove files outside of black list, and their formats too
     foreach ($files as $file => $v) {
 
       $isMatch = FALSE;
       foreach ($blackList as $mask) {
-        if (fnmatch($mask, $file) === TRUE) {
+        if (fnmatch($mask, $file, FNM_CASEFOLD) === TRUE) {
           $isMatch = TRUE;
         }
       }
@@ -300,7 +311,9 @@ class FileSystem {
       }
     }
 
-    $now = $this->profile("Black list", $now);
+    $countTotal = count($files);
+
+    $profile->profile("Black list finished");
 
     // Remove files not matching the filter, and their formats too
     foreach ($files as $file => $v) {
@@ -316,7 +329,9 @@ class FileSystem {
       }
     }
 
-    $now = $this->profile("Filter", $now);
+    $countFiltered = count($files);
+
+    $profile->profile("Filter finished");
 
     uasort($files, function ($arr1, $arr2) {
 
@@ -346,7 +361,7 @@ class FileSystem {
       $fileNames = array_reverse($fileNames);
     }
 
-    $now = $this->profile("Sorting", $now);
+    $profile->profile("Sorting finished");
 
     $startIndex = 0;
     if ($lastIndex) {
@@ -360,12 +375,30 @@ class FileSystem {
     }
 
     $isEnd = $startIndex + $maxFiles >= count($fileNames); // are there any files after current page?
-    $fileNames = array_slice($fileNames, $startIndex, $maxFiles);
 
-    $now = $this->profile("Page slice", $now);
+    // $fileNames = array_slice($fileNames, $startIndex, $maxFiles);
+    // Do the same, but respecting "alwaysInclude":
+    if ($startIndex > 0 || $maxFiles < count($fileNames)) {
+        for ($i=count($alwaysInclude)-1; $i>=0; $i--) {
+            $index = array_search($alwaysInclude[$i], $fileNames);
+            if ($index === FALSE) {
+                // Remove unexisting items from "alwaysInclude"
+                array_splice($alwaysInclude, $i, 1);
+            } else {
+                // And existing items from "fileNames"
+                array_splice($fileNames, $index, 1);
+            }
+        }
+        // Get a page
+        $fileNames = array_slice($fileNames, $startIndex, $maxFiles);
+        // Add to the start of the page all "alwaysInclude" files
+        for ($i=count($alwaysInclude)-1; $i>=0; $i--)
+            array_unshift($fileNames, $alwaysInclude[$i]);
+    }
+
+    $profile->profile("Page slice finished");
 
     $resultFiles = [];
-
 
     // Create result file list for output,
     // attach image attributes and image formats for image files.
@@ -386,11 +419,13 @@ class FileSystem {
       $resultFiles[] = $resultFile;
     }
 
-    $now = $this->profile("Create output list", $now);
-    $this->profile("Total", $start);
+    $profile->profile("Create output list finished");
+    $profile->total();
 
     return [
       'files' => $resultFiles,
+      'countTotal' => $countTotal,
+      'countFiltered' => $countFiltered,
       'isEnd' => $isEnd,
     ];
   }
@@ -417,10 +452,10 @@ class FileSystem {
 
   function reqGetImagePreview($request) {
     $filePath = isset($request->get['f']) ? $request->get['f'] : $request->post['f'];
-    $width = isset($request->get['width']) ? $request->get['width'] :
-      (isset($request->post['width']) ? $request->post['width'] : NULL);
-    $height = isset($request->get['height']) ? $request->get['height'] :
-      (isset($request->post['height']) ? $request->post['height'] : NULL);
+    //$width = isset($request->get['width']) ? $request->get['width'] :
+    //  (isset($request->post['width']) ? $request->post['width'] : NULL);
+    //$height = isset($request->get['height']) ? $request->get['height'] :
+    //  (isset($request->post['height']) ? $request->post['height'] : NULL);
 
     $filePath = $this->getRelativePath($filePath);
     $result = $this->getCachedImagePreview($filePath, NULL);
@@ -488,22 +523,24 @@ class FileSystem {
   private $PREVIEW_HEIGHT = 139;
 
   function getCachedImageInfo($filePath) {
-    $start = microtime(TRUE);
+    $profile = new Profile("getCachedImageInfo()");
     $result = $this->getCachedFile($filePath)->getInfo();
-    $this->profile("getCachedImageInfo: " . $filePath, $start);
+    $profile->total();
     return $result;
   }
 
   function getCachedImagePreview($filePath, $contents) {
-    $start = microtime(TRUE);
+    $profile = new Profile("getCachedImagePreview()");
     $result = $this->getCachedFile($filePath)
       ->getPreview($this->PREVIEW_WIDTH, $this->PREVIEW_HEIGHT, $contents);
-    $this->profile("getCachedImagePreview: " . $filePath, $start);
+    $profile->total();
     return $result;
   }
 
   function getCachedImagePreviewAndResolution($filePath, $contents) {
-    $start = microtime(TRUE);
+
+    $profile = new Profile("getCachedImagePreviewAndResolution()");
+
     $cachedFile = $this->getCachedFile($filePath);
 
     $preview = $cachedFile->getPreview($this->PREVIEW_WIDTH, $this->PREVIEW_HEIGHT, $contents);
@@ -514,7 +551,7 @@ class FileSystem {
       isset($info['width']) ? $info['width'] : NULL,
       isset($info['height']) ? $info['height'] : NULL,
     ];
-    $this->profile("getCachedImagePreviewAndResolution: " . $filePath, $start);
+    $profile->total();
     return $result;
   }
 
@@ -523,6 +560,16 @@ class FileSystem {
     $name = $request->post['n'];
 
     $dirPath = $this->getRelativePath($dirPath);
+
+    if ($name === "") {
+        throw new MessageException(
+            Message::createMessage(
+                FALSE,
+                Message::MALFORMED_REQUEST
+            )
+        );
+    }
+
     if (strpos($name, '/') !== FALSE) {
       throw new MessageException(
         Message::createMessage(
@@ -549,16 +596,7 @@ class FileSystem {
     $path = $this->getRelativePath($path);
     $newPath = $this->getRelativePath($newPath);
 
-    try {
-      $this->driverFiles->move($path, $newPath . '/' . basename($path));
-    } catch (Exception $e) {
-      throw new MessageException(
-        Message::createMessage(
-          FALSE,
-          Message::FM_ERROR_ON_MOVING_FILES
-        )
-      );
-    }
+    $this->driverFiles->move($path, $newPath . '/' . basename($path));
   }
 
   function reqRename($request) {
@@ -596,15 +634,13 @@ class FileSystem {
     }
   }
 
-  // TODO: Currently we delete another image formats, probably we should regenerate them
-  protected function updateFormatsAndClearCachePreviewForFile($filePath, $formatSuffixes) {
+  protected function deleteFormatsAndClearCachePreviewForFile($filePath, $formatSuffixes) {
     $fullPaths = [];
 
     $index = strrpos($filePath, '.');
-    if ($index > -1) {
+    if ($index !== FALSE) {
       $fullPathPrefix = substr($filePath, 0, $index);
-    }
-    else {
+    } else {
       $fullPathPrefix = $filePath;
     }
     if (isset($formatSuffixes) && is_array($formatSuffixes)) {
@@ -626,6 +662,34 @@ class FileSystem {
     }
   }
 
+  protected function updateFormatsAndClearCachePreviewForFile($filePath, $formatSuffixes, $formatMaxWidths, $formatMaxHeights) {
+
+    $fileNameWithoutExt = $filePath;
+    $indexSlash = strrpos($fileNameWithoutExt, '/');
+    if ($indexSlash !== FALSE)
+      $fileNameWithoutExt = substr($fileNameWithoutExt, $indexSlash + 1);
+    $indexDot = strrpos($fileNameWithoutExt, '.');
+    if ($indexDot !== FALSE)
+      $fileNameWithoutExt = substr($fileNameWithoutExt, 0, $indexDot);
+
+    for ($j = 0; $j < count($formatSuffixes); $j++) {
+      try {
+        $this->resizeFile2Impl(
+          $filePath,
+          $fileNameWithoutExt . $formatSuffixes[$j],
+          $formatMaxWidths[$j],
+          $formatMaxHeights[$j],
+          'IF_EXISTS'
+        );
+      } catch (Exception $e) {
+        // Supressing FM_NOT_ERROR_NOT_NEEDED_TO_UPDATE not-a-error
+        //error_log(print_r($e, TRUE));
+      }
+    }
+    $cachedFile = $this->getCachedFile($filePath);
+    $cachedFile->delete();
+  }
+
   // "suffixes" is an optional parameter (does not supported by Flmngr UI v1)
   function reqDeleteFiles($request) {
     $filesPaths = preg_split('/\|/', $request->post['fs']);
@@ -637,7 +701,7 @@ class FileSystem {
     }
 
     foreach ($filesPaths as $filePath) {
-      $this->updateFormatsAndClearCachePreviewForFile($filePath, $formatSuffixes);
+      $this->deleteFormatsAndClearCachePreviewForFile($filePath, $formatSuffixes);
     }
   }
 
@@ -672,6 +736,11 @@ class FileSystem {
     return $result;
   }
 
+  // Legacy request used in V1 client only
+  function reqResizeFile($request) {
+    return $this->reqResizeFile2($request)["url"];
+  }
+
   // mode:
   // "ALWAYS"
   // To recreate image preview in any case (even it is already generated before)
@@ -687,7 +756,7 @@ class FileSystem {
 
   // File uploaded / saved in image editor and reuploaded: $mode is "ALWAYS" for required formats, "IF_EXISTS" for the others
   // User selected image in file manager:                  $mode is "DO_NOT_UPDATE" for required formats and there is no requests for the otheres
-  function reqResizeFile($request) {
+  function reqResizeFile2($request) {
     // $filePath here starts with "/", not with "/root_dir" as usual
     // so there will be no getRelativePath call
     $filePath = $request->post['f'];
@@ -704,6 +773,23 @@ class FileSystem {
         )
       );
     }
+
+    return $this->resizeFile2Impl(
+      $filePath,
+      $newFileNameWithoutExt,
+      $width,
+      $height,
+      $mode
+    );
+  }
+
+  function resizeFile2Impl(
+    $filePath,
+    $newFileNameWithoutExt,
+    $width,
+    $height,
+    $mode
+  ) {
 
     if (
       strpos($newFileNameWithoutExt, '..') !== FALSE ||
@@ -722,6 +808,13 @@ class FileSystem {
     $oldFileNameWithExt = substr($filePath, $index + 1);
     $newExt = 'png';
     $oldExt = strtolower(Utils::getExt($filePath));
+    if ($oldExt === "svg") {
+      return [
+        "url" => $filePath,
+        "width" => -1,
+        "height" => -1
+      ];
+    }
     if ($oldExt === 'jpg' || $oldExt === 'jpeg') {
       $newExt = 'jpg';
     }
@@ -744,7 +837,6 @@ class FileSystem {
     }
 
     $isDstPathExists = $this->driverFiles->fileExists($dstPath);
-
     if ($mode === 'IF_EXISTS' && !$isDstPathExists) {
       throw new MessageException(
         Message::createMessage(
@@ -755,7 +847,17 @@ class FileSystem {
     }
 
     if ($mode === 'DO_NOT_UPDATE' && $isDstPathExists) {
-      return $dstPath;
+
+      // TODO: a preview is not needed, only a resolution
+      $info = $this->getCachedImagePreviewAndResolution(
+        $dstPath,
+        $this->driverFiles->get($dstPath)
+      );
+      return [
+        "url" => $dstPath,
+        "width" => $info[1],
+        "height" => $info[2]
+      ];
     }
 
     $contents = $this->driverFiles->get($filePath);
@@ -771,6 +873,15 @@ class FileSystem {
       );
     }
     imagesavealpha($image, TRUE);
+
+    $orientation = $this->driverFiles->getExifOrientation($filePath);
+    if ($orientation === 3) {
+      $image = imagerotate($image, 180, 0);
+    } else if ($orientation === 6) {
+      $image = imagerotate($image, -90, 0);
+    } else if ($orientation === 8) {
+      $image = imagerotate($image, 90, 0);
+    }
 
     $this->getCachedImagePreview($filePath, $contents); // to force writing image/width into cache file
     $imageInfo = $this->getCachedImageInfo($filePath);
@@ -796,7 +907,17 @@ class FileSystem {
         $newFileNameWithoutExt . '.' . $oldExt === $oldFileNameWithExt
       ) {
         // return old file due to it has correct width/height to be used as a preview
-        return $filePath;
+
+        // TODO: a preview is not needed, only a resolution
+        $info = $this->getCachedImagePreviewAndResolution(
+          $filePath,
+          $this->driverFiles->get($filePath)
+        );
+        return [
+          "url" => $filePath,
+          "width" => $info[1],
+          "height" => $info[2]
+        ];
       }
       else {
         $width = $originalWidth;
@@ -806,11 +927,11 @@ class FileSystem {
 
     if ($needToFitWidth) {
       $ratio = $width / $originalWidth;
-      $height = $originalHeight * $ratio;
+      $height = max(1, floor($originalHeight * $ratio));
     }
     elseif ($needToFitHeight) {
       $ratio = $height / $originalHeight;
-      $width = $originalWidth * $ratio;
+      $width = max(1, floor($originalWidth * $ratio));
     }
 
     $resizedImage = imagecreatetruecolor($width, $height);
@@ -849,7 +970,11 @@ class FileSystem {
     ob_end_clean(); // delete buffer
     $this->driverFiles->put($dstPath, $stringData);
 
-    return $dstPath;
+    return [
+      "url" => $dstPath,
+      "width" => intval($width),
+      "height" => intval($height)
+    ];
   }
 
   function reqGetImageOriginal($request) {
@@ -874,7 +999,8 @@ class FileSystem {
 
   function reqGetVersion($request) {
     return [
-      'version' => '5',
+      'version' => '6',
+      'build' => '14',
       'language' => 'php',
       'storage' => $this->driverFiles->getDriverName(),
       'dirFiles' => $this->driverFiles->getDir(),
@@ -901,10 +1027,19 @@ class FileSystem {
 
     $name = $this->driverFiles->uploadFile($file, $dir, $isOverwrite);
 
-
     if ($isOverwrite) {
       $formatSuffixes = $request->post['formatSuffixes'];
-      $this->updateFormatsAndClearCachePreviewForFile($dir . '/' . $name, $formatSuffixes);
+
+      if (isset($request->post['formatMaxWidths']) && isset($request->post['formatMaxHeights'])) {
+        // New corrected behavior since version 6, build 13
+        $formatMaxWidths = $request->post['formatMaxWidths'];
+        $formatMaxHeights = $request->post['formatMaxHeights'];
+        $this->updateFormatsAndClearCachePreviewForFile($dir . '/' . $name, $formatSuffixes, $formatMaxWidths, $formatMaxHeights);
+      } else {
+        // Old behavior till version 6, build 12
+        $this->deleteFormatsAndClearCachePreviewForFile($dir . '/' . $name, $formatSuffixes);
+      }
+
     }
 
     $resultFile = $this->getFileStructure($dir, $name);
@@ -913,13 +1048,5 @@ class FileSystem {
       'file' => $resultFile,
     ];
   }
-
-  private function profile($text, $start) {
-    $now = microtime(TRUE);
-    $time = $now - $start;
-    //error_log(number_format($time, 3, ",", "")." sec   " . $text . "\n");
-    return $now;
-  }
-
 
 }

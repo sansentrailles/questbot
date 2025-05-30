@@ -18,12 +18,11 @@
         "yiisoft/yii2": "^2.0",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "dmstr/yii2-adminlte-asset": "^2.1",
-        "yii2tech/file-storage": "^1.1",
         "yiisoft/yii2-imagine": "^2.1",
         "kartik-v/yii2-widget-datepicker": "@dev",
         "kartik-v/yii2-field-range": "*",
         "2amigos/yii2-date-picker-widget": "~1.0",
-        "phpoffice/phpspreadsheet": "^1.23",
+        "phpoffice/phpspreadsheet": "^1.28",
         "zgb7mtr/yii2-bootstrap-color-picker": "~1.0",
         "kartik-v/yii2-widget-colorinput": "dev-master",
         "alexantr/yii2-colorpicker": "^2.0",
@@ -36,7 +35,9 @@
         "kartik-v/yii2-widget-select2": "@dev",
         "dompdf/dompdf": "^2.0",
         "yiisoft/yii2-symfonymailer": "^3.0",
-        "wapmorgan/yii2-inflection": "^1.0"
+        "wapmorgan/yii2-inflection": "^1.0",
+        "ezyang/htmlpurifier": "^4.17",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "^2.1",

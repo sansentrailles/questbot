@@ -8,20 +8,22 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
 {
     public static $files = array (
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
+        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
         '271cb6f21c9ae69ccbad5cc1b8d6707c' => __DIR__ . '/..' . '/wapmorgan/morphos/src/English/functions.php',
         '34d31f2fd925dfe2696a521f5ec12db2' => __DIR__ . '/..' . '/wapmorgan/morphos/src/Russian/functions.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -40,7 +42,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
             'yii\\composer\\' => 13,
             'yii\\bootstrap\\' => 14,
             'yii\\' => 4,
-            'yii2tech\\filestorage\\' => 21,
         ),
         'w' => 
         array (
@@ -86,7 +87,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Polyfill\\Php72\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
@@ -109,6 +109,16 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
             'Svg\\' => 4,
             'Sabberworm\\CSS\\' => 15,
         ),
+        'R' => 
+        array (
+            'React\\Stream\\' => 13,
+            'React\\Socket\\' => 13,
+            'React\\Promise\\' => 14,
+            'React\\EventLoop\\' => 16,
+            'React\\Dns\\' => 10,
+            'React\\ChildProcess\\' => 19,
+            'React\\Cache\\' => 12,
+        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -117,7 +127,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
             'Psr\\Http\\Client\\' => 16,
             'Psr\\EventDispatcher\\' => 20,
             'Psr\\Container\\' => 14,
-            'Psr\\Cache\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'PhpCsFixer\\' => 11,
         ),
@@ -132,7 +141,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         ),
         'M' => 
         array (
-            'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
             'Masterminds\\' => 12,
         ),
@@ -140,13 +148,21 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             'Imagine\\' => 8,
         ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
+        ),
         'F' => 
         array (
             'FontLib\\' => 8,
+            'Fidry\\CpuCoreCounter\\' => 21,
             'Faker\\' => 6,
         ),
         'E' => 
         array (
+            'Evenement\\' => 10,
             'Egulias\\EmailValidator\\' => 23,
             'EdSDK\\FlmngrServer\\' => 19,
         ),
@@ -155,7 +171,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
             'Dompdf\\' => 7,
             'Doctrine\\Deprecations\\' => 22,
             'Doctrine\\Common\\Lexer\\' => 22,
-            'Doctrine\\Common\\Annotations\\' => 28,
             'DiDom\\' => 6,
         ),
         'C' => 
@@ -164,6 +179,7 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
             'Composer\\Semver\\' => 16,
             'Composer\\Pcre\\' => 14,
             'Complex\\' => 8,
+            'Clue\\React\\NDJson\\' => 18,
         ),
     );
 
@@ -207,10 +223,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         'yii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
-        ),
-        'yii2tech\\filestorage\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yii2tech/file-storage/src',
         ),
         'wapmorgan\\yii2inflection\\' => 
         array (
@@ -283,10 +295,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Symfony\\Polyfill\\Php72\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
         ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
@@ -372,6 +380,34 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
         ),
+        'React\\Stream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/stream/src',
+        ),
+        'React\\Socket\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/socket/src',
+        ),
+        'React\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/promise/src',
+        ),
+        'React\\EventLoop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/event-loop/src',
+        ),
+        'React\\Dns\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/dns/src',
+        ),
+        'React\\ChildProcess\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/child-process/src',
+        ),
+        'React\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/react/cache/src',
+        ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
@@ -397,10 +433,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
@@ -421,10 +453,6 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             0 => __DIR__ . '/..' . '/n98/junit-xml/src/N98/JUnitXml',
         ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
-        ),
         'Matrix\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
@@ -437,13 +465,33 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         array (
             0 => __DIR__ . '/..' . '/imagine/imagine/src',
         ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
         'FontLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
         ),
+        'Fidry\\CpuCoreCounter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fidry/cpu-core-counter/src',
+        ),
         'Faker\\' => 
         array (
             0 => __DIR__ . '/..' . '/fakerphp/faker/src/Faker',
+        ),
+        'Evenement\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/evenement/evenement/src',
         ),
         'Egulias\\EmailValidator\\' => 
         array (
@@ -459,15 +507,11 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         ),
         'Doctrine\\Deprecations\\' => 
         array (
-            0 => __DIR__ . '/..' . '/doctrine/deprecations/lib/Doctrine/Deprecations',
+            0 => __DIR__ . '/..' . '/doctrine/deprecations/src',
         ),
         'Doctrine\\Common\\Lexer\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/lexer/src',
-        ),
-        'Doctrine\\Common\\Annotations\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
         ),
         'DiDom\\' => 
         array (
@@ -488,6 +532,10 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
         'Complex\\' => 
         array (
             0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
+        ),
+        'Clue\\React\\NDJson\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/clue/ndjson-react/src',
         ),
     );
 
@@ -517,6 +565,7 @@ class ComposerStaticInit780c025a558483967552e2d803224dfb
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'CURLStringFile' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Dompdf\\Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',

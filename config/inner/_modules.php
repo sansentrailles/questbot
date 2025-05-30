@@ -99,46 +99,11 @@ return [
         'viewPath' => '@app/modules/user/views/frontend',
         'layout' => $layoutFrontend,
     ],
-
-    'tyres' => [
-        'class' => 'app\modules\tyres\Module',
-        'controllerNamespace' => 'app\modules\tyres\controllers\frontend',
-        'viewPath' => '@app/modules/tyres/views/frontend',
-        'layout' => $layoutFrontend,
-    ],
-
-    'about' => [
-        'class' => 'app\modules\about\Module',
-        'controllerNamespace' => 'app\modules\about\controllers\frontend',
-        'viewPath' => '@app/modules/about/views/frontend',
-        'layout' => $layoutFrontend,
-    ],
-
-    'feedback' => [
-        'class' => 'app\modules\feedback\Module',
-        'controllerNamespace' => 'app\modules\feedback\controllers\frontend',
-        'viewPath' => '@app/modules/feedback/views/frontend',
-        'layout' => $layoutFrontend,
-    ],
-
-    'social' => [
-        'class' => 'app\modules\social\Module',
-        'controllerNamespace' => 'app\modules\social\controllers\frontend',
-        'viewPath' => '@app/modules/social/views/frontend',
-        'layout' => $layoutFrontend,
-    ],
-
-    'seo' => [
-        'class' => 'app\modules\seo\Module',
-        'controllerNamespace' => 'app\modules\seo\controllers\frontend',
-        'viewPath' => '@app/modules/seo/views/frontend',
-        'layout' => $layoutFrontend,
-    ],
-
-    'pages' => [
-        'class' => 'app\modules\pages\Module',
-        'controllerNamespace' => 'app\modules\pages\controllers\frontend',
-        'viewPath' => '@app/modules/pages/views/frontend',
+    
+    'quests' => [
+        'class' => 'app\modules\quests\Module',
+        'controllerNamespace' => 'app\modules\quests\controllers\frontend',
+        'viewPath' => '@app/modules/quests/views/frontend',
         'layout' => $layoutFrontend,
     ],
 ];

@@ -40,30 +40,7 @@ return [
         '' => 'main/main/index',
         '<_a:error>' => 'main/default/<_a>',
 
-        'api/pages' => 'pages/default/pages',
-        'api/page/seo/<url:[\w_\/-]+>' => 'pages/default/seo',
-        'api/page/<url:[\w_\/-]+>' => 'pages/default/page',
-        
-        'api/menu' => 'main/main/menu',
-        'api/main' => 'main/main/index',
-        'api/main/seo' => 'main/main/seo',
-
-        'api/city/list' => 'seo/city/list',
-        'api/city/get-default' => 'seo/city/get-default',
-
-        'api/open-graph/image' => 'main/main/og-image',
-        'api/about/<_a>' => 'about/default/<_a>',
-        'api/tyres/category/<url:[\w_\/-]+>' => 'tyres/default/category',
-        'api/tyres/contacts/<url:[\w_\/-]+>' => 'tyres/default/contacts',
-        'api/tyres/categories' => 'tyres/default/categories',
-        'api/tyres/seo/<url:[\w_\/-]+>' => 'tyres/default/seo',
-
-        'api/social/links' => 'social/default/links',
-        'api/feedback/send-partner-request' => 'feedback/default/send-partner-request',
-        'api/feedback/send-offer' => 'feedback/default/send-offer',
-        'api/feedback/send-feedback' => 'feedback/default/send-feedback',
-        'api/feedback/bot-handler' => 'feedback/default/bot-handler',
-        // 'api/feedback/test-send' => 'feedback/default/test-send',
+        '/quests/handler' => 'quests/default/handler',
 
         // '<pageUri:[\w_\/-]+>'=>'page/default/view',
         // 'page/<_a>' => 'page/default/<_a>',

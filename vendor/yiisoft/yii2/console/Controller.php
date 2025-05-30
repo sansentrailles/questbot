@@ -198,6 +198,7 @@ class Controller extends \yii\base\Controller
             $method = new \ReflectionMethod($action, 'run');
         }
 
+        $paramKeys = array_keys($params);
         $args = [];
         $missing = [];
         $actionParams = [];
@@ -212,16 +213,27 @@ class Controller extends \yii\base\Controller
             }
 
             if ($key !== null) {
-                if (PHP_VERSION_ID >= 80000) {
-                    $isArray = ($type = $param->getType()) instanceof \ReflectionNamedType && $type->getName() === 'array';
+                if ($param->isVariadic()) {
+                    for ($j = array_search($key, $paramKeys); $j < count($paramKeys); $j++) {
+                        $jKey = $paramKeys[$j];
+                        if ($jKey !== $key && !is_int($jKey)) {
+                            break;
+                        }
+                        $args[] = $actionParams[$key][] = $params[$jKey];
+                        unset($params[$jKey]);
+                    }
                 } else {
-                    $isArray = $param->isArray();
+                    if (PHP_VERSION_ID >= 80000) {
+                        $isArray = ($type = $param->getType()) instanceof \ReflectionNamedType && $type->getName() === 'array';
+                    } else {
+                        $isArray = $param->isArray();
+                    }
+                    if ($isArray) {
+                        $params[$key] = $params[$key] === '' ? [] : preg_split('/\s*,\s*/', $params[$key]);
+                    }
+                    $args[] = $actionParams[$key] = $params[$key];
+                    unset($params[$key]);
                 }
-                if ($isArray) {
-                    $params[$key] = $params[$key] === '' ? [] : preg_split('/\s*,\s*/', $params[$key]);
-                }
-                $args[] = $actionParams[$key] = $params[$key];
-                unset($params[$key]);
             } elseif (
                 PHP_VERSION_ID >= 70100
                 && ($type = $param->getType()) !== null
@@ -400,12 +412,19 @@ class Controller extends \yii\base\Controller
      *
      * @param string $prompt the prompt message
      * @param array $options Key-value array of options to choose from
+     * @param string|null $default value to use when the user doesn't provide an option.
+     * If the default is `null`, the user is required to select an option.
      *
      * @return string An option character the user chose
+     * @since 2.0.49 Added the $default argument
      */
-    public function select($prompt, $options = [])
+    public function select($prompt, $options = [], $default = null)
     {
-        return Console::select($prompt, $options);
+        if ($this->interactive) {
+            return Console::select($prompt, $options, $default);
+        }
+
+        return $default;
     }
 
     /**

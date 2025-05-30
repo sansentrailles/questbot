@@ -1,10 +1,21 @@
 <?php
 
 /**
- * Flmngr Server package
- * Developer: N1ED
- * Website: https://n1ed.com/
+ *
+ * Flmngr server package for PHP.
+ *
+ * This file is a part of the server side implementation of Flmngr -
+ * the JavaScript/TypeScript file manager widely used for building apps and editors.
+ *
+ * Comes as a standalone package for custom integrations,
+ * and as a part of N1ED web content builder.
+ *
+ * Flmngr file manager:       https://flmngr.com
+ * N1ED web content builder:  https://n1ed.com
+ * Developer website:         https://edsdk.com
+ *
  * License: GNU General Public License Version 3 or later
+ *
  **/
 
 namespace EdSDK\FlmngrServer;
@@ -131,6 +142,9 @@ class FlmngrServer {
         case 'fileResize':
           $data = $fileSystem->reqResizeFile($request);
           break;
+        case 'fileResize2':
+          $data = $fileSystem->reqResizeFile2($request);
+          break;
         case 'fileOriginal':
           list($mimeType, $data) = $fileSystem->reqGetImageOriginal($request);
           header('Content-Type:' . $mimeType);
@@ -156,6 +170,28 @@ class FlmngrServer {
       }
       $resp = new Response(NULL, $data);
     } catch (MessageException $e) {
+
+      if (isset($config["messageExceptionLogger"])) {
+        $config["messageExceptionLogger"]($e, $request);
+      } else {
+
+        $sourceException = $e->getSourceException();
+
+        // Log only messages with an exception
+        if ($sourceException != NULL) {
+          error_log("FLMNGR exception.\n");
+          error_log("REQUEST:\n");
+          error_log(print_r($request, TRUE)."\n");
+          error_log("\n");
+
+          error_log("RESPONSE:\n");
+          error_log(print_r($e->getFailMessage(), TRUE)."\n");
+
+          error_log("EXCEPTION:\n");
+          error_log($sourceException."\n");
+        }
+      }
+
       $resp = new Response($e->getFailMessage(), NULL);
     }
 
@@ -281,37 +317,6 @@ class FlmngrServer {
       return FALSE;
     }
 
-  }
-
-  private static function upload($config) {
-    try {
-      $configUploader = [
-        'dirFiles' => $config['dirFiles'],
-        'dirTmp' => $config['dirTmp'],
-        'filesystem' => $config['filesystem'],
-        'config' => isset($config['uploader'])
-          ? $config['uploader']
-          : [],
-        'request' => $config['request'],
-      ];
-
-      $dir = isset($config['request']->post['dir']) ? $config['request']->post['dir'] : NULL;
-      $post = [
-        'action' => $config['request']->post['action'],
-        'dir' => $dir,
-        'data' => JsonCodec::s_toJson([
-          'action' => $config['request']->post['action'],
-          'dir' => $dir,
-        ]),
-      ];
-      FileUploaderServer::fileUploadRequest(
-        $configUploader,
-        $post,
-        $config['request']->files
-      );
-    } catch (MessageException $e) {
-      return new Response($e->getFailMessage(), NULL);
-    }
   }
 
 }
