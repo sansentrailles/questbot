@@ -369,12 +369,12 @@ class TelegramBot
             $this->sendMessage($chatId, 'К сожалению квест не найден 😟');
         }
 
-        $questions = $quest->visibleTasks;
-        if (count($questions) > 0) {
+        $tasks = $quest->visibleTasks;
+        if (count($tasks) == 0) {
             $this->sendMessage($chatId, 'Данный квест не содержит вопросов 😟');
         }
 
-        $keyboard = $this->questService->generateQuestionsKeyboard($questions);
+        $keyboard = $this->questService->generateTasksKeyboard($tasks);
         $options['reply_markup'] = json_encode($keyboard);
 
         if ($quest->imagePath) {
