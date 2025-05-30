@@ -25,28 +25,26 @@ class DefaultController extends Controller
         $bot = new TelegramBot($token);
 
         // Пример обработки входящих сообщений (для webhook)
-        // $update = $bot->getWebhookUpdate();
-        $update = json_decode(file_get_contents('php://input'), true);
-        print_r($update);
+        $update = $bot->getWebhookUpdate();
         // $bot->handleUpdate($update);
 
         $bot->sendMessage(215488627, print_r($update, true));
 
-        // try {
-        //     if (isset($update['message'])) {
-        //         $chatId = $update['message']['chat']['id'];
-        //         $text = $update['message']['text'];
-        //         if ($text == '/start') {
-        //             $bot->sendMessage($chatId, 'Добро пожаловать!');
-        //         } elseif ($text == '/getid') {
-        //             $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
-        //         } else {
-        //             $bot->sendMessage($chatId, 'Вы написали: ' . $text);
-        //         }
-        //     }
-        // } catch (\Exception $e) {
-        //     $bot->sendMessage(215488627, 'Error');
-        // }
+        try {
+            if (isset($update['message'])) {
+                $chatId = $update['message']['chat']['id'];
+                $text = $update['message']['text'];
+                if ($text == '/start') {
+                    $bot->sendMessage($chatId, 'Добро пожаловать!');
+                } elseif ($text == '/getid') {
+                    $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
+                } else {
+                    $bot->sendMessage($chatId, 'Вы написали: ' . $text);
+                }
+            }
+        } catch (\Exception $e) {
+            $bot->sendMessage(215488627, 'Error');
+        }
         
         
         Yii::$app->response->setStatusCode(200);
