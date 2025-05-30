@@ -41,6 +41,7 @@ class DefaultController extends Controller
             }
         }
         
+        Yii::$app->response->setStatusCode(200);
         return 'ok';
     }
 }
