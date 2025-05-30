@@ -123,6 +123,6 @@ class Quest extends ActiveRecord implements Fileable
     {
         return $this->getTasks()
             ->andWhere(['is_visible' => Task::STATUS_VISIBLE])
-            ->orderBy('ordr');
+            ->orderBy('ord');
     }
 }
