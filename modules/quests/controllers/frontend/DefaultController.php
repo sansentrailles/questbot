@@ -21,6 +21,7 @@ class DefaultController extends Controller
     public function actionHandler()
     {
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
+        $chatId = 215488627;
         
         $bot = new TelegramBot($token);
 
@@ -34,6 +35,17 @@ class DefaultController extends Controller
                 $text = $update['message']['text'];
                 if ($text == '/start') {
                     $bot->sendMessage($chatId, 'Добро пожаловать!');
+                    $quests = $this->questService->getAll();
+                    if (count($quests) > 0) {
+                        $keyboard = $this->questService->generateQuestKeyboard($quests);
+
+                        $bot->sendMessage($chatId, "Добро пожаловать! Выберите квест:", [
+                            'reply_markup' => json_encode($keyboard)
+                        ]);
+                    } else {
+                        $bot->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
+                    }
+                    
                 } elseif ($text == '/getid') {
                     $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
                 } else {
