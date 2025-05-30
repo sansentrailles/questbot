@@ -26,6 +26,8 @@ class DefaultController extends Controller
         $update = $bot->getWebhookUpdate();
         $bot->handleUpdate($update);
 
+        $bot->sendMessage(215488627, 'Enter');
+
         if (isset($update['message'])) {
             $chatId = $update['message']['chat']['id'];
             $text = $update['message']['text'];
