@@ -26,9 +26,7 @@ class DefaultController extends Controller
 
         // Пример обработки входящих сообщений (для webhook)
         $update = $bot->getWebhookUpdate();
-        // $bot->handleUpdate($update);
-
-        $bot->sendMessage(215488627, print_r($update, true));
+        $bot->handleUpdate($update);
 
         try {
             if (isset($update['message'])) {
