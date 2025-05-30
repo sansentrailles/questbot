@@ -301,7 +301,7 @@ class TelegramBot
             case '/start':
                 $this->sendStartMessage($chatId);
                 break;
-            case '/start':
+            case '/quests':
                 $this->sendQuests($chatId);
                 break;
                 
