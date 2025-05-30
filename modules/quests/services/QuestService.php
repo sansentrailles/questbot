@@ -53,7 +53,7 @@ class QuestService extends BaseService
         foreach ($quests as $quest) {
             $lines[] = [
                 'text' => $quest->title,
-                'callback_data' => 'quest:' . $quest->id,
+                'callback_data' => 'quest_questions:' . $quest->id,
             ];
         }
 

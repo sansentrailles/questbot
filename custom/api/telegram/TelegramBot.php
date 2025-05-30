@@ -2,10 +2,14 @@
 
 namespace app\custom\api\telegram;
 
+use app\modules\quests\services\QuestService;
+
 class TelegramBot
 {
     private $token;
     private $apiUrl;
+
+    private $questService;
     
     /**
      * Конструктор класса
@@ -15,6 +19,7 @@ class TelegramBot
     {
         $this->token = $token;
         $this->apiUrl = "https://api.telegram.org/bot{$this->token}/";
+        $this->questService = \Yii::$container->get(QuestService::class);
     }
     
     /**
@@ -296,6 +301,9 @@ class TelegramBot
             case '/start':
                 $this->sendStartMessage($chatId);
                 break;
+            case '/start':
+                $this->sendQuests($chatId);
+                break;
                 
             case '/menu':
                 $this->sendMenu($chatId);
@@ -326,6 +334,19 @@ class TelegramBot
         $this->sendMessage($chatId, "Добро пожаловать! Выберите действие:", [
             'reply_markup' => json_encode($keyboard)
         ]);
+    }
+
+    protected function sendQuests($chatId) {
+        $quests = $this->questService->getAll();
+        if (count($quests) > 0) {
+            $keyboard = $this->questService->generateQuestKeyboard($quests);
+
+            $this->sendMessage($chatId, "Добро пожаловать! Список доступных квестов:", [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        } else {
+            $this->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
+        }
     }
     
     /**

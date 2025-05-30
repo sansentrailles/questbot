@@ -29,32 +29,31 @@ class DefaultController extends Controller
         $update = $bot->getWebhookUpdate();
         $bot->handleUpdate($update);
 
-        try {
-            if (isset($update['message'])) {
-                $chatId = $update['message']['chat']['id'];
-                $text = $update['message']['text'];
-                if ($text == '/start') {
-                    $bot->sendMessage($chatId, 'Добро пожаловать!');
-                    $quests = $this->questService->getAll();
-                    if (count($quests) > 0) {
-                        $keyboard = $this->questService->generateQuestKeyboard($quests);
+        // try {
+        //     if (isset($update['message'])) {
+        //         $chatId = $update['message']['chat']['id'];
+        //         $text = $update['message']['text'];
+        //         if ($text == '/start') {
+        //             $quests = $this->questService->getAll();
+        //             if (count($quests) > 0) {
+        //                 $keyboard = $this->questService->generateQuestKeyboard($quests);
 
-                        $bot->sendMessage($chatId, "Добро пожаловать! Выберите квест:", [
-                            'reply_markup' => json_encode($keyboard)
-                        ]);
-                    } else {
-                        $bot->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
-                    }
+        //                 $bot->sendMessage($chatId, "Добро пожаловать! Выберите квест:", [
+        //                     'reply_markup' => json_encode($keyboard)
+        //                 ]);
+        //             } else {
+        //                 $bot->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
+        //             }
                     
-                } elseif ($text == '/getid') {
-                    $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
-                } else {
-                    $bot->sendMessage($chatId, 'Вы написали: ' . $text);
-                }
-            }
-        } catch (\Exception $e) {
-            $bot->sendMessage(215488627, 'Error');
-        }
+        //         } elseif ($text == '/getid') {
+        //             $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
+        //         } else {
+        //             $bot->sendMessage($chatId, 'Вы написали: ' . $text);
+        //         }
+        //     }
+        // } catch (\Exception $e) {
+        //     $bot->sendMessage(215488627, 'Error');
+        // }
         
         
         Yii::$app->response->setStatusCode(200);
