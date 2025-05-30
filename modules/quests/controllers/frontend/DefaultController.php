@@ -32,10 +32,13 @@ class DefaultController extends Controller
             
             if ($text == '/start') {
                 $bot->sendMessage($chatId, 'Добро пожаловать!');
+            } elseif ($text == '/getid') {
+                $bot->sendMessage($chatId, 'ChatID: ' . $chatId);
             } else {
                 $bot->sendMessage($chatId, 'Вы написали: ' . $text);
             }
         }
-        exit;
+        
+        return 'ok';
     }
 }
