@@ -225,6 +225,10 @@ class TelegramBot
                 case 'show_text':
                     $this->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
                     break;
+
+                case 'quest_questions':
+                    $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
+                    break;
                     
                 case 'delete_message':
                     $this->deleteMessage($chatId, $messageId);
@@ -318,7 +322,8 @@ class TelegramBot
      * Отправка стартового сообщения
      * @param int $chatId - ID чата
      */
-    protected function sendStartMessage($chatId) {
+    protected function sendStartMessage($chatId) 
+    {
         $keyboard = [
             'inline_keyboard' => [
                 [
@@ -336,7 +341,8 @@ class TelegramBot
         ]);
     }
 
-    protected function sendQuests($chatId) {
+    protected function sendQuests($chatId) 
+    {
         $quests = $this->questService->getAll();
         if (count($quests) > 0) {
             $keyboard = $this->questService->generateQuestKeyboard($quests);
@@ -346,6 +352,39 @@ class TelegramBot
             ]);
         } else {
             $this->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
+        }
+    }
+
+    /**
+     * Получение вопросов по квесту
+     * @param mixed $chatId
+     * @param mixed $questId
+     * @return void
+     */
+    protected function getQuestQuestions($chatId, $questId)
+    {
+        $quest = $this->questService->find((int)$questId);
+        if ($quest == null) {
+            $this->sendMessage($chatId, 'К сожалению квест не найден 😟');
+        }
+
+        $questions = $quest->visiblleQuestions();
+        if (count($questions) > 0) {
+            $this->sendMessage($chatId, 'Данный квест не содержит вопросов 😟');
+        }
+
+        $keyboard = $this->questService->generateQuestionsKeyboard($questions);
+        $options['reply_markup'] = json_encode($keyboard);
+
+        if ($quest->imagePath) {
+            if ($quest->desc) {
+                $options['caption'] = $quest->desc;
+            }
+            $this->sendPhoto($chatId, $quest->imageFullPath, $options);
+        } else {
+            if ($quest->desc) {
+                $this->sendMessage($chatId, $quest->desc, $options);
+            }
         }
     }
     

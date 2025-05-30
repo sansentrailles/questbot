@@ -67,4 +67,31 @@ class QuestService extends BaseService
         return $result;
 
     }
+
+    /** Generate array for telegram bot keyboard with questions for quest */
+    public function generateQuestionsKeyboard(array $questions)
+    {
+        $lines = [];
+        foreach ($questions as $question) {
+            $lines[] = [
+                'text' => $question->title,
+                'callback_data' => 'show_question:' . $question->id,
+            ];
+        }
+
+        $lines[] = [
+                'text' => 'К списку квестов',
+                'callback_data' => 'quests',
+            ];
+
+        $inlineKeyboard = [];
+        foreach ($lines as $button) {
+            $inlineKeyboard[] = [$button];
+        }
+
+        $result['inline_keyboard'] = $inlineKeyboard;
+
+        return $result;
+    }
+
 }

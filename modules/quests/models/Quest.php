@@ -105,6 +105,15 @@ class Quest extends ActiveRecord implements Fileable
         return null;
     }
 
+    public function getImageFullPath()
+    {
+        if ($this->image) {
+            return \Yii::getAlias("@webroot")."/".$this->imagePath;
+        }
+
+        return null;
+    }
+
     public function getTasks()
     {
         return $this->hasMany(Task::class, ['quest_id' => 'id']);
