@@ -29,6 +29,20 @@ class DefaultController extends Controller
         $update = $bot->getWebhookUpdate();
         $bot->handleUpdate($update);
 
+        // $quests = $this->questService->getAll();
+        // if (count($quests) > 0) {
+        //     $keyboard = $this->questService->generateQuestKeyboard($quests);
+
+        //     $bot->sendPhoto(215488627, $quests[0]->imageFullPath, 'Квест!', [
+        //         // 'caption' => 'Квесты:',
+        //         // 'has_spoiler' => true,
+        //         'reply_markup' => json_encode($keyboard)
+        //     ]);
+        //     // $bot->sendMessage($chatId, "Добро пожаловать! Выберите квест:", [
+        //     //     'reply_markup' => json_encode($keyboard)
+        //     // ]);
+        // }
+
         // try {
         //     if (isset($update['message'])) {
         //         $chatId = $update['message']['chat']['id'];

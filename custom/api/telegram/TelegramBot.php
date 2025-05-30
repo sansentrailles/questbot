@@ -227,7 +227,7 @@ class TelegramBot
                     break;
 
                 case 'quest_questions':
-                    $this->getQuestQuestions($chatId, (int) $buttonData['value']);
+                    $this->getQuestTasks($chatId, (int) $buttonData['value']);
                     // $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
                     break;
                     
@@ -362,7 +362,7 @@ class TelegramBot
      * @param mixed $questId
      * @return void
      */
-    protected function getQuestQuestions($chatId, $questId)
+    protected function getQuestTasks($chatId, $questId)
     {
         $quest = $this->questService->find((int)$questId);
         if ($quest == null) {
@@ -376,15 +376,14 @@ class TelegramBot
 
         $keyboard = $this->questService->generateTasksKeyboard($tasks);
         $options['reply_markup'] = json_encode($keyboard);
+        
+        $caption = $quest->desc;
 
         if ($quest->imagePath) {
-            if ($quest->desc) {
-                $options['caption'] = $quest->desc;
-            }
-            $this->sendPhoto($chatId, $quest->imageFullPath, $options);
+            $this->sendPhoto($chatId, $quest->imageFullPath, $caption, $options);
         } else {
             if ($quest->desc) {
-                $this->sendMessage($chatId, $quest->desc, $options);
+                $this->sendMessage($chatId, $caption, $options);
             }
         }
     }
