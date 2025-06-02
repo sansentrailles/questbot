@@ -78,17 +78,13 @@ class QuizService
 // $this->bot->sendMessage($chatId, print_r($data, true));
         
         try {
-            error_log("Handle buttons");
-            error_log("callbackQueryId: ". $callbackQueryId);
             // Ответим на callback (чтобы убрать "часики" у кнопки)
             $this->answerCallbackQuery($callbackQueryId);
             
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
 
-            $chatId = 215488627;
-            $this->bot->sendMessage($chatId, "Action: ". $buttonData['action']);
-            
+            error_log("buttonData: ". print_r($buttonData, true));
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
                 case 'quests':
