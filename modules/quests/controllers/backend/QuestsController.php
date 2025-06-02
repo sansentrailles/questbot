@@ -102,7 +102,7 @@ class QuestsController extends Controller
     public function actionToggleVisible($id)
     {
         $this->guardRequestPostAjax();
-        $state = $this->taskService->toggleVisible($id);
+        $state = $this->questService->toggleVisible($id);
 
         return [
             'status' => 'ok',
