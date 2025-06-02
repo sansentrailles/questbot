@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\modules\quests\controllers\common;
 
 use Yii;
+use app\modules\quests\services\QuizService;
 use app\modules\quests\services\TaskService;
 use app\modules\quests\services\QuestService;
 use app\modules\quests\services\AnswerService;

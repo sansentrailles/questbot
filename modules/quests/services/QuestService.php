@@ -53,7 +53,7 @@ class QuestService extends BaseService
         foreach ($quests as $quest) {
             $lines[] = [
                 'text' => $quest->title,
-                'callback_data' => 'quest_tasks:' . $quest->id,
+                'callback_data' => 'show_quest:' . $quest->id,
             ];
         }
 
@@ -75,7 +75,7 @@ class QuestService extends BaseService
         foreach ($tasks as $task) {
             $lines[] = [
                 'text' => $task->question,
-                'callback_data' => 'show_task:' . $task->id,
+                'callback_data' => 'show_quest:' . $task->id,
             ];
         }
 
@@ -101,6 +101,11 @@ class QuestService extends BaseService
         $this->repository->save($model);
 
         return $state;
+    }
+
+    public function getVisible()
+    {
+        return $this->repository->getVisible();
     }
 
 }

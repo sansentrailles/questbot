@@ -13,4 +13,12 @@ class QuestRepository extends BaseRepository
     {
         $this->model = Model::class;
     }
+
+    public function getVisible()
+    {
+        return $this->model::find()
+            ->andWhere(['is_visible' => Model::STATUS_VISIBLE])
+            ->orderBy(['title' => SORT_ASC])
+            ->all();
+    }
 }
