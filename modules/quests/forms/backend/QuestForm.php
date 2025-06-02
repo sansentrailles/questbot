@@ -23,7 +23,7 @@ class QuestForm extends Model
     public $desc;
     public $date;
     public $limit;
-
+    public $is_visible;
     public $image;
     public $imageFile;
 
@@ -48,18 +48,20 @@ class QuestForm extends Model
             return;
         }
 
-        $this->id    = $this->quest->id;
-        $this->title = $this->quest->title;
-        $this->code  = $this->quest->code;
-        $this->desc  = $this->quest->desc;
-        $this->limit = $this->quest->limit;
-        $this->date  = $this->quest->date;
-        $this->image = $this->quest->image;
+        $this->id         = $this->quest->id;
+        $this->title      = $this->quest->title;
+        $this->code       = $this->quest->code;
+        $this->desc       = $this->quest->desc;
+        $this->limit      = $this->quest->limit;
+        $this->date       = $this->quest->date;
+        $this->image      = $this->quest->image;
+        $this->is_visible = $this->quest->is_visible;
     }
 
     public function rules()
     {
         return [
+            [['is_visible'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
             [['desc'], 'string'],
             [['title'], 'required', 'message' => 'Введите название'],

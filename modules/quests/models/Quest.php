@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace app\modules\quests\models;
 
+use yii\db\ActiveRecord;
 use app\custom\files\BaseImageFile;
+use yii\behaviors\TimestampBehavior;
+use app\custom\traits\models\VisibilityTrait;
 use app\custom\interfaces\annotations\Fileable;
 use app\modules\quests\forms\backend\QuestForm as Form;
 use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "quests".
@@ -27,6 +28,10 @@ use yii\db\ActiveRecord;
 class Quest extends ActiveRecord implements Fileable
 {
     use QuestAttributeLabelsTrait;
+    use VisibilityTrait;
+
+    public const STATUS_INVISIBLE = 0;
+    public const STATUS_VISIBLE = 1;
 
     public const BUCKET_NAME_IMAGE = 'questImage';
 
@@ -55,24 +60,26 @@ class Quest extends ActiveRecord implements Fileable
     {
         $model = new self();
 
-        $model->title = $form->title;
-        $model->code  = $form->code;
-        $model->desc  = $form->desc;
-        $model->date  = $form->date;
-        $model->image = $form->image;
-        $model->limit = $form->limit;
+        $model->title      = $form->title;
+        $model->code       = $form->code;
+        $model->desc       = $form->desc;
+        $model->date       = $form->date;
+        $model->image      = $form->image;
+        $model->limit      = $form->limit;
+        $model->is_visible = $form->is_visible;
 
         return $model;
     }
 
     public function edit(Form $form): void
     {
-        $this->title = $form->title;
-        $this->code  = $form->code;
-        $this->desc  = $form->desc;
-        $this->date  = $form->date;
-        $this->image = $form->image;
-        $this->limit = $form->limit;
+        $this->title      = $form->title;
+        $this->code       = $form->code;
+        $this->desc       = $form->desc;
+        $this->date       = $form->date;
+        $this->image      = $form->image;
+        $this->limit      = $form->limit;
+        $this->is_visible = $form->is_visible;
     }
 
 

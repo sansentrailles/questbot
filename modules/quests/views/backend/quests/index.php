@@ -8,6 +8,7 @@ use app\modules\quests\Module;
 use app\modules\quests\models\Quest;
 use app\custom\widgets\backend\grid\LinkColumn;
 use app\custom\widgets\backend\grid\ActionColumn;
+use app\custom\widgets\backend\grid\ToggleColumn;
 
 // @var $this yii\web\View
 // @var $searchModel app\modules\quests\models\QuestSearch
@@ -59,6 +60,17 @@ $seoSection = 'quests';
                     $url = Url::to(['/admin/quests/tasks', 'questId' => $model->id]);
                     return Html::a(Module::t('common', 'TASKS'), $url);
                 },
+            ],
+
+            [
+                'class' => ToggleColumn::class,
+                'contentOptions' => ['style' => 'text-align: center'],
+                'attribute' => 'is_visible',
+                'action' => 'toggle-visible',
+                'filter' => [
+                    Quest::STATUS_INVISIBLE => Module::t('common', 'INACTIVE'),
+                    Quest::STATUS_VISIBLE => Module::t('common', 'ACTIVE'),
+                ],
             ],
 
             [

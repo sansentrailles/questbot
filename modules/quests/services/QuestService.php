@@ -53,7 +53,7 @@ class QuestService extends BaseService
         foreach ($quests as $quest) {
             $lines[] = [
                 'text' => $quest->title,
-                'callback_data' => 'quest_questions:' . $quest->id,
+                'callback_data' => 'quest_tasks:' . $quest->id,
             ];
         }
 
@@ -92,6 +92,15 @@ class QuestService extends BaseService
         $result['inline_keyboard'] = $inlineKeyboard;
 
         return $result;
+    }
+
+    public function toggleVisible($id)
+    {
+        $model = $this->repository->find($id);
+        $state = $model->toggleVisible();
+        $this->repository->save($model);
+
+        return $state;
     }
 
 }

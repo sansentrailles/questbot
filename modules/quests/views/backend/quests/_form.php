@@ -18,6 +18,8 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
+        <?php echo $form->field($model, 'is_visible')->checkbox(); ?>
+
         <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
 
         <?php echo $form->field($model, 'desc')->textarea(['rows' => 8]); ?>

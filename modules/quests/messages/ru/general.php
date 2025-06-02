@@ -21,5 +21,7 @@ return [
     'ORD' => 'Порядок',
     'VIDEO_QUALITY' => 'Качество видео',
     'ADDRESS_SEARCH' => 'Искать по адресу',
-    'ADDRESS_LINE' => 'Адрес'
+    'ADDRESS_LINE' => 'Адрес',
+    'ACTIVE' => 'Активный',
+    'INACTIVE' => 'Нективный',
 ];

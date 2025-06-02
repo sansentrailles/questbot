@@ -19,7 +19,7 @@ trait QuestAttributeLabelsTrait
             'date'       => Module::t('common', 'QUEST_DATE'),
             'image'      => Module::t('common', 'QUEST_IMAGE'),
             'imageFile'  => Module::t('common', 'QUEST_IMAGE'),
-            'is_visible' => Module::t('common', 'IS_VISIBLE'),
+            'is_visible' => Module::t('common', 'QUEST_IS_ACTIVE'),
             'ord'        => Module::t('common', 'ORDER'),
             'created_at' => Module::t('common', 'CREATED_AT'),
             'updated_at' => Module::t('common', 'UPDATED_AT'),

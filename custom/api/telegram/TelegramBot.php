@@ -230,7 +230,7 @@ class TelegramBot
                     $this->sendQuests($chatId);
                     break;
 
-                case 'quest_questions':
+                case 'quest_tasks':
                     $this->getQuestTasks($chatId, (int) $buttonData['value']);
                     // $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
                     break;
@@ -414,7 +414,7 @@ class TelegramBot
             'reply_markup' => json_encode($keyboard)
         ]);
     }
-    
+
     /**
      * Обработка обычных сообщений (можно переопределить в дочернем классе)
      * @param int $chatId - ID чата

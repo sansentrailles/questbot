@@ -98,4 +98,16 @@ class QuestsController extends Controller
             'message' => 'The requested file has been deleted successfully',
         ];
     }
+
+    public function actionToggleVisible($id)
+    {
+        $this->guardRequestPostAjax();
+        $state = $this->taskService->toggleVisible($id);
+
+        return [
+            'status' => 'ok',
+            'value' => $state,
+            'message' => 'The requested photo has been switched successfully',
+        ];
+    }
 }
