@@ -69,7 +69,7 @@ class QuizService
         $messageId = $callbackQuery['message']['message_id'];
         $data = $callbackQuery['data'];
         $callbackQueryId = $callbackQuery['id'];
-error_log("data ". print_r($data));
+error_log("data ". print_r($data, true));
         try {
             // Ответим на callback (чтобы убрать "часики" у кнопки)
             $this->answerCallbackQuery($callbackQueryId);
