@@ -7,10 +7,12 @@ use app\modules\quests\api\telegram\TelegramBot;
 class QuizService
 {
     private $bot;
+    private $questService;
 
     public function __construct(TelegramBot $bot)
     {
         $this->bot = $bot;
+        $this->questService = \Yii::$container->get(QuestService::class);
     }
 
     /**
@@ -109,6 +111,10 @@ class QuizService
             case '/menu':
                 $this->sendMenu($chatId);
                 break;
+
+            case '/quests':
+                $this->showQuests($chatId);
+                break;
                 
             default:
                 $this->bot->sendMessage($chatId, "Неизвестная команда: $command");
@@ -195,6 +201,20 @@ class QuizService
                     $this->bot->deleteMessage($chatId, $messageId);
                     break;
             }
+        }
+    }
+
+    private function showQuests($chatId)
+    {
+        $quests = $this->questService->getVisible();
+        if (count($quests) > 0) {
+            $keyboard = $this->questService->generateQuestKeyboard($quests);
+
+            $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        } else {
+            $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
         }
     }
 }
