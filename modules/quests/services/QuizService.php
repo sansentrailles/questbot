@@ -66,7 +66,7 @@ class QuizService
                     break;
 
                 case 'show_quest':
-                    $this->bot->showQuestInfo($chatId, (int) $buttonData['value']);
+                    $this->showQuestInfo($chatId, (int) $buttonData['value']);
                     break;
                     
                 case 'delete_message':
