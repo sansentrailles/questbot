@@ -225,28 +225,28 @@ class QuizService
     protected function showQuestInfo($chatId, int $questId)
     {
         $this->bot->sendMessage($chatId, $questId);
-        // $quest = $this->questService->find((int) $questId);
-        // if ($quest == null) {
-        //     return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
-        // }
+        $quest = $this->questService->find((int) $questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+        }
 
-        // $message = $quest->desc;
-        // $keyboard = [
-        //     'inline_keyboard' => [
-        //         [
-        //             ['text' => 'Начать прогулку', 'callback_data' => 'start_quest:'.$quest->id],
-        //         ],
-        //     ]
-        // ];
+        $message = $quest->desc;
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Начать прогулку', 'callback_data' => 'start_quest:'.$quest->id],
+                ],
+            ]
+        ];
 
-        // if ($quest->image) {
-        //     return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
-        //         'reply_markup' => json_encode($keyboard)
-        //     ]);
-        // }
+        if ($quest->image) {
+            return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        }
 
-        // return $this->bot->sendMessage($chatId, $message, [
-        //     'reply_markup' => json_encode($keyboard)
-        // ]);
+        return $this->bot->sendMessage($chatId, $message, [
+            'reply_markup' => json_encode($keyboard)
+        ]);
     }
 }
