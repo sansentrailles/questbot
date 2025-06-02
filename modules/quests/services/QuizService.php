@@ -79,6 +79,7 @@ class QuizService
         
         try {
             error_log("Handle buttons");
+            error_log("callbackQueryId: ". $callbackQueryId);
             // Ответим на callback (чтобы убрать "часики" у кнопки)
             $this->answerCallbackQuery($callbackQueryId);
             
