@@ -73,6 +73,7 @@ class QuizService
         $messageId = $callbackQuery['message']['message_id'];
         $data = $callbackQuery['data'];
         $callbackQueryId = $callbackQuery['id'];
+
         
         try {
             // Ответим на callback (чтобы убрать "часики" у кнопки)
@@ -80,6 +81,9 @@ class QuizService
             
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
+
+            $chatId = 215488627;
+            $this->bot->sendMessage($chatId, "Action: ". $buttonData['action']);
             
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
@@ -195,6 +199,7 @@ class QuizService
     // Отправка информации о выбранном квесте и кнопку запуска квеста
     protected function sendQuestInfo($chatId, int $questId)
     {
+        $this->bot->sendMessage($chatId, "Send quest info");
         $quest = $this->questService->find((int) $questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
