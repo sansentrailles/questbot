@@ -2,10 +2,14 @@
 
 namespace app\modules\quests\api\telegram;
 
+use app\modules\quests\services\QuestService;
+
 class TelegramBot
 {
     private $token;
     private $apiUrl;
+
+    private $questService;
     
     /**
      * Конструктор класса
@@ -15,6 +19,7 @@ class TelegramBot
     {
         $this->token = $token;
         $this->apiUrl = "https://api.telegram.org/bot{$this->token}/";
+        $this->questService = \Yii::$container->get(QuestService::class);
     }
     
     /**
@@ -23,7 +28,7 @@ class TelegramBot
      * @param array $params - параметры запроса
      * @return array - ответ от API
      */
-    private function request($method, $params = []) 
+    public function request($method, $params = []): ?array
     {
         $url = $this->apiUrl . $method;
         $ch = curl_init();
@@ -153,29 +158,12 @@ class TelegramBot
         $input = file_get_contents('php://input');
         return json_decode($input, true);
     }
-    
-    /**
-     * Ответ на callback запрос (для inline кнопок)
-     * @param string $callbackQueryId - ID callback запроса
-     * @param string $text - текст ответа
-     * @param bool $showAlert - показывать alert вместо toast уведомления
-     * @return array
-     */
-    public function answerCallbackQuery($callbackQueryId, $text = '', $showAlert = false) {
-        $params = [
-            'callback_query_id' => $callbackQueryId,
-            'text' => $text,
-            'show_alert' => $showAlert
-        ];
-        
-        return $this->request('answerCallbackQuery', $params);
-    }
 
-    /**
+        /**
      * Удаление сообщения
      * @param int $chatId - ID чата
      * @param int $messageId - ID сообщения
-     * @return array - результат операции
+     * @return array
      */
     public function deleteMessage($chatId, $messageId) {
         $params = [

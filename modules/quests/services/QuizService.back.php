@@ -2,15 +2,35 @@
 
 namespace app\modules\quests\services;
 
+use app\modules\quests\services\QuestService;
 use app\modules\quests\api\telegram\TelegramBot;
 
 class QuizService
 {
     private $bot;
+    private $questService;
 
     public function __construct(TelegramBot $bot)
     {
         $this->bot = $bot;
+        $this->questService = \Yii::$container->get(QuestService::class);
+    }
+
+    /**
+     * Ответ на callback запрос (для inline кнопок)
+     * @param string $callbackQueryId - ID callback запроса
+     * @param string $text - текст ответа
+     * @param bool $showAlert - показывать alert вместо toast уведомления
+     * @return array
+     */
+    public function answerCallbackQuery($callbackQueryId, $text = '', $showAlert = false) {
+        $params = [
+            'callback_query_id' => $callbackQueryId,
+            'text' => $text,
+            'show_alert' => $showAlert
+        ];
+        
+        return $this->bot->request('answerCallbackQuery', $params);
     }
 
     /**
@@ -49,20 +69,28 @@ class QuizService
         $messageId = $callbackQuery['message']['message_id'];
         $data = $callbackQuery['data'];
         $callbackQueryId = $callbackQuery['id'];
-        
+
         try {
             // Ответим на callback (чтобы убрать "часики" у кнопки)
-            $this->bot->answerCallbackQuery($callbackQueryId);
+            $this->answerCallbackQuery($callbackQueryId);
             
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
-            
+
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
-                case 'show_text':
-                    $this->bot->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
+                case 'quests':
+                    $this->sendQuests($chatId);
                     break;
-                    
+
+                case 'show_quest':
+                    $this->sendQuestInfo($chatId, (int) $buttonData['value']);
+                    break;
+
+                case 'start_quest':
+                    $this->startQuest($chatId, (int) $buttonData['value']);
+                    break;
+
                 case 'delete_message':
                     $this->bot->deleteMessage($chatId, $messageId);
                     break;
@@ -94,7 +122,7 @@ class QuizService
             'value' => $parts[1] ?? ''
         ];
     }
-
+    
     /**
      * Обработка команд (можно переопределить в дочернем классе)
      * @param int $chatId - ID чата
@@ -105,6 +133,9 @@ class QuizService
             case '/start':
                 $this->sendStartMessage($chatId);
                 break;
+            case '/quests':
+                $this->sendQuests($chatId);
+                break;
                 
             case '/menu':
                 $this->sendMenu($chatId);
@@ -114,12 +145,13 @@ class QuizService
                 $this->bot->sendMessage($chatId, "Неизвестная команда: $command");
         }
     }
-    
+
     /**
      * Отправка стартового сообщения
      * @param int $chatId - ID чата
      */
-    protected function sendStartMessage($chatId) {
+    protected function sendStartMessage($chatId) 
+    {
         $keyboard = [
             'inline_keyboard' => [
                 [
@@ -136,12 +168,97 @@ class QuizService
             'reply_markup' => json_encode($keyboard)
         ]);
     }
+
+    protected function sendQuests($chatId) 
+    {
+        $quests = $this->questService->getVisible();
+        if (count($quests) > 0) {
+            $keyboard = $this->questService->generateQuestKeyboard($quests);
+
+            $this->bot->sendMessage($chatId, "Добро пожаловать! Список доступных квестов:", [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        } else {
+            $this->bot->sendMessage($chatId, 'В данный момент нет активных квестов 😟');
+        }
+    }
+
+    // Отправка информации о выбранном квесте и кнопку запуска квеста
+    protected function sendQuestInfo($chatId, int $questId)
+    {
+        $this->bot->sendMessage($chatId, "Send quest info");
+        $quest = $this->questService->find((int) $questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+        }
+
+        $message = $quest->desc;
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Начать прогулку', 'callback_data' => 'start_quest:'.$quest->id],
+                ],
+            ]
+        ];
+
+        if ($quest->image) {
+            return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        }
+
+        return $this->bot->sendMessage($chatId, $message, [
+            'reply_markup' => json_encode($keyboard)
+        ]);
+    }
+
+    protected function startQuest($chatId, int $questId)
+    {
+        $quest = $this->questService->find((int) $questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+        }
+
+        return $this->bot->sendMessage($chatId, "Прогулка начинается!");
+    }
+
+    /**
+     * Получение вопросов по квесту
+     * @param mixed $chatId
+     * @param mixed $questId
+     * @return void
+     */
+    // protected function getQuestTasks($chatId, $questId)
+    // {
+    //     $quest = $this->questService->find((int)$questId);
+    //     if ($quest == null) {
+    //         $this->sendMessage($chatId, 'К сожалению квест не найден 😟');
+    //     }
+
+    //     $tasks = $quest->visibleTasks;
+    //     if (count($tasks) == 0) {
+    //         $this->sendMessage($chatId, 'Данный квест не содержит вопросов 😟');
+    //     }
+
+    //     $keyboard = $this->questService->generateTasksKeyboard($tasks);
+    //     $options['reply_markup'] = json_encode($keyboard);
+        
+    //     $caption = $quest->desc;
+
+    //     if ($quest->imagePath) {
+    //         $this->sendPhoto($chatId, $quest->imageFullPath, $caption, $options);
+    //     } else {
+    //         if ($quest->desc) {
+    //             $this->sendMessage($chatId, $caption, $options);
+    //         }
+    //     }
+    // }
     
     /**
      * Отправка меню
      * @param int $chatId - ID чата
      */
-    protected function sendMenu($chatId) {
+    public function sendMenu($chatId) {
         $keyboard = [
             'inline_keyboard' => [
                 [
@@ -159,7 +276,7 @@ class QuizService
             'reply_markup' => json_encode($keyboard)
         ]);
     }
-    
+
     /**
      * Обработка обычных сообщений (можно переопределить в дочернем классе)
      * @param int $chatId - ID чата

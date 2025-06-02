@@ -6,7 +6,6 @@ namespace app\modules\quests\controllers\frontend;
 
 use Yii;
 use app\modules\quests\services\QuizService;
-use app\modules\quests\api\telegram\TelegramApi;
 use app\modules\quests\api\telegram\TelegramBot;
 use app\modules\quests\controllers\common\Controller;
 
@@ -22,20 +21,17 @@ class DefaultController extends Controller
 
     public function actionHandler()
     {
-        // $update = $bot->getWebhookUpdate();
-        // $bot->handleUpdate($update);
-
         // $chatId = 215488627;
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
-        // $bot = new TelegramBot($token);
-        // $quizService = new QuizService($bot);
 
-        // $update = $bot->getWebhookUpdate();
-        // $quizService->handleUpdate($update);
-
-        $bot = new TelegramApi($token);
+        $bot = new TelegramBot($token);
+        $quizService = new QuizService($bot);
         $update = $bot->getWebhookUpdate();
-        $bot->handleUpdate($update);
+        $quizService->handleUpdate($update);
+
+        // $bot = new TelegramApi($token);
+        // $update = $bot->getWebhookUpdate();
+        // $bot->handleUpdate($update);
 
         // Пример обработки входящих сообщений (для webhook)
         // $update = $bot->getWebhookUpdate();
