@@ -64,6 +64,10 @@ class QuizService
                 case 'show_text':
                     $this->bot->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
                     break;
+
+                case 'show_quest':
+                    $this->bot->showQuestInfo($chatId, (int) $buttonData['value']);
+                    break;
                     
                 case 'delete_message':
                     $this->bot->deleteMessage($chatId, $messageId);
@@ -216,5 +220,33 @@ class QuizService
         } else {
             $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
         }
+    }
+
+    protected function sendQuestInfo($chatId, int $questId)
+    {
+        $this->bot->sendMessage($chatId, "Send quest info");
+        $quest = $this->questService->find((int) $questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+        }
+
+        $message = $quest->desc;
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Начать прогулку', 'callback_data' => 'start_quest:'.$quest->id],
+                ],
+            ]
+        ];
+
+        if ($quest->image) {
+            return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        }
+
+        return $this->bot->sendMessage($chatId, $message, [
+            'reply_markup' => json_encode($keyboard)
+        ]);
     }
 }
