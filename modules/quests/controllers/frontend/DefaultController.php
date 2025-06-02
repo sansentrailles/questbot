@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace app\modules\quests\controllers\frontend;
 
 use Yii;
-use app\custom\api\telegram\TelegramApi;
 use app\modules\quests\services\QuizService;
+use app\modules\quests\api\telegram\TelegramApi;
 use app\modules\quests\api\telegram\TelegramBot;
 use app\modules\quests\controllers\common\Controller;
 

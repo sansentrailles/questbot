@@ -1,6 +1,6 @@
 <?php
 
-namespace app\custom\api\telegram;
+namespace app\modules\quests\api\telegram;
 
 class TelegramApi
 {
