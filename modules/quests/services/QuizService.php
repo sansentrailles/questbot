@@ -222,7 +222,7 @@ class QuizService
         }
     }
 
-    protected function sendQuestInfo($chatId, int $questId)
+    protected function showQuestInfo($chatId, int $questId)
     {
         $this->bot->sendMessage($chatId, $questId);
         // $quest = $this->questService->find((int) $questId);
