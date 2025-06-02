@@ -74,6 +74,8 @@ class QuizService
         $data = $callbackQuery['data'];
         $callbackQueryId = $callbackQuery['id'];
 
+        $chatId = 215488627;
+        $this->bot->sendMessage($chatId, print_r($data, true));
         
         try {
             // Ответим на callback (чтобы убрать "часики" у кнопки)
