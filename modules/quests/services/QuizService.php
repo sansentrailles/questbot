@@ -12,11 +12,7 @@ class QuizService
 
     public function __construct(TelegramBot $bot)
     {
-        // Перенести token в настройки
-        // $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
-
         $this->bot = $bot;
-        // $this->bot = \Yii::$container->get(TelegramBot::class, ['token' => $token]);
         $this->questService = \Yii::$container->get(QuestService::class);
     }
 
@@ -73,10 +69,7 @@ class QuizService
         $messageId = $callbackQuery['message']['message_id'];
         $data = $callbackQuery['data'];
         $callbackQueryId = $callbackQuery['id'];
-
-// $chatId = 215488627;
-// $this->bot->sendMessage($chatId, print_r($data, true));
-        
+error_log("data ". print_r($data));
         try {
             // Ответим на callback (чтобы убрать "часики" у кнопки)
             $this->answerCallbackQuery($callbackQueryId);
@@ -84,7 +77,6 @@ class QuizService
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
 
-            error_log("buttonData: ". print_r($buttonData, true));
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
                 case 'quests':
@@ -99,11 +91,6 @@ class QuizService
                     $this->startQuest($chatId, (int) $buttonData['value']);
                     break;
 
-                // case 'quest_tasks':
-                    // $this->getQuestTasks($chatId, (int) $buttonData['value']);
-                    // $this->sendMessage($chatId, "Вы выбрали квест №: {$buttonData['value']}");
-                    // break;
-                    
                 case 'delete_message':
                     $this->bot->deleteMessage($chatId, $messageId);
                     break;
