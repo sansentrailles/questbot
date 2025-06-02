@@ -215,7 +215,8 @@ class QuizService
             $keyboard = $this->questService->generateQuestKeyboard($quests);
 
             $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
-                'reply_markup' => json_encode($keyboard)
+                'reply_markup' => json_encode($keyboard),
+                'one_time_keyboard' => true,
             ]);
         } else {
             $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
@@ -224,7 +225,6 @@ class QuizService
 
     protected function showQuestInfo($chatId, int $questId)
     {
-        $this->bot->sendMessage($chatId, $questId);
         $quest = $this->questService->find((int) $questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
