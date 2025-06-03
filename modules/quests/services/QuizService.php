@@ -291,6 +291,7 @@ error_log("Start quest: step 3");
 
     private function sendNextTask($chatId, $questId)
     {
+error_log("Start quest: step 4");
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 

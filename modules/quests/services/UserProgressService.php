@@ -46,8 +46,9 @@ class UserProgressService extends BaseService
         $form->user_id = $userId;
         $form->quest_id = $questId;
         $form->current_task_id = $taskId;
-        $form->is_completed = Model::STATE_COMPLETED;
+        $form->is_completed = Model::STATE_NOT_COMPLETED;
 
+        error_log("create progress");
         error_log(print_r(\yii\widgets\ActiveForm::validate($form), true));
 
         return $this->save($form);
