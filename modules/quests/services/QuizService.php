@@ -311,7 +311,7 @@ error_log("Start quest: step 4");
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];
         if ($task->type == Task::TYPE_CHOICE) {
-            $answers = $task->visibleAnswers;
+            $answers = $task->answers;
 
             foreach ($answers as $answer) {
                 // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];

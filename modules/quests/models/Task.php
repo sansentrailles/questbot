@@ -149,4 +149,10 @@ class Task extends ActiveRecord implements Sortable
 
         return null;
     }
+
+    public function getAnswers()
+    {
+        return $this->hasMany(Answer::class, ['task_id' => 'id'])
+            ->orderBy(['ord' => SORT_ASC]);
+    }
 }
