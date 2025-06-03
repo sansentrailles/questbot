@@ -361,6 +361,7 @@ error_log("Start quest: step 4");
             $this->userProgressService->updateProgress($progress, $nextTask->id);
             $this->sendNextTask($chatId, $questId);
         } else {
+            $this->userProgressService->completeQuest($progress);
             $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
         }
     }
