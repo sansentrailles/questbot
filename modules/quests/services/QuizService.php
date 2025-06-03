@@ -269,18 +269,21 @@ class QuizService
 
     protected function startQuest($chatId, int $questId)
     {
+        error_log("Start quest");
         $quest = $this->questService->find($questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
         }
-
+error_log("Start quest: step 1");
         $tasks = $quest->visibleTasks;
         if (count($tasks) == 0) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
 
+error_log("Start quest: step 2");
         $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
 
+error_log("Start quest: step 3");
         $this->sendNextTask($chatId, $questId);
 
         // $progress = $this->userProgressService->getProgress($chatId, $questId);
