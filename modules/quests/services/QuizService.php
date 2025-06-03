@@ -347,6 +347,8 @@ error_log("Start quest: step 4");
 
     protected function handleAnswer($chatId, int $answerId, int $questId)
     {
+        error_log('Handle answer 1');
+
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
