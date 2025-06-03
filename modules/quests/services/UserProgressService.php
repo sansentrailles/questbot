@@ -35,7 +35,7 @@ class UserProgressService extends BaseService
         return Repository::class;
     }
 
-    public function getProgress(int $userId, int $questId)
+    public function getProgress(int $userId, ?int $questId = null)
     {
         return $this->repository->getProgress($userId, $questId);
     }

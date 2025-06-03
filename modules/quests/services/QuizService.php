@@ -228,15 +228,21 @@ class QuizService
 
     private function showQuests($chatId)
     {
+        // Если есть прогулка в процессе, показываем следующее задание этой прогулки
+        $progress = $this->userProgressService->getProgress($chatId);
+        if ($progress) {
+            return $this->sendNextTask($chatId, $progress->quest_id);
+        }
+
         $quests = $this->questService->getVisible();
         if (count($quests) > 0) {
             $keyboard = $this->questService->generateQuestKeyboard($quests);
 
-            $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
+            return $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
                 'reply_markup' => json_encode($keyboard),
             ]);
         } else {
-            $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
+            return $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
         }
     }
 
@@ -295,7 +301,7 @@ error_log("Start quest: step 4");
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
-        $this->showTask($chatId, $currentTask);
+        return $this->showTask($chatId, $currentTask);
 
         // $nextTask = $this->taskService->getNext($currentTask);
         // Обновить прогресс

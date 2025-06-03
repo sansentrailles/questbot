@@ -16,12 +16,20 @@ class UserProgressRepository extends BaseRepository
 
     // TODO: Возможно добавить проверку даты
     // TODO: Возможно сделать выбор нескольких квестов
-    public function getProgress(int $userId, int $questId)
+    public function getProgress(int $userId, ?int $questId = null)
     {
-        return $this->model::find()->where([
-            'user_id' => $userId,
-            'quest_id' => $questId,
-            'is_completed' => Model::STATE_NOT_COMPLETED
-        ])->one();
+        $query = $this->model::find()
+            ->andWhere([
+                'user_id' => $userId,
+                'is_completed' => Model::STATE_NOT_COMPLETED
+            ]);
+
+        if ((int) $questId > 0) {
+            $query->andWhere([
+                'quest_id' => $questId,
+            ]);
+        }
+        
+        return $query->one();
     }
 }
