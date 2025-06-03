@@ -317,7 +317,7 @@ error_log("Start quest: step 4");
                 $keyboard[] = [
                     [
                         'text' => $answer->title,
-                        'callback_data' => 'task_answer' . $answer->id
+                        'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
                     ]
                 ];
             }
