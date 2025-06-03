@@ -46,6 +46,7 @@ class UserProgressService extends BaseService
         $form->user_id = $userId;
         $form->quest_id = $questId;
         $form->current_task_id = $taskId;
+        $form->is_completed = Model::STATE_COMPLETED;
 
         return $this->create($form);
     }

@@ -21,7 +21,7 @@ class UserProgressRepository extends BaseRepository
         return $this->model::find()->where([
             'user_id' => $userId,
             'quest_id' => $questId,
-            'is_complted' => Model::STATE_NOT_COMPLETED
+            'is_completed' => Model::STATE_NOT_COMPLETED
         ])->one();
     }
 }
