@@ -314,14 +314,28 @@ error_log("Start quest: step 4");
             $answers = $task->answers;
 
             foreach ($answers as $answer) {
-                // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];
-                $keyboard['inline_keyboard'] = [['text' => $answer->title, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
+                $keyboard[] = [
+                    [
+                        'text' => $answer->title,
+                        'callback_data' => 'task_answer' . $answer->id
+                    ]
+                ];
             }
+
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+
+            // foreach ($answers as $answer) {
+            //     // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];
+            //     $keyboard['inline_keyboard'] = [['text' => $answer->title, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
+            // }
         }
 
         $options = [];
         if (count ($keyboard) > 0) {
-            $options['reply_markup'] = json_encode($keyboard);
+            // $options['reply_markup'] = json_encode($keyboard);
+            $options['reply_markup'] = json_encode($replyMarkup);
         }
 
         if ($task->image) {
