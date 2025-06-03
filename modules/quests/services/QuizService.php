@@ -266,13 +266,13 @@ class QuizService
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
                 'reply_markup' => json_encode($keyboard),
-                'parse_mode' => 'Markdown',
+                'parse_mode' => 'html',
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
-            'parse_mode' => 'Markdown',
+            'parse_mode' => 'html',
         ]);
     }
 
