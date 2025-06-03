@@ -2,17 +2,25 @@
 
 namespace app\modules\quests\services;
 
+use app\modules\quests\models\Task;
 use app\modules\quests\api\telegram\TelegramBot;
 
 class QuizService
 {
     private $bot;
     private $questService;
+    private $taskService;
+    private $userProgressService;
+    private $answerService;
 
     public function __construct(TelegramBot $bot)
     {
+        $container = \Yii::$container;
+        $this->questService = $container->get(QuestService::class);
+        $this->userProgressService = $container->get(UserProgressService::class);
+        $this->taskService = $container->get(TaskService::class);
+        $this->answerService = $container->get(AnswerService::class);
         $this->bot = $bot;
-        $this->questService = \Yii::$container->get(QuestService::class);
     }
 
     /**
@@ -67,6 +75,16 @@ class QuizService
 
                 case 'show_quest':
                     $this->showQuestInfo($chatId, (int) $buttonData['value']);
+                    break;
+
+                case 'start_quest':
+                    $this->startQuest($chatId, (int) $buttonData['value']);
+                    break;
+
+                // Обработка выбора ответа
+                case 'task_answer':
+                    list($answerId, $questId) = explode("@", $buttonData['value']);
+                    $this->handleAnswer($chatId, (int) $answerId, (int) $questId);
                     break;
                     
                 case 'delete_message':
@@ -216,7 +234,6 @@ class QuizService
 
             $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
                 'reply_markup' => json_encode($keyboard),
-                'one_time_keyboard' => true,
             ]);
         } else {
             $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
@@ -248,5 +265,83 @@ class QuizService
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard)
         ]);
+    }
+
+    protected function startQuest($chatId, int $questId)
+    {
+        $quest = $this->questService->find($questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+        }
+
+        $tasks = $quest->visibleTasks();
+        if (count($tasks) == 0) {
+            return $this->bot->sendMessage($chatId, 'К данная прогулка не содержит заданий 😟');
+        }
+
+        $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
+
+        $this->sendNextTask($chatId, $questId);
+
+        // $progress = $this->userProgressService->getProgress($chatId, $questId);
+    }
+
+    private function sendNextTask($chatId, $questId)
+    {
+        $progress = $this->userProgressService->getProgress($chatId, $questId);
+        $currentTask = $progress->task;
+
+        $this->showTask($chatId, $currentTask);
+
+        // $nextTask = $this->taskService->getNext($currentTask);
+        // Обновить прогресс
+        // Показать следующий вопрос
+        // Если следующего вопрос нет - показать информацию об окончании прогулки,
+        // установить UserProgress::is_complete = true
+    }
+
+    private function showTask($chatId, $task)
+    {
+        $message = $task->question;
+
+        // Формирование вариантов ответов, если вопрос с выбором варианта
+        $keyboard = [];
+        if ($task->quest->type == Task::TYPE_CHOICE) {
+            $answers = $task->visibleAnswers;
+
+            foreach ($answers as $answer) {
+                // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];
+                $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
+            }
+        }
+
+        $options = [];
+        if (count ($keyboard) > 0) {
+            $options['reply_markup'] = json_encode($keyboard);
+        }
+
+        if ($task->image) {
+            return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
+        }
+
+        return $this->bot->sendMessage($chatId, $message, $options);
+    }
+
+    protected function handleAnswer($chatId, int $answerId, int $questId)
+    {
+        $progress = $this->userProgressService->getProgress($chatId, $questId);
+        $currentTask = $progress->task;
+
+        // $answer = $this->answerService->find($answerId);
+        // Сделать проверку выбора правильного ответа
+        // сохранить прогресс
+
+        $nextTask = $this->taskService->getNext($currentTask);
+        if ($nextTask) {
+            $this->userProgressService->updateProgress($progress, $nextTask->id);
+            $this->sendNextTask($chatId, $questId);
+        } else {
+            $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
+        }
     }
 }

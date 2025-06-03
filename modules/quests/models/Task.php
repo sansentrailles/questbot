@@ -140,4 +140,13 @@ class Task extends ActiveRecord implements Sortable
     {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
+
+    public function getImageFullPath()
+    {
+        if ($this->image) {
+            return \Yii::getAlias("@webroot")."/".$this->imagePath;
+        }
+
+        return null;
+    }
 }

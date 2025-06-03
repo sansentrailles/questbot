@@ -70,6 +70,12 @@ class TasksController extends Controller
         $entity = $this->taskService->find((int)$id);
         $model = new Form($entity);
 
+        // $next = $this->taskService->getNext($entity);
+        // if ($next) {
+        //     echo $next->id.' '.$next->question.'<br>';
+        //     echo \yii\helpers\Html::a("Next", ['/admin/quests/tasks/update', 'id' => $next->id]);
+        // }
+
         if ($model->load($post) && $model->validate()) {
             $this->taskService->save($model);
 

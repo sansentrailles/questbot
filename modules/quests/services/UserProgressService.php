@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace app\modules\quests\services;
 
-use app\custom\helpers\StorageFileHelper;
 use app\custom\services\base\BaseService;
 use app\modules\quests\models\UserProgress as Model;
 use app\modules\quests\repositories\UserProgressRepository as Repository;
 use yii\base\Model as Form;
+use app\modules\quests\forms\backend\UserProgressForm;
 
 class UserProgressService extends BaseService
 {
@@ -40,4 +40,29 @@ class UserProgressService extends BaseService
         return $this->repository->getProgress($userId, $questId);
     }
 
+    public function createProgress(int $userId, int $questId, $taskId)
+    {
+        $form = new Model();
+        $form->user_id = $userId;
+        $form->quest_id = $questId;
+        $form->current_task_id = $taskId;
+
+        return $this->create($form);
+    }
+
+    public function updateProgress(Model $model, $taskId)
+    {
+        $form = new UserProgressForm($model);
+        $form->current_task_id = $taskId;
+
+        return $this->save($form);
+    }
+
+    public function completeQuest(Model $model)
+    {
+        $form = new UserProgressForm($model);
+        $form->is_completed = Model::STATE_COMPLETED;
+
+        return $this->save($form);
+    }
 }

@@ -52,4 +52,9 @@ class TaskService extends BaseService
 
         return $state;
     }
+
+    public function getNext(Model $model)
+    {
+        return $this->repository->getNext($model);
+    }
 }
