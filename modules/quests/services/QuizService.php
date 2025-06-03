@@ -315,7 +315,7 @@ error_log("Start quest: step 4");
 
             foreach ($answers as $answer) {
                 // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];
-                $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
+                $keyboard[] = [['text' => $answer->title, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
             }
         }
 
