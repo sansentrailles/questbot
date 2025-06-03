@@ -231,6 +231,7 @@ class QuizService
         // Если есть прогулка в процессе, показываем следующее задание этой прогулки
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
+            $this->bot->sendMessage($chatId, "Вы находитесь на прогулке: " . $progress->quest->title. "\nАктуальное задание" );
             return $this->sendNextTask($chatId, $progress->quest_id);
         }
 
@@ -250,7 +251,7 @@ class QuizService
     {
         $quest = $this->questService->find((int) $questId);
         if ($quest == null) {
-            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+            return $this->bot->sendMessage($chatId, 'К сожалению прогулка не найдена или неактивна 😟');
         }
 
         $message = $quest->desc;
@@ -264,12 +265,14 @@ class QuizService
 
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
-                'reply_markup' => json_encode($keyboard)
+                'reply_markup' => json_encode($keyboard),
+                'parser_mode' => 'Markdown',
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
-            'reply_markup' => json_encode($keyboard)
+            'reply_markup' => json_encode($keyboard),
+            'parser_mode' => 'Markdown',
         ]);
     }
 
