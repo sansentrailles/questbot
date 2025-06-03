@@ -258,7 +258,7 @@ class QuizService
         $keyboard = [
             'inline_keyboard' => [
                 [
-                    ['text' => 'Начать прогулку', 'callback_data' => 'start_quest:'.$quest->id],
+                    ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id],
                 ],
             ]
         ];
@@ -266,13 +266,13 @@ class QuizService
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
                 'reply_markup' => json_encode($keyboard),
-                'parser_mode' => 'Markdown',
+                'parse_mode' => 'Markdown',
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
-            'parser_mode' => 'Markdown',
+            'parse_mode' => 'Markdown',
         ]);
     }
 
