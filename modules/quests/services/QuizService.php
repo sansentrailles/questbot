@@ -66,7 +66,7 @@ class QuizService
             
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
-            
+        error_log("ButtonData ".print_r($buttonData, true));
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
                 case 'show_text':
@@ -276,7 +276,7 @@ class QuizService
 
         $tasks = $quest->visibleTasks();
         if (count($tasks) == 0) {
-            return $this->bot->sendMessage($chatId, 'К данная прогулка не содержит заданий 😟');
+            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
 
         $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
@@ -332,7 +332,7 @@ class QuizService
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
-        // $answer = $this->answerService->find($answerId);
+        $answer = $this->answerService->find($answerId);
         // Сделать проверку выбора правильного ответа
         // сохранить прогресс
 
