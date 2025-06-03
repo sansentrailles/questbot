@@ -274,7 +274,7 @@ class QuizService
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
         }
 
-        $tasks = $quest->visibleTasks();
+        $tasks = $quest->visibleTasks;
         if (count($tasks) == 0) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
