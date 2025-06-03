@@ -42,7 +42,7 @@ class UserProgressService extends BaseService
 
     public function createProgress(int $userId, int $questId, $taskId)
     {
-        $form = new Model();
+        $form = new UserProgressForm();
         $form->user_id = $userId;
         $form->quest_id = $questId;
         $form->current_task_id = $taskId;
