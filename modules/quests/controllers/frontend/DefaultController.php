@@ -98,30 +98,37 @@ class DefaultController extends Controller
 
     public function actionHelp()
     {
-        $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:1'];
-        $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:1'];
-
-        $help = 'Справка по квесту:';
-        if ($help) {
-            $inlineKeyboards[] = [$helpButton];
-        }
-
-        $inlineKeyboards[] = [$startButton];
-
-        $keyboard = [
-            'inliene_keyboard' => $inlineKeyboards,
+        $payload = [
+            'task_id' => 1,
+            'answer' => "Текст ответа",
         ];
 
-        print_r($keyboard);
-        echo "----------------------------<br>";
-        $keyboard = [
-            'inline_keyboard' => [
-                [
-                    ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:1'],
-                ],
-            ]
-        ];
-        print_r($keyboard);
+        echo 'apply_answer:'.json_encode($payload);
+
+        // $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:1'];
+        // $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:1'];
+
+        // $help = 'Справка по квесту:';
+        // if ($help) {
+        //     $inlineKeyboards[] = [$helpButton];
+        // }
+
+        // $inlineKeyboards[] = [$startButton];
+
+        // $keyboard = [
+        //     'inliene_keyboard' => $inlineKeyboards,
+        // ];
+
+        // print_r($keyboard);
+        // echo "----------------------------<br>";
+        // $keyboard = [
+        //     'inline_keyboard' => [
+        //         [
+        //             ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:1'],
+        //         ],
+        //     ]
+        // ];
+        // print_r($keyboard);
         exit;
     }
 }

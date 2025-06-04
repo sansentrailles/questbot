@@ -220,7 +220,7 @@ class QuizService
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.json_encode($payload)],
+                        ['text' => 'Принять ✅', 'callback_data' => "apply_answer:".json_encode($payload)],
                     ],
                 ]
             ];
