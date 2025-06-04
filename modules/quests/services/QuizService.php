@@ -45,7 +45,6 @@ class QuizService
                 return;
             }
             
-            error_log("Handle update");
             // Обработка обычных сообщений
             $this->handleMessage($chatId, $text);
         }
@@ -205,8 +204,6 @@ class QuizService
      */
     protected function handleMessage($chatId, $text)
     {
-        error_log("Handle Message");
-
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
             
@@ -443,7 +440,19 @@ class QuizService
     public function handleInputAnswer($chatId, $taskId)
     {
         $progress = $this->userProgressService->getProgress($chatId);
+        $currentTask = $progress->task;
+        
+        // Сохранить ответ $progress->answer
 
-        return $this->bot->sendMessage($chatId, "Сохранен ответ: ". $progress->answer);
+        // Вынести в отдельный метод
+        $nextTask = $this->taskService->getNext($currentTask);
+        if ($nextTask) {
+            $progress->current_task_id = $nextTask->id;
+            $this->userProgressService->updateProgress($progress);
+            $this->sendNextTask($chatId, $progress->quest_id);
+        } else {
+            $this->userProgressService->completeQuest($progress);
+            $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
+        }
     }
 }
