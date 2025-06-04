@@ -373,7 +373,7 @@ class QuizService
                 'inline_keyboard' => $keyboard
             ];
         } else {
-            $message .= "<br>\nВведите ответ на вопрос: ";
+            $message .= "\n\nВведите ответ на вопрос: ";
         }
 
         $options = [];
