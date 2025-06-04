@@ -98,12 +98,22 @@ class DefaultController extends Controller
 
     public function actionHelp()
     {
-        $payload = [
-            'task_id' => 1,
-            'answer' => "Текст ответа",
-        ];
+        $callback_data = '1[#]матрица';
+        list($taskId, $answer) = explode('[#]', $callback_data);
 
-        echo 'apply_answer:'.json_encode($payload);
+        print_r([
+            'taskId' => $taskId,
+            'answer' => $answer,
+        ]);
+        exit;
+
+        // $message =  "Ваш ответ: \nОтвет\n\nНажмите \"Принять ✅\" для подтверждения или введите новый ответ";
+        // $bot->sendMessage($chatId, $message, [
+        //     'reply_markup' => json_encode($keyboard),
+        //     'parse_mode' => 'HTML'
+        // ]);
+
+        // echo \yii\helpers\Html::encode('apply_answer:'.json_encode($payload));
 
         // $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:1'];
         // $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:1'];
