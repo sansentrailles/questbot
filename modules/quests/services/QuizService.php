@@ -217,7 +217,7 @@ class QuizService
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.$progress->task_id.'[#]'.$text],
+                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.$progress->current_task_id.'[#]'.$text],
                     ],
                 ]
             ];
@@ -457,11 +457,14 @@ class QuizService
 
     public function handleInputAnswer($chatId, $payload)
     {
-        list($taskId, $answer) = explode('[#]', $payload);
+        $this->bot->sendMessage($chatId, "Ответ принят");
 
-        return $this->bot->sendMessage($chatId, "Payload\n".print_r([
-            'taskId' => $taskId,
-            'answer' => $answer,
-        ], true));
+        // list($taskId, $answer) = explode('[#]', $payload);
+        
+
+        // return $this->bot->sendMessage($chatId, "Payload\n".print_r([
+        //     'taskId' => $taskId,
+        //     'answer' => $answer,
+        // ], true));
     }
 }
