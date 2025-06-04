@@ -462,6 +462,6 @@ class QuizService
         return $this->bot->sendMessage($chatId, "Payload\n".print_r([
             'taskId' => $taskId,
             'answer' => $answer,
-        ]));
+        ], true));
     }
 }
