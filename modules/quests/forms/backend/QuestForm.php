@@ -65,7 +65,7 @@ class QuestForm extends Model
         return [
             [['is_visible'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
-            [['desc'], 'string'],
+            [['desc', 'help'], 'string'],
             [['title'], 'required', 'message' => 'Введите название'],
             [['code'], 'unique', 'targetClass' => Quest::class, 'filter' => function ($query): void {
                 if ($this->id) {
