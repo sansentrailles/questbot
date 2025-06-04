@@ -81,6 +81,10 @@ class QuizService
                     $this->startQuest($chatId, (int) $buttonData['value']);
                     break;
 
+                case 'quest_help':
+                    $this->showQuestHelp($chatId, (int) $buttonData['value']);
+                    break;
+
                 // Обработка выбора ответа
                 case 'task_answer':
                     list($answerId, $questId) = explode("@", $buttonData['value']);
@@ -284,6 +288,28 @@ class QuizService
                 'parse_mode' => 'html',
             ]);
         }
+
+        return $this->bot->sendMessage($chatId, $message, [
+            'reply_markup' => json_encode($keyboard),
+            'parse_mode' => 'html',
+        ]);
+    }
+
+    protected function showQuestHelp($chatId, int $questId)
+    {
+        $quest = $this->questService->find($questId);
+        if ($quest == null) {
+            return $this->bot->sendMessage($chatId, 'К сожалению, данная прогулка не найдена или неактивна 😟');
+        }
+
+        $message = $quest->help;
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id],
+                ],
+            ]
+        ];
 
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
