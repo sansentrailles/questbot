@@ -45,6 +45,7 @@ class QuizService
                 return;
             }
             
+            error_log("Handle update");
             // Обработка обычных сообщений
             $this->handleMessage($chatId, $text);
         }
@@ -204,8 +205,11 @@ class QuizService
      */
     protected function handleMessage($chatId, $text)
     {
+        error_log("Handle Message");
+
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
+            error_log("Progress");
             $payload = [
                 'task_id' => $progress->quest_id,
                 'answer' => $text,
