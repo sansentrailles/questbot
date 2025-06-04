@@ -212,16 +212,20 @@ class QuizService
             error_log("Progress");
             $this->bot->sendMessage($chatId, $progress->task->question);
 
-            $message =  'Ваш ответ: '. $text.'\n\nНажмите "Принять ✅" для подтверждения или введите новый ответ';
+            $message =  'Ваш ответ: \n'. $text.'\n\nНажмите "Принять ✅" для подтверждения или введите новый ответ';
+            $payload = [
+                'task_id' => $progress->quest_id,
+                'answer' => $text,
+            ];
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:info'],
+                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.json_encode($payload)],
                     ],
                 ]
             ];
             
-            $this->bot->sendMessage($chatId, "Меню:", [
+            $this->bot->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard)
             ]);
             
