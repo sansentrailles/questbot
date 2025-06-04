@@ -211,6 +211,23 @@ class QuizService
         if ($progress) {
             error_log("Progress");
             $this->bot->sendMessage($chatId, $progress->task->question);
+
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Информация', 'callback_data' => 'menu:info'],
+                        ['text' => 'Настройки', 'callback_data' => 'menu:settings']
+                    ],
+                    [
+                        ['text' => 'Помощь', 'callback_data' => 'menu:help'],
+                        ['text' => 'Закрыть', 'callback_data' => 'menu:close']
+                    ]
+                ]
+            ];
+            
+            $this->bot->sendMessage($chatId, "Меню:", [
+                'reply_markup' => json_encode($keyboard)
+            ]);
             
             // $payload = [
             //     'task_id' => $progress->quest_id,
