@@ -324,16 +324,14 @@ class QuizService
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
         }
-error_log("Start quest: step 1");
+
         $tasks = $quest->visibleTasks;
         if (count($tasks) == 0) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
 
-error_log("Start quest: step 2");
         $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
 
-error_log("Start quest: step 3");
         $this->sendNextTask($chatId, $questId);
 
         // $progress = $this->userProgressService->getProgress($chatId, $questId);
@@ -341,7 +339,6 @@ error_log("Start quest: step 3");
 
     private function sendNextTask($chatId, $questId)
     {
-error_log("Start quest: step 4");
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
@@ -375,16 +372,12 @@ error_log("Start quest: step 4");
             $replyMarkup = [
                 'inline_keyboard' => $keyboard
             ];
-
-            // foreach ($answers as $answer) {
-            //     // $keyboard[] = [['text' => $answer->answer, 'callback_data' => 'task_answer:'.$task->id.'@'.$answer->id]];
-            //     $keyboard['inline_keyboard'] = [['text' => $answer->title, 'callback_data' => 'task_answer:'.$answer->id.'@'.$task->quest_id]];
-            // }
+        } else {
+            $message .= "<br>\nВведите ответ на вопрос: ";
         }
 
         $options = [];
         if (count ($keyboard) > 0) {
-            // $options['reply_markup'] = json_encode($keyboard);
             $options['reply_markup'] = json_encode($replyMarkup);
         }
 
@@ -397,8 +390,6 @@ error_log("Start quest: step 4");
 
     protected function handleAnswer($chatId, int $answerId, int $questId)
     {
-        error_log('Handle answer 1');
-
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
