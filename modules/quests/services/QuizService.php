@@ -254,18 +254,29 @@ class QuizService
             return $this->bot->sendMessage($chatId, 'К сожалению прогулка не найдена или неактивна 😟');
         }
 
-        $message = $quest->desc;
-        $keyboard = [
-            'inline_keyboard' => [
-                [
-                    ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id],
-                ],
-            ]
-        ];
+
+        $inlineKeyboards = [];
+        $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:'.$quest->id];
+        $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id];
 
         if ($quest->help) {
-            $keyboard['inline_keyboard'][0][] = ['text' => 'ℹ️', 'callback_data' => 'quest_help:'.$quest->id];
+            $inlineKeyboards[] = [$helpButton];
         }
+
+        $inlineKeyboards[] = [$startButton];
+
+        $keyboard = [
+            'inliene_keyboard' => $inlineKeyboards,
+        ];
+
+        $message = $quest->desc;
+        // $keyboard = [
+        //     'inline_keyboard' => [
+        //         [
+        //             ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id],
+        //         ],
+        //     ]
+        // ];
 
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
