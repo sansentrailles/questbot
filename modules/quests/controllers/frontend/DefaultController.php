@@ -29,19 +29,19 @@ class DefaultController extends Controller
         $update = $bot->getWebhookUpdate();
         $quizService->handleUpdate($update);
 
-        $question = "Сколько месяцев в году?";
-        $variants = [
-            "5",
-            "7",
-            "12",
-            "17",
-        ];
-        $options = [
-            'type' => 'quiz',
-            'correct_option_id' => 2,
-            'explanation' => "В году 12 месяцев"
-        ];
-        $bot->sendPoll($chatId, $question, $variants, $options);
+        // $question = "Сколько месяцев в году?";
+        // $variants = [
+        //     "5",
+        //     "7",
+        //     "12",
+        //     "17",
+        // ];
+        // $options = [
+        //     'type' => 'quiz',
+        //     'correct_option_id' => 2,
+        //     'explanation' => "В году 12 месяцев"
+        // ];
+        // $bot->sendPoll($chatId, $question, $variants, $options);
 
         // $bot = new TelegramApi($token);
         // $update = $bot->getWebhookUpdate();
