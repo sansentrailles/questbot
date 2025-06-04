@@ -41,6 +41,7 @@ return [
         '<_a:error>' => 'main/default/<_a>',
 
         '/quests/handler' => 'quests/default/handler',
+        '/quests/help' => 'quests/default/help',
 
         // '<pageUri:[\w_\/-]+>'=>'page/default/view',
         // 'page/<_a>' => 'page/default/<_a>',

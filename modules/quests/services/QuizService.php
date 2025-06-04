@@ -266,7 +266,7 @@ class QuizService
         $inlineKeyboards[] = [$startButton];
 
         $keyboard = [
-            'inliene_keyboard' => $inlineKeyboards,
+            'inline_keyboard' => $inlineKeyboards,
         ];
 
         $message = $quest->desc;
