@@ -88,7 +88,12 @@ class QuizService
                 // Обработка выбора ответа
                 case 'task_answer':
                     list($answerId, $questId) = explode("@", $buttonData['value']);
-                    $this->handleAnswer($chatId, (int) $answerId, (int) $questId);
+                    $this->handleChoiceAnswer($chatId, (int) $answerId, (int) $questId);
+                    break;
+
+                // Обработка ответа, введенного пользователем
+                case 'apply_answer':
+                    $this->handleInputAnswer($chatId, $buttonData['value']);
                     break;
                     
                 case 'delete_message':
@@ -197,8 +202,30 @@ class QuizService
      * @param int $chatId - ID чата
      * @param string $text - текст сообщения
      */
-    protected function handleMessage($chatId, $text) {
-        $this->bot->sendMessage($chatId, "Вы написали: $text");
+    protected function handleMessage($chatId, $text)
+    {
+        $progress = $this->userProgressService->getProgress($chatId);
+        if ($progress) {
+            $payload = [
+                'task_id' => $progress->quest_id,
+                'answer' => $text,
+            ];
+
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.json_encode($payload)],
+                    ],
+                ]
+            ];
+            
+            $message =  'Ваш ответ: '. $text.'\n\nНажмите "Принять ✅" для подтверждения или введите новый ответ';
+            $this->bot->sendMessage($chatId, $message, [
+                'reply_markup' => json_encode($keyboard)
+            ]);
+        }
+
+        // $this->bot->sendMessage($chatId, "Вы написали: $text");
     }
     
     /**
@@ -388,7 +415,7 @@ class QuizService
         return $this->bot->sendMessage($chatId, $message, $options);
     }
 
-    protected function handleAnswer($chatId, int $answerId, int $questId)
+    protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
@@ -405,5 +432,10 @@ class QuizService
             $this->userProgressService->completeQuest($progress);
             $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
         }
+    }
+
+    public function handleInputAnswer($chatId, $payload)
+    {
+        return $this->bot->sendMessage($chatId, "Payload\n".print_r(json_decode($payload, true)));
     }
 }
