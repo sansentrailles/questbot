@@ -218,7 +218,7 @@ class QuizService
                 'answer' => $text,
             ];
 
-            $callbackData = \yii\helpers\Html::encode("apply_answer:".json_encode($payload));
+            $callbackData = json_encode($payload);
             $keyboard = [
                 'inline_keyboard' => [
                     [
