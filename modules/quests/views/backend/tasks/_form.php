@@ -38,6 +38,8 @@ $cityName = '';
 
         <?php echo $form->field($model, 'address')->textInput(['maxlength' => true]); ?>
 
+        <?php echo $form->field($model, 'message')->textarea(['rows' => 5]); ?>
+
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">

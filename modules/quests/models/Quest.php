@@ -20,6 +20,7 @@ use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
  * @property string $code
  * @property string $image
  * @property string $desc
+ * @property string $help
  * @property int $date
  * @property int $limit
  * @property int $created_at
@@ -63,6 +64,7 @@ class Quest extends ActiveRecord implements Fileable
         $model->title      = $form->title;
         $model->code       = $form->code;
         $model->desc       = $form->desc;
+        $model->help       = $form->help;
         $model->date       = $form->date;
         $model->image      = $form->image;
         $model->limit      = $form->limit;
@@ -76,6 +78,7 @@ class Quest extends ActiveRecord implements Fileable
         $this->title      = $form->title;
         $this->code       = $form->code;
         $this->desc       = $form->desc;
+        $this->help       = $form->help;
         $this->date       = $form->date;
         $this->image      = $form->image;
         $this->limit      = $form->limit;

@@ -21,13 +21,27 @@ class DefaultController extends Controller
 
     public function actionHandler()
     {
-        // $chatId = 215488627;
+        $chatId = 215488627;
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
 
         $bot = new TelegramBot($token);
         $quizService = new QuizService($bot);
         $update = $bot->getWebhookUpdate();
         $quizService->handleUpdate($update);
+
+        $question = "Сколько месяцев в году?";
+        $variants = [
+            "5",
+            "7",
+            "12",
+            "17",
+        ];
+        $options = [
+            'type' => 'quiz',
+            'correct_option_id' => 2,
+            'explanation' => "В году 12 месяцев"
+        ];
+        $bot->sendPoll($chatId, $question, $variants, $options);
 
         // $bot = new TelegramApi($token);
         // $update = $bot->getWebhookUpdate();

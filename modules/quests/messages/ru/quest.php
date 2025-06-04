@@ -13,4 +13,5 @@ return [
     'QUEST_CREATE' => 'Добавить квест',
     'QUEST_UPDATE' => 'Обновить квест',
     'QUEST_IS_ACTIVE' => 'Активный',
+    'QUEST_HELP' => 'Справка/рекомендации',
 ];

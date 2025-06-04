@@ -21,6 +21,7 @@ class QuestForm extends Model
     public $title;
     public $code;
     public $desc;
+    public $help;
     public $date;
     public $limit;
     public $is_visible;
@@ -52,6 +53,7 @@ class QuestForm extends Model
         $this->title      = $this->quest->title;
         $this->code       = $this->quest->code;
         $this->desc       = $this->quest->desc;
+        $this->help       = $this->quest->help;
         $this->limit      = $this->quest->limit;
         $this->date       = $this->quest->date;
         $this->image      = $this->quest->image;

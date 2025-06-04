@@ -14,6 +14,7 @@ trait QuestAttributeLabelsTrait
             'id'         => Module::t('common', 'ID'),
             'title'      => Module::t('common', 'QUEST_TITLE'),
             'desc'       => Module::t('common', 'QUEST_DESC'),
+            'help'       => Module::t('common', 'QUEST_HELP'),
             'code'       => Module::t('common', 'QUEST_CODE'),
             'limit'      => Module::t('common', 'QUEST_LIMIT'),
             'date'       => Module::t('common', 'QUEST_DATE'),

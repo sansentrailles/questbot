@@ -97,7 +97,25 @@ class TelegramBot
         
         return $this->request('sendPhoto', $params);
     }
-    
+
+    /**
+     * Отправка голосования (опроса)
+     * @param int $chatId - ID чата
+     * @param string $question - вопрос опроса
+     * @param array $variants - массив вариантов ответов (минимум 2, максимум 10)
+     * @param array $options - дополнительные параметры (is_anonymous, allows_multiple_answers и т.д.)
+     * @return array - информация об отправленном голосовании
+     */
+    public function sendPoll($chatId, $question, $variants, $options = []) {
+        $params = array_merge([
+            'chat_id' => $chatId,
+            'question' => $question,
+            'options' => json_encode(array_values($variants)), // Ограничиваем до 10 вариантов
+        ], $options);
+
+        return $this->request('sendPoll', $params);
+    }
+
     /**
      * Получение обновлений (входящих сообщений)
      * @param int $offset - ID последнего полученного обновления

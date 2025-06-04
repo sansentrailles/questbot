@@ -263,6 +263,10 @@ class QuizService
             ]
         ];
 
+        if ($quest->help) {
+            $keyboard['inline_keyboard'][0][] = ['text' => 'ℹ️', 'callback_data' => 'quest_help:'.$quest->id];
+        }
+
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
                 'reply_markup' => json_encode($keyboard),

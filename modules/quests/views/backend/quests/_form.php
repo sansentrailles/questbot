@@ -24,6 +24,8 @@ use yii\widgets\ActiveForm;
 
         <?php echo $form->field($model, 'desc')->textarea(['rows' => 8]); ?>
 
+        <?php echo $form->field($model, 'help')->textarea(['rows' => 8]); ?>
+
         <?php echo $form->field($model, 'code')->textInput(['maxlength' => true]); ?>
 
         <?php echo $form->field($model, 'limit')->textInput(['maxlength' => true]); ?>
