@@ -217,10 +217,12 @@ class QuizService
                 'task_id' => $progress->quest_id,
                 'answer' => $text,
             ];
+
+            $callbackData = \yii\helpers\Html::encode("apply_answer:".json_encode($payload));
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Принять ✅', 'callback_data' => "apply_answer:".json_encode($payload)],
+                        ['text' => 'Принять ✅', 'callback_data' => $callbackData],
                     ],
                 ]
             ];
