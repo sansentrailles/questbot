@@ -209,15 +209,16 @@ class QuizService
 
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
-            error_log("Progress");
-            $this->bot->sendMessage($chatId, $progress->task->question);
+            
+            $progress->answer = $text;
+            $this->userProgressService->updateProgress($progress);
 
             $message =  "Ваш ответ: \n". $text."\n\nНажмите \"Принять ✅\" для подтверждения или введите новый ответ";
 
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.$progress->current_task_id.'[#]'.$text],
+                        ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.$progress->current_task_id],
                     ],
                 ]
             ];
@@ -226,24 +227,6 @@ class QuizService
                 'reply_markup' => json_encode($keyboard),
                 'parse_mode' => 'HTML'
             ]);
-            
-            // $payload = [
-            //     'task_id' => $progress->quest_id,
-            //     'answer' => $text,
-            // ];
-
-            // $keyboard = [
-            //     'inline_keyboard' => [
-            //         [
-            //             ['text' => 'Принять ✅', 'callback_data' => 'apply_answer:'.json_encode($payload)],
-            //         ],
-            //     ]
-            // ];
-            
-            // $message =  'Ваш ответ: '. $text.'\n\nНажмите "Принять ✅" для подтверждения или введите новый ответ';
-            // $this->bot->sendMessage($chatId, $message, [
-            //     'reply_markup' => json_encode($keyboard)
-            // ]);
         }
 
         $this->bot->sendMessage($chatId, "Вы написали: $text");
@@ -447,7 +430,9 @@ class QuizService
 
         $nextTask = $this->taskService->getNext($currentTask);
         if ($nextTask) {
-            $this->userProgressService->updateProgress($progress, $nextTask->id);
+            $progress->current_task_id = $nextTask->id;
+            $this->userProgressService->updateProgress($progress);
+            // $this->userProgressService->updateProgress($progress, $nextTask->id);
             $this->sendNextTask($chatId, $questId);
         } else {
             $this->userProgressService->completeQuest($progress);
@@ -455,15 +440,10 @@ class QuizService
         }
     }
 
-    public function handleInputAnswer($chatId, $payload)
+    public function handleInputAnswer($chatId, $taskId)
     {
-        // $this->bot->sendMessage($chatId, "Ответ принят");
+        $progress = $this->userProgressService->getProgress($chatId);
 
-        list($taskId, $answer) = explode('[#]', $payload);
-
-        return $this->bot->sendMessage($chatId, "Payload\n".print_r([
-            'taskId' => $taskId,
-            'answer' => $answer,
-        ], true));
+        return $this->bot->sendMessage($chatId, "Сохранен ответ: ". $progress->answer);
     }
 }

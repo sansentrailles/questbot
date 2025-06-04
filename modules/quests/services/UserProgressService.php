@@ -51,10 +51,10 @@ class UserProgressService extends BaseService
         return $this->save($form);
     }
 
-    public function updateProgress(Model $model, $taskId)
+    public function updateProgress(Model $model)
     {
         $form = new UserProgressForm($model);
-        $form->current_task_id = $taskId;
+        // $form->current_task_id = $taskId;
 
         return $this->save($form);
     }

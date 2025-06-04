@@ -14,9 +14,9 @@ use app\modules\quests\models\traits\UserProgressAttributeLabelsTrait;
  * @property int $id
  * @property int $user_id
  * @property int $quest_id
- * @property string $curretn_question_id
- * @property string $is_completed
- * @property int $is_visible
+ * @property int $curretn_question_id
+ * @property string $answer
+ * @property int $is_completed
  * @property int $created_at
  * @property int $updated_at
  */
@@ -48,6 +48,7 @@ class UserProgress extends ActiveRecord
         $model->user_id         = $form->user_id;
         $model->current_task_id = $form->current_task_id;
         $model->is_completed    = $form->is_completed;
+        $model->answer          = $form->answer;
 
         return $model;
     }
@@ -58,6 +59,7 @@ class UserProgress extends ActiveRecord
         $this->user_id         = $form->user_id;
         $this->current_task_id = $form->current_task_id;
         $this->is_completed    = $form->is_completed;
+        $this->answer          = $form->answer;
     }
 
     public function getQuest()

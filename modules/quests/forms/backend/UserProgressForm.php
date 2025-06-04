@@ -16,6 +16,7 @@ class UserProgressForm extends Model
     public $quest_id;
     public $current_task_id;
     public $is_completed;
+    public $answer;
 
     private $userProgress;
 
@@ -24,8 +25,6 @@ class UserProgressForm extends Model
         $this->userProgress = $userProgress;
         parent::__construct($config);
     }
-
-
 
     public function init(): void
     {
@@ -38,11 +37,13 @@ class UserProgressForm extends Model
         $this->current_task_id = $this->userProgress->current_task_id;
         $this->user_id         = $this->userProgress->user_id;
         $this->is_completed    = $this->userProgress->is_completed;
+        $this->answer          = $this->userProgress->answer;
     }
 
     public function rules()
     {
         return [
+            [['answer'], 'string'],
             [['is_completed'], 'in', 'range' => [UserProgress::STATE_COMPLETED, UserProgress::STATE_NOT_COMPLETED] ],
             [['user_id'], 'integer'],
             [['quest_id'],
