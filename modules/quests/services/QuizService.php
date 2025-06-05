@@ -487,10 +487,12 @@ class QuizService
 
         $currentHint = $progress->hint;
         if ($currentHint == null) {
-            $currentHint = $hints[0];
+            $nextHint = $hints[0];
+        }  else {
+            $nextHint = $this->hintService->getNext($currentHint);
         }
 
-        $nextHint = $this->hintService->getNext($currentHint);
+        
         if ($nextHint) {
             $progress->hint_id = $nextHint->id;
             $progress->hint_used += (int) $progress->hint_used;
