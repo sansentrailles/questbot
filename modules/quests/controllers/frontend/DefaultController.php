@@ -109,13 +109,62 @@ class DefaultController extends Controller
         
         $bot = new TelegramBot($token);
 
-        // Формирование вариантов ответов, если вопрос с выбором варианта
+        // ============================================
+        // $inlineKeyboards = [];
+        // $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:1'];
+        // $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:2'];
+
+        // $inlineKeyboards[] = [$helpButton];
+        // $inlineKeyboards[] = [$startButton];
+
+        // $keyboard = [
+        //     'inline_keyboard' => $inlineKeyboards,
+        // ];
+
+        // ============================================
+
+        $keyboard[] = [
+            [
+                'text' => 'ℹ️ Подсказки (1/2)',
+                'callback_data' => 'show_hint:1',
+            ],
+        ];
+
+        $keyboard[] = [
+            [
+                'text' => '⬅️ Вернуться к вопросу',
+                'callback_data' => 'to_answer:1',
+            ]
+        ];
+
+        $replyMarkup = [];
+        if (count ($keyboard) > 0) {
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+
+        }
+
+        // error_log("Keyboard: " . print_r($replyMarkup, true));
+
+        $hintService = Yii::$container->get(\app\modules\quests\services\HintService::class);
+        $hint = $hintService->find(3);
+        $message = "**Держите подсказку:**\n\n".StringHelper::escapeMarkdown($hint->text);
+        if ($hint->image) {
+            return $bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
+                'show_caption_above_media' => true,
+                'parse_mode' => 'markdownv2',
+                'reply_markup' => json_encode($replyMarkup),
+                // 'reply_markup' => json_encode($keyboard),
+            ]);
+        }
+
         
-        $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
-        $bot->sendMessage($chatId, $message, [
-            // 'reply_markup' => json_encode($keyboard),
-            'parse_mode' => 'markdownv2'
-        ]);
+        // $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
+        // $bot->sendMessage($chatId, $message, [
+        //     // 'reply_markup' => json_encode($keyboard),
+        //     'parse_mode' => 'markdownv2'
+        // ]);
 
         // $bot->sendMessage($chatId, $message, $options);
 

@@ -515,11 +515,11 @@ class QuizService
         $hintsCount = count($hints);
         $keyboard[] = [
             [
-                'text' => 'ℹ️ Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
+                'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️ ',
                 'callback_data' => 'show_hint:' . $task->quest_id,
             ],
             [
-                'text' => '⬅️ Вернуться к вопросу',
+                'text' => 'Вернуться к вопросу ⬅️',
                 'callback_data' => 'to_answer:' . $task->quest_id,
             ]
         ];
@@ -529,24 +529,20 @@ class QuizService
             $replyMarkup = [
                 'inline_keyboard' => $keyboard
             ];
-
-            error_log("keyboard");
         }
-
-        error_log("Keyboard: " . print_r($replyMarkup, true));
 
         $message = "**Держите подсказку:**\n\n".StringHelper::escapeMarkdown($hint->text);
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
                 'show_caption_above_media' => true,
                 'parse_mode' => 'markdownv2',
-                'reply_keyboard' => json_encode($replyMarkup),
+                'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
             'parse_mode' => 'markdownv2',
-            'reply_keyboard' => json_encode($replyMarkup),
+            'reply_markup' => json_encode($replyMarkup),
         ]);
     }
 }
