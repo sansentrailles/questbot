@@ -99,6 +99,10 @@ class QuizService
                     $this->handleInputAnswer($chatId, $buttonData['value']);
                     break;
 
+                case 'to_answer':
+                    $this->sendNextTask($chatId, (int) $buttonData['value']);
+                    break;
+
                 case 'show_hint':
                     $this->handleHint($chatId, (int) $buttonData['value']);
                     break;
