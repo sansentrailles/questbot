@@ -410,16 +410,16 @@ class QuizService
                     ]
                 ];
             }
-
-            $replyMarkup = [
-                'inline_keyboard' => $keyboard
-            ];
         } else {
             $message .= "\n\nВведите ответ на вопрос: ";
         }
 
         $options = [];
         if (count ($keyboard) > 0) {
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+
             $options['reply_markup'] = json_encode($replyMarkup);
         }
 
