@@ -97,6 +97,10 @@ class QuizService
                 case 'apply_answer':
                     $this->handleInputAnswer($chatId, $buttonData['value']);
                     break;
+
+                case 'show_hint':
+                    $this->handleHint($chatId, (int) $buttonData['value']);
+                    break;
                     
                 case 'delete_message':
                     $this->bot->deleteMessage($chatId, $messageId);
@@ -393,7 +397,7 @@ class QuizService
             error_log('add hints button');
             $keyboard[] = [
                 [
-                    'text' => 'Подсказки ('.$progress->hint_used.'/'.$hintsCount.')',
+                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
                     'callback_data' => 'show_hint:' . $task->quest_id,
                 ]
             ];
@@ -469,5 +473,45 @@ class QuizService
             $this->userProgressService->completeQuest($progress);
             $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
         }
+    }
+
+    private function handleHint($chatId, $questId)
+    {
+        $progress = $this->userProgressService->getProgress($chatId, $questId);
+        $currentTask = $progress->task;
+        $hints = $currentTask->visibleHints;
+
+        if (count($hints) == 0) {
+            return $this->bot->sendMessage($chatId, "Подсказки не найдены ❌");
+        }
+
+        $currentHint = $progress->hint;
+        if ($currentHint == null) {
+            $currentHint = $hints[0];
+        }
+
+        $nextHint = $this->hintService->getNext($currentHint);
+        if ($nextHint) {
+            $progress->hint_id = $nextHint->id;
+            $progress->hint_used += (int) $progress->hint_used;
+            $this->userProgressService->updateProgress($progress);
+            $this->showHint($chatId, $nextHint);
+            $this->sendNextTask($chatId, $progress->quest_id);
+        }
+    }
+
+    private function showHint($chatId, $hint)
+    {
+        $message = "Держите подсказку:\n\n".$hint->text;
+
+        if ($hint->image) {
+            return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
+                'parse_mode' => 'markdownv2'
+            ]);
+        }
+
+        return $this->bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'markdownv2'
+        ]);
     }
 }
