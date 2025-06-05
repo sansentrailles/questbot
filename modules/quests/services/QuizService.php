@@ -342,7 +342,7 @@ class QuizService
             return $this->bot->sendMessage($chatId, 'К сожалению, данная прогулка не найдена или неактивна 😟');
         }
 
-        $message = $quest->help;
+        $message = StringHelper::escapeMarkdown($quest->help);
         $keyboard = [
             'inline_keyboard' => [
                 [
@@ -353,7 +353,7 @@ class QuizService
 
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
-            'parse_mode' => 'html',
+            'parse_mode' => 'markdown',
         ]);
     }
 
