@@ -159,7 +159,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
 
     public function getHints()
     {
-        return $this->hasMany(Answer::class, ['task_id' => 'id']);
+        return $this->hasMany(Hint::class, ['task_id' => 'id']);
     }
 
     public function getVisibleHints()
