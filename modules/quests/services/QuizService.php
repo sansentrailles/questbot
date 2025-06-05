@@ -499,9 +499,31 @@ class QuizService
             $this->userProgressService->updateProgress($progress);
             $this->sendNextTask($chatId, $progress->quest_id);
         } else {
-            $this->userProgressService->completeQuest($progress);
-            $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
+            $this->finalizeQuizz($chatId, $progress);
         }
+    }
+
+    private function finalizeQuizz($chatId, $progress)
+    {
+        $quest = $progress->quest;
+        $this->userProgressService->completeQuest($progress);
+
+        $message = "Все задания прогулки заданы!\n\n**Спасибо за участие!**";
+        if ($quest->text_final) {
+            $message = $quest->text_final;
+        }
+
+        $message = StringHelper::escapeMarkdown($message);
+
+        if ($quest->image_final) {
+            return $this->bot->sendPhoto($chatId, $quest->image_finalFullPath, $message, [
+                'parse_mode' => 'markdownv2',
+            ]);
+        }
+
+        return $this->bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'markdownv2',
+        ]);
     }
 
     private function handleHint($chatId, $questId)
@@ -516,10 +538,8 @@ class QuizService
 
         $currentHint = $progress->hint;
         if ($currentHint === null) {
-            error_log("Hint is empty. Set next hint - first hint for task");
             $nextHint = $hints[0];
         }  else {
-            error_log("Get next hint");
             $nextHint = $this->hintService->getNext($currentHint);
         }
 
@@ -529,6 +549,7 @@ class QuizService
             $this->userProgressService->updateProgress($progress);
             $this->showHint($chatId, $nextHint, $progress);
         } else {
+            // Вроде бы этот код не нужен
             $this->sendNextTask($chatId, $questId);
         }
     }
