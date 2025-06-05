@@ -12,6 +12,7 @@ class DefaultController extends Controller
 {
     public function actionError(): void
     {
+        echo 'error';
         $exception  =   Yii::$app->getErrorHandler()->exception;
         print_r($exception);
         exit;

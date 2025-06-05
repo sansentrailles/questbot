@@ -397,7 +397,6 @@ class QuizService
         $hints = $task->visibleHints;
         $hintsCount = count($hints);
         if ($hintsCount > 0) {
-            error_log('add hints button');
             $keyboard[] = [
                 [
                     'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
@@ -437,6 +436,7 @@ class QuizService
         return $this->bot->sendMessage($chatId, $message, $options);
     }
 
+    // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
@@ -497,28 +497,50 @@ class QuizService
             $nextHint = $this->hintService->getNext($currentHint);
         }
 
-        
         if ($nextHint) {
             $progress->hint_id = $nextHint->id;
-            $progress->hint_used += (int) $progress->hint_used;
+            $progress->hint_used = (int) $progress->hint_used + 1;
             $this->userProgressService->updateProgress($progress);
-            $this->showHint($chatId, $nextHint);
-            $this->sendNextTask($chatId, $progress->quest_id);
+            $this->showHint($chatId, $nextHint, $progress);
+        } else {
+            $this->sendNextTask($chatId, $questId);
         }
     }
 
-    private function showHint($chatId, $hint)
+    private function showHint($chatId, $hint, $progress)
     {
-        $message = "**Держите подсказку:**\n\n".$hint->text;
+        $task = $progress->task;
 
+        $hints = $task->visibleHints;
+        $hintsCount = count($hints);
+        $keyboard[] = [
+            [
+                'text' => 'ℹ️ Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
+                'callback_data' => 'show_hint:' . $task->quest_id,
+            ],
+            [
+                'text' => '⬅️ Вернуться к вопросу',
+                'callback_data' => 'to_answer:' . $task->quest_id,
+            ]
+        ];
+
+        if (count ($keyboard) > 0) {
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+        }
+        $message = StringHelper::escapeMarkdown("**Держите подсказку:**\n\n".$hint->text);
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
-                'parse_mode' => 'markdownv2'
+                'show_caption_above_media' => true,
+                'parse_mode' => 'markdownv2',
+                'reply_keyboard' => json_encode($replyMarkup),
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'markdownv2'
+            'parse_mode' => 'markdownv2',
+            'reply_keyboard' => json_encode($replyMarkup),
         ]);
     }
 }
