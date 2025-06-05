@@ -524,12 +524,18 @@ class QuizService
             ]
         ];
 
+        $replyMarkup = [];
         if (count ($keyboard) > 0) {
             $replyMarkup = [
                 'inline_keyboard' => $keyboard
             ];
+
+            error_log("keyboard");
         }
-        $message = StringHelper::escapeMarkdown("**Держите подсказку:**\n\n".$hint->text);
+
+        error_log("Keyboard: " . print_r($replyMarkup, true));
+
+        $message = "**Держите подсказку:**\n\n".StringHelper::escapeMarkdown($hint->text);
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
                 'show_caption_above_media' => true,
