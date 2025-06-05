@@ -277,8 +277,9 @@ class QuizService
         if (count($quests) > 0) {
             $keyboard = $this->questService->generateQuestKeyboard($quests);
 
-            return $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин! Список доступных прогулок:", [
+            return $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:", [
                 'reply_markup' => json_encode($keyboard),
+                'parse_mode' => 'markdownv2'
             ]);
         } else {
             return $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
@@ -486,9 +487,11 @@ class QuizService
         }
 
         $currentHint = $progress->hint;
-        if ($currentHint == null) {
+        if ($currentHint === null) {
+            error_log("Hint is empty. Set next hint - first hint for task");
             $nextHint = $hints[0];
         }  else {
+            error_log("Get next hint");
             $nextHint = $this->hintService->getNext($currentHint);
         }
 
@@ -504,7 +507,7 @@ class QuizService
 
     private function showHint($chatId, $hint)
     {
-        $message = "Держите подсказку:\n\n".$hint->text;
+        $message = "**Держите подсказку:**\n\n".$hint->text;
 
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
