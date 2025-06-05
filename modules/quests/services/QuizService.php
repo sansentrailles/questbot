@@ -69,7 +69,6 @@ class QuizService
             
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
-        error_log("ButtonData ".print_r($buttonData, true));
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
                 case 'show_text':
@@ -400,14 +399,6 @@ class QuizService
         $keyboard = [];
         $hints = $task->visibleHints;
         $hintsCount = count($hints);
-        if ($hintsCount > 0) {
-            $keyboard[] = [
-                [
-                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
-                    'callback_data' => 'show_hint:' . $task->quest_id,
-                ]
-            ];
-        }
 
         if ($task->type == Task::TYPE_CHOICE) {
             $answers = $task->answers;
@@ -422,6 +413,15 @@ class QuizService
             }
         } else {
             $message .= "\n\nВведите ответ на вопрос: ";
+        }
+
+        if ($hintsCount > 0) {
+            $keyboard[] = [
+                [
+                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
+                    'callback_data' => 'show_hint:' . $task->quest_id,
+                ]
+            ];
         }
 
         $options = [];
@@ -450,17 +450,20 @@ class QuizService
         // Сделать проверку выбора правильного ответа
         // сохранить прогресс
 
-        $nextTask = $this->taskService->getNext($currentTask);
-        if ($nextTask) {
-            $progress->current_task_id = $nextTask->id;
-            $progress->answer = null;
-            $this->userProgressService->updateProgress($progress);
-            // $this->userProgressService->updateProgress($progress, $nextTask->id);
-            $this->sendNextTask($chatId, $questId);
-        } else {
-            $this->userProgressService->completeQuest($progress);
-            $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
-        }
+        $this->handeNextAnswer($chatId, $currentTask, $progress);
+
+        // $nextTask = $this->taskService->getNext($currentTask);
+        // if ($nextTask) {
+        //     $progress->current_task_id = $nextTask->id;
+        //     $progress->answer = null;
+        //     $progress->hint_id = null;
+        //     $progress->hint_used = null;
+        //     $this->userProgressService->updateProgress($progress);
+        //     $this->sendNextTask($chatId, $questId);
+        // } else {
+        //     $this->userProgressService->completeQuest($progress);
+        //     $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
+        // }
     }
 
     public function handleInputAnswer($chatId, $taskId)
@@ -470,10 +473,29 @@ class QuizService
         
         // Сохранить ответ $progress->answer
 
-        // Вынести в отдельный метод
+        $this->handeNextAnswer($chatId, $currentTask, $progress);
+        // $nextTask = $this->taskService->getNext($currentTask);
+        // if ($nextTask) {
+        //     $progress->current_task_id = $nextTask->id;
+        //     $progress->answer = null;
+        //     $progress->hint_id = null;
+        //     $progress->hint_used = null;
+        //     $this->userProgressService->updateProgress($progress);
+        //     $this->sendNextTask($chatId, $progress->quest_id);
+        // } else {
+        //     $this->userProgressService->completeQuest($progress);
+        //     $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
+        // }
+    }
+
+    private function handeNextAnswer($chatId, $currentTask, $progress)
+    {
         $nextTask = $this->taskService->getNext($currentTask);
         if ($nextTask) {
             $progress->current_task_id = $nextTask->id;
+            $progress->answer = null;
+            $progress->hint_id = null;
+            $progress->hint_used = null;
             $this->userProgressService->updateProgress($progress);
             $this->sendNextTask($chatId, $progress->quest_id);
         } else {
