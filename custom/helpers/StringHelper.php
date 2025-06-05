@@ -218,5 +218,4 @@ class StringHelper
         }
         return $text;
     }
-
 }

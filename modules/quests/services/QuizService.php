@@ -517,7 +517,7 @@ class QuizService
         $message = StringHelper::escapeMarkdown($message);
 
         if ($quest->image_final) {
-            return $this->bot->sendPhoto($chatId, $quest->image_finalFullPath, $message, [
+            return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
                 'parse_mode' => 'markdownv2',
             ]);
         }

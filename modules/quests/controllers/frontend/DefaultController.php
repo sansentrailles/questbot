@@ -109,55 +109,33 @@ class DefaultController extends Controller
         
         $bot = new TelegramBot($token);
 
-        // ============================================
-        // $inlineKeyboards = [];
-        // $helpButton = ['text' => 'Справка / Рекомендации ℹ️', 'callback_data' => 'quest_help:1'];
-        // $startButton = ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:2'];
+//         $questService = Yii::$container->get(\app\modules\quests\services\QuestService::class);
+//         $questId = 2;
+//         $quest = $questService->find($questId);
+//         $message = StringHelper::escapeMarkdown($quest->help);
 
-        // $inlineKeyboards[] = [$helpButton];
-        // $inlineKeyboards[] = [$startButton];
+// $message = StringHelper::escapeMarkdown($message);
 
-        // $keyboard = [
-        //     'inline_keyboard' => $inlineKeyboards,
-        // ];
+$message = "
+*bold \*text*
+_italic \*text_
+__underline__
+~strikethrough~
+||spoiler||
+*bold _italic bold ~italic bold strikethrough ||italic bold strikethrough spoiler||~ __underline italic bold___ bold*
+[inline URL](http://www.example.com/)
+[inline mention of a user](tg://user?id=123456789)
+![👍](tg://emoji?id=5368324170671202286)
+`inline fixed-width code`
+";
 
-        // ============================================
+// $message = StringHelper::smartEscapeMarkdownV2($message);
 
-        $keyboard[] = [
-            [
-                'text' => 'ℹ️ Подсказки (1/2)',
-                'callback_data' => 'show_hint:1',
-            ],
-        ];
+        $bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'markdownv2',
+        ]);
 
-        $keyboard[] = [
-            [
-                'text' => '⬅️ Вернуться к вопросу',
-                'callback_data' => 'to_answer:1',
-            ]
-        ];
-
-        $replyMarkup = [];
-        if (count ($keyboard) > 0) {
-            $replyMarkup = [
-                'inline_keyboard' => $keyboard
-            ];
-
-        }
-
-        // error_log("Keyboard: " . print_r($replyMarkup, true));
-
-        $hintService = Yii::$container->get(\app\modules\quests\services\HintService::class);
-        $hint = $hintService->find(3);
-        $message = "**Держите подсказку:**\n\n".StringHelper::escapeMarkdown($hint->text);
-        if ($hint->image) {
-            return $bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
-                'show_caption_above_media' => true,
-                'parse_mode' => 'markdownv2',
-                'reply_markup' => json_encode($replyMarkup),
-                // 'reply_markup' => json_encode($keyboard),
-            ]);
-        }
+        
 
         
         // $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
@@ -194,10 +172,10 @@ class DefaultController extends Controller
 // ";
 
 
-        // $bot = new TelegramBot($token);
-        // $bot->sendMessage($chatId, $message, [
-        //     'parse_mode' => 'markdownv2',
-        // ]);
+//         // $bot = new TelegramBot($token);
+//         $bot->sendMessage($chatId, $message, [
+//             'parse_mode' => 'markdownv2',
+//         ]);
         exit;
     }
 }
