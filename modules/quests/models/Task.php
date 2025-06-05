@@ -156,4 +156,16 @@ class Task extends ActiveRecord implements Sortable, Fileable
         return $this->hasMany(Answer::class, ['task_id' => 'id'])
             ->orderBy(['ord' => SORT_ASC]);
     }
+
+    public function getHints()
+    {
+        return $this->hasMany(Answer::class, ['task_id' => 'id']);
+    }
+
+    public function getVisibleHints()
+    {
+        return $this->getHints()
+            ->andWhere(['is_visible' => Hint::STATUS_VISIBLE])
+            ->orderBy(['ord' => SORT_ASC]);
+    }
 }

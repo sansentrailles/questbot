@@ -15,6 +15,8 @@ use app\modules\quests\models\traits\UserProgressAttributeLabelsTrait;
  * @property int $user_id
  * @property int $quest_id
  * @property int $curretn_question_id
+ * @property int $hint_id
+ * @property int $hint_used
  * @property string $answer
  * @property int $is_completed
  * @property int $created_at
@@ -49,6 +51,8 @@ class UserProgress extends ActiveRecord
         $model->current_task_id = $form->current_task_id;
         $model->is_completed    = $form->is_completed;
         $model->answer          = $form->answer;
+        $model->hint_id         = $form->hint_id;
+        $model->hint_used       = $form->hint_used;
 
         return $model;
     }
@@ -60,6 +64,8 @@ class UserProgress extends ActiveRecord
         $this->current_task_id = $form->current_task_id;
         $this->is_completed    = $form->is_completed;
         $this->answer          = $form->answer;
+        $this->hint_id         = $form->hint_id;
+        $this->hint_used       = $form->hint_used;
     }
 
     public function getQuest()
@@ -70,5 +76,10 @@ class UserProgress extends ActiveRecord
     public function getTask()
     {
         return $this->hasOne(Task::class, ['id' => 'current_task_id']);
+    }
+
+    public function getHint()
+    {
+        return $this->hasOne(Hint::class, ['id' => 'hint_id']);
     }
 }

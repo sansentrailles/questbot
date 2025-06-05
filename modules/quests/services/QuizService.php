@@ -12,6 +12,7 @@ class QuizService
     private $taskService;
     private $userProgressService;
     private $answerService;
+    private $hintService;
 
     public function __construct(TelegramBot $bot)
     {
@@ -20,6 +21,7 @@ class QuizService
         $this->userProgressService = $container->get(UserProgressService::class);
         $this->taskService = $container->get(TaskService::class);
         $this->answerService = $container->get(AnswerService::class);
+        $this->hintService = $container->get(HintService::class);
         $this->bot = $bot;
     }
 
@@ -369,7 +371,7 @@ class QuizService
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
-        return $this->showTask($chatId, $currentTask);
+        return $this->showTask($chatId, $currentTask, $progress);
 
         // $nextTask = $this->taskService->getNext($currentTask);
         // Обновить прогресс
@@ -378,12 +380,25 @@ class QuizService
         // установить UserProgress::is_complete = true
     }
 
-    private function showTask($chatId, $task)
+    // Показать задание
+    private function showTask($chatId, $task, $progress)
     {
         $message = $task->question;
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];
+        $hints = $task->visibleHints;
+        $hintsCount = count($hints);
+        if ($hintsCount > 0) {
+            error_log('add hints button');
+            $keyboard[] = [
+                [
+                    'text' => 'Подсказки ('.$progress->hint_used.'/'.$hintsCount.')',
+                    'callback_data' => 'show_hint:' . $task->quest_id,
+                ]
+            ];
+        }
+
         if ($task->type == Task::TYPE_CHOICE) {
             $answers = $task->answers;
 
