@@ -353,7 +353,7 @@ class QuizService
 
         return $this->bot->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
-            'parse_mode' => 'markdown',
+            'parse_mode' => 'markdownv2',
         ]);
     }
 
