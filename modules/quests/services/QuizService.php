@@ -2,6 +2,7 @@
 
 namespace app\modules\quests\services;
 
+use app\custom\helpers\StringHelper;
 use app\modules\quests\models\Task;
 use app\modules\quests\api\telegram\TelegramBot;
 
@@ -277,7 +278,8 @@ class QuizService
         if (count($quests) > 0) {
             $keyboard = $this->questService->generateQuestKeyboard($quests);
 
-            return $this->bot->sendMessage($chatId, "Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:", [
+            $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
+            return $this->bot->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard),
                 'parse_mode' => 'markdownv2'
             ]);

@@ -209,4 +209,14 @@ class StringHelper
         }
         return null;
     }
+
+    public static function escapeMarkdown($text) 
+    {
+        $specialChars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
+        foreach ($specialChars as $char) {
+            $text = str_replace($char, '\\' . $char, $text);
+        }
+        return $text;
+    }
+
 }

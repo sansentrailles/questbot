@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\modules\quests\controllers\frontend;
 
+use app\custom\helpers\StringHelper;
 use Yii;
 use app\modules\quests\services\QuizService;
 use app\modules\quests\api\telegram\TelegramBot;
@@ -102,56 +103,21 @@ class DefaultController extends Controller
         $chatId = 215488627;
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
 
-        $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
-        $task = $taskService->find(2);
-
-        $message = $task->question;
+        // $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
+        // $task = $taskService->find(2);
+        // $message = $task->question;
         
         $bot = new TelegramBot($token);
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
-        $keyboard = [];
-        $hints = $task->visibleHints;
-        $hintsCount = count($hints);
-        if ($hintsCount > 0) {
-            error_log('add hints button');
-            $keyboard[] = [
-                [
-                    'text' => 'Подсказки (0/3)',
-                    'callback_data' => 'show_hint:' . $task->quest_id,
-                ]
-            ];
-        }
+        
+        $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
+        $bot->sendMessage($chatId, $message, [
+            // 'reply_markup' => json_encode($keyboard),
+            'parse_mode' => 'markdownv2'
+        ]);
 
-        if ($task->type == \app\modules\quests\models\Task::TYPE_CHOICE) {
-            $answers = $task->answers;
-
-            foreach ($answers as $answer) {
-                $keyboard[] = [
-                    [
-                        'text' => $answer->title,
-                        'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
-                    ]
-                ];
-            }
-        } else {
-            $message .= "\n\nВведите ответ на вопрос: ";
-        }
-
-        $options = [];
-        if (count ($keyboard) > 0) {
-            $replyMarkup = [
-                'inline_keyboard' => $keyboard
-            ];
-
-            $options['reply_markup'] = json_encode($replyMarkup);
-        }
-
-        if ($task->image) {
-            return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
-        }
-
-        $bot->sendMessage($chatId, $message, $options);
+        // $bot->sendMessage($chatId, $message, $options);
 
 //         $message = "
 // *Жирный текст* и _курсивный текст_  
