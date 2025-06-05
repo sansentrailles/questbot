@@ -33,6 +33,9 @@ use app\custom\widgets\backend\delete\Delete;
 
         <?php echo $form->field($model, 'date')->textInput(['maxlength' => true]); ?>
 
+        <?php echo $form->field($model, 'text_final')->textarea(['rows' => 8]); ?>
+
+        <?php /*
         <?php echo $form->field($model, 'text_final')->widget(TinyMce::class, [
             'options' => ['rows' => 10],
             'language' => Yii::$app->language,
@@ -45,6 +48,7 @@ use app\custom\widgets\backend\delete\Delete;
                 'toolbar' => 'undo redo | styleselect | bold italic ',
             ],
         ]); ?>
+        */?>
 
         <div class="form-group">
             <div class="row">
