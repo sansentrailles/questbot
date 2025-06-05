@@ -19,6 +19,8 @@ use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
  * @property string $title
  * @property string $code
  * @property string $image
+ * @property string $image_final
+ * @property string $text_final
  * @property string $desc
  * @property string $help
  * @property int $date
@@ -35,12 +37,15 @@ class Quest extends ActiveRecord implements Fileable
     public const STATUS_VISIBLE = 1;
 
     public const BUCKET_NAME_IMAGE = 'questImage';
+    public const BUCKET_NAME_IMAGE_FINAL = 'questImageFinal';
 
     private $imageFile;
+    private $imageFinalFile;
 
     public function __construct($config = [])
     {
         $this->imageFile = new BaseImageFile(self::BUCKET_NAME_IMAGE);
+        $this->imageFinalFile = new BaseImageFile(self::BUCKET_NAME_IMAGE_FINAL);
 
         parent::__construct($config);
     }
@@ -61,28 +66,32 @@ class Quest extends ActiveRecord implements Fileable
     {
         $model = new self();
 
-        $model->title      = $form->title;
-        $model->code       = $form->code;
-        $model->desc       = $form->desc;
-        $model->help       = $form->help;
-        $model->date       = $form->date;
-        $model->image      = $form->image;
-        $model->limit      = $form->limit;
-        $model->is_visible = $form->is_visible;
+        $model->title       = $form->title;
+        $model->code        = $form->code;
+        $model->desc        = $form->desc;
+        $model->help        = $form->help;
+        $model->date        = $form->date;
+        $model->image       = $form->image;
+        $model->image_final = $form->image_final;
+        $model->text_final  = $form->text_final;
+        $model->limit       = $form->limit;
+        $model->is_visible  = $form->is_visible;
 
         return $model;
     }
 
     public function edit(Form $form): void
     {
-        $this->title      = $form->title;
-        $this->code       = $form->code;
-        $this->desc       = $form->desc;
-        $this->help       = $form->help;
-        $this->date       = $form->date;
-        $this->image      = $form->image;
-        $this->limit      = $form->limit;
-        $this->is_visible = $form->is_visible;
+        $this->title       = $form->title;
+        $this->code        = $form->code;
+        $this->desc        = $form->desc;
+        $this->help        = $form->help;
+        $this->date        = $form->date;
+        $this->image       = $form->image;
+        $this->image_final = $form->image_final;
+        $this->text_final  = $form->text_final;
+        $this->limit       = $form->limit;
+        $this->is_visible  = $form->is_visible;
     }
 
 
@@ -98,11 +107,23 @@ class Quest extends ActiveRecord implements Fileable
         return $files;
     }
 
+    public function getImageFinalFiles()
+    {
+        $files = [];
+        if ($this->image_final) {
+            $files[] = [
+                'bucket' => $this->imageFinalFile->getBucket(),
+                'file' => $this->image_final,
+            ];
+        }
+        return $files;
+    }
 
     public function getNestedFiles(): array
     {
         $files = [];
         $files = array_merge($files, $this->getImageFiles());
+        $files = array_merge($files, $this->getImageFinalFiles());
         return $files;
     }
 
@@ -115,10 +136,28 @@ class Quest extends ActiveRecord implements Fileable
         return null;
     }
 
+    public function getImageFinalPath()
+    {
+        if ($this->image_final) {
+            return $this->imageFinalFile->getPath($this->image_final);
+        }
+
+        return null;
+    }
+
     public function getImageFullPath()
     {
         if ($this->image) {
             return \Yii::getAlias("@webroot")."/".$this->imagePath;
+        }
+
+        return null;
+    }
+
+    public function getImageFinalFullPath()
+    {
+        if ($this->image_final) {
+            return \Yii::getAlias("@webroot")."/".$this->imageFinalPath;
         }
 
         return null;

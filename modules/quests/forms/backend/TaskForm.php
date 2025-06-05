@@ -42,8 +42,6 @@ class TaskForm extends Model
         parent::__construct($config);
     }
 
-
-
     public function init(): void
     {
         if (!$this->task) {

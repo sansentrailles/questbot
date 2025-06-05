@@ -98,14 +98,40 @@ class DefaultController extends Controller
 
     public function actionHelp()
     {
-        $callback_data = '1[#]матрица';
-        list($taskId, $answer) = explode('[#]', $callback_data);
+        // $message = "Текст с HTML\nНовая строка\n<i>Курсив</i>\n<span class='tg-spoiler'>text</span>";
+        $chatId = 215488627;
+        $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
 
-        print_r([
-            'taskId' => $taskId,
-            'answer' => $answer,
+//         $message = "
+// *Жирный текст* и _курсивный текст_  
+// ~~Зачёркнуто~~ и `моноширинный код`  
+// ~Зачёркнуто~ и `моноширинный код`  
+// __underline__
+
+// [Ссылка на Google](https://google.com)  
+// [Упомянуть пользователя](tg://user?id=215488627)  
+
+// ||Спойлер скрыт||  
+// Экранирование: \\*не жирный\\*
+// ";
+$message = "
+*bold \*text*
+_italic \*text_
+__underline__
+~strikethrough~
+||spoiler||
+*bold _italic bold ~italic bold strikethrough ||italic bold strikethrough spoiler||~ __underline italic bold___ bold*
+[inline URL](http://www.example.com/)
+[inline mention of a user](tg://user?id=123456789)
+![👍](tg://emoji?id=5368324170671202286)
+`inline fixed-width code`
+";
+
+
+        $bot = new TelegramBot($token);
+        $bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'markdownv2',
         ]);
-        exit;
 
         // $message =  "Ваш ответ: \nОтвет\n\nНажмите \"Принять ✅\" для подтверждения или введите новый ответ";
         // $bot->sendMessage($chatId, $message, [

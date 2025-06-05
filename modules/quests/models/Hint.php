@@ -11,39 +11,29 @@ use yii\behaviors\TimestampBehavior;
 use app\custom\traits\models\SortableTrait;
 use app\custom\traits\models\VisibilityTrait;
 use app\custom\interfaces\annotations\Sortable;
-use app\modules\quests\forms\backend\TaskForm as Form;
-use app\modules\quests\models\traits\TaskAttributeLabelsTrait;
+use app\modules\quests\forms\backend\HintForm as Form;
+use app\modules\quests\models\traits\HintAttributeLabelsTrait;
 
 /**
- * This is the model class for table "{{%quest_tasks}}".
+ * This is the model class for table "{{%quest_task_hints}}".
  * @property int $id
- * @property int $quest_id
- * @property string $question
+ * @property int $task_id
+ * @property string $text
  * @property string $image
- * @property string $answer
- * @property int $type
- * @property string $place
- * @property string $address
- * @property string $longitude
- * @property string $latitude
- * @property string $message
  * @property int $is_visible
  * @property int $created_at
  * @property int $updated_at
  */
-class Task extends ActiveRecord implements Sortable, Fileable
+class Hint extends ActiveRecord implements Sortable, Fileable
 {
-    use TaskAttributeLabelsTrait;
+    use HintAttributeLabelsTrait;
     use SortableTrait;
     use VisibilityTrait;
 
     public const STATUS_INVISIBLE = 0;
     public const STATUS_VISIBLE = 1;
 
-    public const TYPE_INPUT = 1;
-    public const TYPE_CHOICE = 2;
-
-    public const BUCKET_NAME_IMAGE = 'taskImage';
+    public const BUCKET_NAME_IMAGE = 'taskHintImage';
 
     private $imageFile;
 
@@ -56,7 +46,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
 
     public static function tableName()
     {
-        return 'quest_tasks';
+        return 'quest_task_hints';
     }
 
     public function behaviors()
@@ -70,16 +60,9 @@ class Task extends ActiveRecord implements Sortable, Fileable
     {
         $model = new self();
 
-        $model->quest_id   = $form->quest_id;
-        $model->address    = $form->address;
-        $model->question   = $form->question;
+        $model->task_id    = $form->task_id;
+        $model->text       = $form->text;
         $model->image      = $form->image;
-        $model->answer     = $form->answer;
-        $model->type       = $form->type;
-        $model->place      = $form->place;
-        $model->longitude  = $form->longitude;
-        $model->latitude   = $form->latitude;
-        $model->message    = $form->message;
         $model->is_visible = $form->is_visible;
 
         return $model;
@@ -87,16 +70,9 @@ class Task extends ActiveRecord implements Sortable, Fileable
 
     public function edit(Form $form): void
     {
-        $this->quest_id   = $form->quest_id;
-        $this->address    = $form->address;
-        $this->question   = $form->question;
+        $this->task_id    = $form->task_id;
+        $this->text       = $form->text;
         $this->image      = $form->image;
-        $this->answer     = $form->answer;
-        $this->type       = $form->type;
-        $this->place      = $form->place;
-        $this->longitude  = $form->longitude;
-        $this->latitude   = $form->latitude;
-        $this->message    = $form->message;
         $this->is_visible = $form->is_visible;
     }
 
@@ -129,17 +105,9 @@ class Task extends ActiveRecord implements Sortable, Fileable
         return null;
     }
 
-    public static function getTypes()
+    public function getTask()
     {
-        return [
-            self::TYPE_INPUT => 'Ввод ответа',
-            self::TYPE_CHOICE => 'Выбор варианта ответа',
-        ];
-    }
-
-    public function getQuest()
-    {
-        return $this->hasOne(Quest::class, ['id' => 'quest_id']);
+        return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
 
     public function getImageFullPath()
@@ -149,11 +117,5 @@ class Task extends ActiveRecord implements Sortable, Fileable
         }
 
         return null;
-    }
-
-    public function getAnswers()
-    {
-        return $this->hasMany(Answer::class, ['task_id' => 'id'])
-            ->orderBy(['ord' => SORT_ASC]);
     }
 }

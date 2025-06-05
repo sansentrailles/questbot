@@ -44,6 +44,15 @@ class QuestService extends BaseService
         $this->repository->save($model);
     }
 
+    public function deleteImageFinal($id): void
+    {
+        $model = $this->repository->find($id);
+        $files = $model->getImageFinalFiles();
+        StorageFileHelper::removeFiles($files);
+        $model->image_final = null;
+        $this->repository->save($model);
+    }
+
     /**
      * Generate array for telegram bot keyboard with quests
      */

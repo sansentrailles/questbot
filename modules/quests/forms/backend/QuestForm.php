@@ -21,21 +21,25 @@ class QuestForm extends Model
     public $title;
     public $code;
     public $desc;
+    public $text_final;
     public $help;
     public $date;
     public $limit;
     public $is_visible;
     public $image;
     public $imageFile;
+    public $image_final;
+    public $imageFinalFile;
 
     public $questImage;
-
+    public $questImageFinal;
 
     private $quest;
 
     public function __construct(?Quest $quest = null, $config = [])
     {
         $this->questImage = new BaseImageFile(Quest::BUCKET_NAME_IMAGE);
+        $this->questImageFinal = new BaseImageFile(Quest::BUCKET_NAME_IMAGE_FINAL);
 
         $this->quest = $quest;
         parent::__construct($config);
@@ -49,15 +53,17 @@ class QuestForm extends Model
             return;
         }
 
-        $this->id         = $this->quest->id;
-        $this->title      = $this->quest->title;
-        $this->code       = $this->quest->code;
-        $this->desc       = $this->quest->desc;
-        $this->help       = $this->quest->help;
-        $this->limit      = $this->quest->limit;
-        $this->date       = $this->quest->date;
-        $this->image      = $this->quest->image;
-        $this->is_visible = $this->quest->is_visible;
+        $this->id          = $this->quest->id;
+        $this->title       = $this->quest->title;
+        $this->code        = $this->quest->code;
+        $this->desc        = $this->quest->desc;
+        $this->help        = $this->quest->help;
+        $this->limit       = $this->quest->limit;
+        $this->date        = $this->quest->date;
+        $this->image       = $this->quest->image;
+        $this->image_final = $this->quest->image_final;
+        $this->text_final  = $this->quest->text_final;
+        $this->is_visible  = $this->quest->is_visible;
     }
 
     public function rules()
@@ -65,7 +71,7 @@ class QuestForm extends Model
         return [
             [['is_visible'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
-            [['desc', 'help'], 'string'],
+            [['desc', 'help', 'text_final'], 'string'],
             [['title'], 'required', 'message' => 'Введите название'],
             [['code'], 'unique', 'targetClass' => Quest::class, 'filter' => function ($query): void {
                 if ($this->id) {
@@ -74,7 +80,7 @@ class QuestForm extends Model
             }],
             [['date'], 'string'],
             [['limit'], 'integer'],
-            [['imageFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['imageFile', 'imageFinalFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -106,11 +112,23 @@ class QuestForm extends Model
                     ],
                 ],
             ],
+            'imageFinalFile' => [
+                'image_final' => [
+                    'transform' => [
+                        $this->questImageFinal->save(),
+                    ],
+                ],
+            ],
         ];
     }
 
     public function getImagePath()
     {
         return $this->quest->imagePath;
+    }
+
+    public function getImageFinalPath()
+    {
+        return $this->quest->imageFinalPath;
     }
 }

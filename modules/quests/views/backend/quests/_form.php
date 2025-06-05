@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
 
-use app\custom\widgets\backend\delete\Delete;
-use app\modules\quests\models\Quest;
-use app\modules\quests\Module;
-use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\View;
+use yii\helpers\Url;
+use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\modules\quests\Module;
+use dosamigos\tinymce\TinyMce;
+use app\modules\quests\models\Quest;
+use app\custom\widgets\backend\delete\Delete;
 
 /** @var View $this */
 /** @var Quest $model */
@@ -32,6 +33,19 @@ use yii\widgets\ActiveForm;
 
         <?php echo $form->field($model, 'date')->textInput(['maxlength' => true]); ?>
 
+        <?php echo $form->field($model, 'text_final')->widget(TinyMce::class, [
+            'options' => ['rows' => 10],
+            'language' => Yii::$app->language,
+            'clientOptions' => [
+                'plugins' => [
+                    'advlist autolink lists link charmap hr preview pagebreak',
+                    'wordcount code fullscreen nonbreaking',
+                    'save insertdatetime contextmenu paste',
+                ],
+                'toolbar' => 'undo redo | styleselect | bold italic ',
+            ],
+        ]); ?>
+
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
@@ -51,7 +65,22 @@ use yii\widgets\ActiveForm;
                     <?php } ?>
                 </div>
 
-                <div class="col-md-6"></div>
+                <div class="col-md-6">
+                    <?php echo $form->field($model, 'imageFinalFile')->fileInput(); ?>
+
+                    <?php if ($model->image_final) { ?>
+                        <div class="row" data-removable>
+                            <div class="col-md-6">
+                                <img src="<?php echo $model->imageFinalPath; ?>" alt="" class='img-responsive'>
+                            </div>
+                            <div class="col-md-6">
+                                <?php echo Delete::widget([
+                                    'url' => Url::to(['/admin/quests/quests/delete-image-final', 'id' => $model->id]),
+                                ]); ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </div>
 

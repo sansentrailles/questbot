@@ -226,7 +226,7 @@ class QuizService
             ]);
         }
 
-        $this->bot->sendMessage($chatId, "Вы написали: $text");
+        // $this->bot->sendMessage($chatId, "Вы написали: $text");
     }
     
     /**
@@ -347,7 +347,6 @@ class QuizService
 
     protected function startQuest($chatId, int $questId)
     {
-        error_log("Start quest");
         $quest = $this->questService->find($questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
@@ -428,6 +427,7 @@ class QuizService
         $nextTask = $this->taskService->getNext($currentTask);
         if ($nextTask) {
             $progress->current_task_id = $nextTask->id;
+            $progress->answer = null;
             $this->userProgressService->updateProgress($progress);
             // $this->userProgressService->updateProgress($progress, $nextTask->id);
             $this->sendNextTask($chatId, $questId);
