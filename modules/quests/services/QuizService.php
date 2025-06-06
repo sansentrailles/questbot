@@ -550,7 +550,7 @@ class QuizService
         $quest = $progress->quest;
         $this->userProgressService->completeQuest($progress);
 
-        $message = "Все задания прогулки заданы!\n\n**Спасибо за участие!**";
+        $message = "Все задания прогулки заданы!\n\n<b>Спасибо за участие!</b>";
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
@@ -559,12 +559,12 @@ class QuizService
 
         if ($quest->image_final) {
             return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
-                'parse_mode' => 'markdownv2',
+                'parse_mode' => 'html',
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'markdownv2',
+            'parse_mode' => 'html',
         ]);
     }
 
