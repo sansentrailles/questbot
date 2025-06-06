@@ -13,4 +13,17 @@ class StatRepository extends BaseRepository
     {
         $this->model = Model::class;
     }
+
+    public function getActualStat($userId, $questId)
+    {
+        $query = $this->model::find()
+            ->andWhere([
+                'user_id' => $userId,
+                'quest_id' => $questId,
+            ]);
+
+        $query->andWhere('`finish` is null or `finish` = 0');
+
+        return $query->one();
+    }
 }

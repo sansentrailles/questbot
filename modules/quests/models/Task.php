@@ -174,4 +174,24 @@ class Task extends ActiveRecord implements Sortable, Fileable
             ->andWhere(['is_visible' => Hint::STATUS_VISIBLE])
             ->orderBy(['ord' => SORT_ASC]);
     }
+
+    public function getAnswerText()
+    {
+        if ($this->type == self::TYPE_INPUT) {
+            return $this->answer;
+        }
+
+        $correctAnswer = $this->getCorrectAnswer()->one();
+        if ($correctAnswer) {
+            return $correctAnswer->title;
+        }
+
+        return '';
+    }
+
+    public function getCorrectAnswer()
+    {
+        return $this->getAnswers()
+            ->andWhere(['is_right' => Answer::STATE_RIGHT]);
+    }
 }

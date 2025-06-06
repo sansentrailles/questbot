@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace app\modules\quests\services;
 
+use yii\base\Model as Form;
 use app\custom\services\base\BaseService;
 use app\modules\quests\models\StatItem as Model;
+use app\modules\quests\forms\backend\StatItemForm;
 use app\modules\quests\repositories\StatItemRepository as Repository;
-use yii\base\Model as Form;
 
 class StatItemService extends BaseService
 {
@@ -30,5 +31,12 @@ class StatItemService extends BaseService
     public function getRepositoryClass()
     {
         return Repository::class;
+    }
+
+    public function saveStatItem(Model $model)
+    {
+        $form = new StatItemForm($model);
+
+        return $this->save($form);
     }
 }

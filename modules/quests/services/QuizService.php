@@ -14,6 +14,7 @@ class QuizService
     private $userProgressService;
     private $answerService;
     private $hintService;
+    private $statService;
 
     public function __construct(TelegramBot $bot)
     {
@@ -23,6 +24,7 @@ class QuizService
         $this->taskService = $container->get(TaskService::class);
         $this->answerService = $container->get(AnswerService::class);
         $this->hintService = $container->get(HintService::class);
+        $this->statService = $container->get(StatService::class);
         $this->bot = $bot;
     }
 
@@ -221,6 +223,7 @@ class QuizService
     }
     
     /**
+     * TODO: Вынести обработку ответа в отдельный метод
      * Обработка обычных сообщений (можно переопределить в дочернем классе)
      * @param int $chatId - ID чата
      * @param string $text - текст сообщения
@@ -232,6 +235,7 @@ class QuizService
             
             $progress->answer = $text;
             $this->userProgressService->updateProgress($progress);
+            // $this->statService->getActualStat($chatId, $progress->quest_id);
 
             $message =  "Ваш ответ: \n". $text."\n\nНажмите \"Принять ✅\" для подтверждения или введите новый ответ";
 
@@ -373,18 +377,18 @@ class QuizService
 
     protected function startQuest($chatId, int $questId)
     {
-        error_log('start quest');
         $quest = $this->questService->find($questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
         }
-error_log('quest exists');
+
         $tasks = $quest->visibleTasks;
         if (count($tasks) == 0) {
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
-error_log('quest has tasks');
-        $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
+
+        $progress = $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
+        $stat = $this->statService->createStat($chatId, $questId);
 
         $this->sendNextTask($chatId, $questId);
 
@@ -466,7 +470,6 @@ error_log('quest has tasks');
             $options['reply_markup'] = json_encode($replyMarkup);
             $options['parse_mode'] = 'html';
         }
-error_log("Send task");
         if ($task->image) {
             return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
         }
@@ -521,6 +524,11 @@ error_log("Send task");
         //     $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
         // }
     }
+
+    // private function saveStat($chatId, $progress)
+    // {
+    //     $stat = $this->statService->
+    // }
 
     private function handleNextAnswer($chatId, $currentTask, $progress)
     {

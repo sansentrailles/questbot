@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace app\modules\quests\services;
 
+use yii\base\Model as Form;
 use app\custom\services\base\BaseService;
 use app\modules\quests\models\Stat as Model;
+use app\modules\quests\forms\backend\StatForm;
 use app\modules\quests\repositories\StatRepository as Repository;
-use yii\base\Model as Form;
 
 class StatService extends BaseService
 {
@@ -30,5 +31,25 @@ class StatService extends BaseService
     public function getRepositoryClass()
     {
         return Repository::class;
+    }
+
+    public function createStat($userId, $questId)
+    {
+        $form = new StatForm();
+        $form->user_id = $userId;
+        $form->quest_id = $questId;
+        $form->start = time();
+
+        return $this->save($form);
+    }
+
+    public function updateStat($id)
+    {
+
+    }
+
+    public function getActualStat($userId, $questId)
+    {
+        return $this->repository->getActualStat($userId, $questId);
     }
 }

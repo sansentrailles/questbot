@@ -103,77 +103,30 @@ class DefaultController extends Controller
         $chatId = 215488627;
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
 
+        $statService = Yii::$container->get(\app\modules\quests\services\StatService::class);
         $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
-        $task = $taskService->find(2);
-        // $message = $task->question;
+
+        $questId = 1;
+        $taskId = 2;
+
+        $task = $taskService->find($taskId);
+        $correctAnswer = $task->answerText;
+        print_r($correctAnswer);
+
+        // $stat = $statService->createStat($chatId, $questId);
+        $actualStat = $statService->getActualStat($chatId, $questId);
+        // if ($actualStat) {
+
+        // }
+
+        print_r($actualStat);
         
-        $bot = new TelegramBot($token);
 
-        $message = $task->question;
-
-        if ($task->place_show == \app\modules\quests\models\Task::PLACE_SHOW) {
-            $message .= "\n\nМесто: ".$task->place."\n";
-            $message .= "Адрес: ".$task->address."\n";
-            $baseUrl = "https://yandex.ru/maps/"; 
-            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-            $kbButton = [];
-            $kbButton = [
-                [
-                    'text' => 'Посмотреть на карте 🌎',
-                    'url' => $link,
-                ]
-            ];
-        }
-
-
-        // Формирование вариантов ответов, если вопрос с выбором варианта
-        $keyboard = [];
-        $hints = $task->visibleHints;
-        $hintsCount = count($hints);
-
-        if ($task->type == \app\modules\quests\models\Task::TYPE_CHOICE) {
-            $answers = $task->answers;
-
-            foreach ($answers as $answer) {
-                $keyboard[] = [
-                    [
-                        'text' => $answer->title,
-                        'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
-                    ]
-                ];
-            }
-        } else {
-            $message .= "\n\nВведите ответ на вопрос: ";
-        }
-
-        if ($hintsCount > 0) {
-            $keyboard[] = [
-                [
-                    'text' => 'Подсказки (1/'.$hintsCount.') ℹ️',
-                    'callback_data' => 'show_hint:' . $task->quest_id,
-                ]
-            ];
-        }
-
-        if (count($kbButton) > 0) {
-            $keyboard[] = $kbButton;
-        }
-
-        $options = [];
-        if (count ($keyboard) > 0) {
-            $replyMarkup = [
-                'inline_keyboard' => $keyboard
-            ];
-
-            $options['reply_markup'] = json_encode($replyMarkup);
-            $options['parse_mode'] = 'html';
-        }
-
-        if ($task->image) {
-            $bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
-        }
-
-        $bot->sendMessage($chatId, $message, $options);
+        echo 'Ok';
+        // $bot = new TelegramBot($token);
+        // $message = "";
+        // $options = [];
+        // $bot->sendMessage($chatId, $message, $options);
 
         exit;
 
