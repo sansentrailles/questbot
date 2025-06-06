@@ -554,7 +554,7 @@ class QuizService
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
-
+error_log($message);
         if ($quest->image_final) {
             return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
                 'parse_mode' => 'html',
