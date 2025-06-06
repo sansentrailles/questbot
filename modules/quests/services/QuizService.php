@@ -541,11 +541,11 @@ class QuizService
             $this->userProgressService->updateProgress($progress);
             $this->sendNextTask($chatId, $progress->quest_id);
         } else {
-            $this->finalizeQuizz($chatId, $progress);
+            $this->finalizeQuiz($chatId, $progress);
         }
     }
 
-    private function finalizeQuizz($chatId, $progress)
+    private function finalizeQuiz($chatId, $progress)
     {
         $quest = $progress->quest;
         $this->userProgressService->completeQuest($progress);
@@ -554,8 +554,6 @@ class QuizService
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
-
-        $message = StringHelper::escapeMarkdown($message);
 
         if ($quest->image_final) {
             return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
