@@ -71,22 +71,27 @@ class QuizService
             $buttonData = $this->parseButtonData($data);
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
+                // Список прогулок
                 case 'quests':
-                    $this->bot->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
-                    break;
-
-                case 'show_quest':
                     $this->showQuests($chatId);
                     break;
 
+                // Выбор пргулки
+                case 'quest_info':
+                    $this->showQuestInfo($chatId, (int) $buttonData['value']);
+                    break;
+
+                // Отображение статистики
                 case 'show_stat':
                     $this->showStat($chatId);
                     break;
 
+                // Запуск прогулки
                 case 'start_quest':
                     $this->startQuest($chatId, (int) $buttonData['value']);
                     break;
 
+                // Отображение справки прогулки
                 case 'quest_help':
                     $this->showQuestHelp($chatId, (int) $buttonData['value']);
                     break;
@@ -102,22 +107,16 @@ class QuizService
                     $this->handleInputAnswer($chatId, $buttonData['value']);
                     break;
 
-                case 'to_answer':
+                // Перейти к заданию из подсказки
+                case 'to_task':
                     $this->sendNextTask($chatId, (int) $buttonData['value']);
                     break;
 
+                // Показать подсказку
                 case 'show_hint':
                     $this->handleHint($chatId, (int) $buttonData['value']);
                     break;
-                    
-                case 'delete_message':
-                    $this->bot->deleteMessage($chatId, $messageId);
-                    break;
-                    
-                case 'edit_message':
-                    $this->bot->editMessageText($chatId, $messageId, "Сообщение изменено!");
-                    break;
-                    
+
                 default:
                     $this->processCustomButtonAction($chatId, $messageId, $buttonData);
             }
@@ -187,7 +186,7 @@ class QuizService
         $keyboard = [
             'inline_keyboard' => [
                 [
-                    ['text' => 'Прогулки 🚶‍♂️', 'callback_data' => 'show_quest'],
+                    ['text' => 'Прогулки 🚶‍♂️', 'callback_data' => 'quests'],
                     ['text' => 'Статистика 📊', 'callback_data' => 'show_stat']
                 ],
             ]
@@ -601,7 +600,7 @@ class QuizService
             ],
             [
                 'text' => 'Вернуться к вопросу ⬅️',
-                'callback_data' => 'to_answer:' . $task->quest_id,
+                'callback_data' => 'to_task:' . $task->quest_id,
             ]
         ];
 

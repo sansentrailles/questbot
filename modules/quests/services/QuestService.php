@@ -62,7 +62,7 @@ class QuestService extends BaseService
         foreach ($quests as $quest) {
             $lines[] = [
                 'text' => $quest->title,
-                'callback_data' => 'show_quest:' . $quest->id,
+                'callback_data' => 'quest_info:' . $quest->id,
             ];
         }
 
@@ -78,30 +78,30 @@ class QuestService extends BaseService
     }
 
     /** Generate array for telegram bot keyboard with questions for quest */
-    public function generateTasksKeyboard(array $tasks)
-    {
-        $lines = [];
-        foreach ($tasks as $task) {
-            $lines[] = [
-                'text' => $task->question,
-                'callback_data' => 'show_quest:' . $task->id,
-            ];
-        }
+    // public function generateTasksKeyboard(array $tasks)
+    // {
+    //     $lines = [];
+    //     foreach ($tasks as $task) {
+    //         $lines[] = [
+    //             'text' => $task->question,
+    //             'callback_data' => 'show_quest:' . $task->id,
+    //         ];
+    //     }
 
-        $lines[] = [
-                'text' => '⬅️ К списку квестов',
-                'callback_data' => 'quests',
-            ];
+    //     $lines[] = [
+    //             'text' => '⬅️ К списку квестов',
+    //             'callback_data' => 'quests',
+    //         ];
 
-        $inlineKeyboard = [];
-        foreach ($lines as $button) {
-            $inlineKeyboard[] = [$button];
-        }
+    //     $inlineKeyboard = [];
+    //     foreach ($lines as $button) {
+    //         $inlineKeyboard[] = [$button];
+    //     }
 
-        $result['inline_keyboard'] = $inlineKeyboard;
+    //     $result['inline_keyboard'] = $inlineKeyboard;
 
-        return $result;
-    }
+    //     return $result;
+    // }
 
     public function toggleVisible($id)
     {
