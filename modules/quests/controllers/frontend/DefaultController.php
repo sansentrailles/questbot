@@ -111,10 +111,9 @@ class DefaultController extends Controller
 
         $message = $task->question;
 
-        if ($task->place_show == 1) {
+        if ($task->place_show == \app\modules\quests\models\Task::PLACE_SHOW) {
             $message .= "\n\nМесто: ".$task->place."\n";
             $message .= "Адрес: ".$task->address."\n";
-
             $baseUrl = "https://yandex.ru/maps/"; 
             $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
             $kbButton = [];
@@ -125,6 +124,7 @@ class DefaultController extends Controller
                 ]
             ];
         }
+
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];

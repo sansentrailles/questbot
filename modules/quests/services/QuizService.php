@@ -412,23 +412,19 @@ error_log('quest has tasks');
         error_log("showTask");
         $message = $task->question;
 
-        // try {
-        //     if ($task->place_show == Task::PLACE_SHOW) {
-        //         $message .= "\n\nМесто: ".$task->place."\n";
-        //         $message .= "Адрес: ".$task->address."\n";
-        //         $baseUrl = "https://yandex.ru/maps/"; 
-        //         $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-        //         $kbButton = [];
-        //         $kbButton = [
-        //             [
-        //                 'text' => 'Посмотреть на карте 🌎',
-        //                 'url' => $link,
-        //             ]
-        //         ];
-        //     }
-        // } catch (\Exception $e) {
-        //     error_log("error: ". $e->getMessage());
-        // }
+        if ($task->place_show == Task::PLACE_SHOW) {
+            $message .= "\n\nМесто: ".$task->place."\n";
+            $message .= "Адрес: ".$task->address."\n";
+            // $baseUrl = "https://yandex.ru/maps/"; 
+            // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+            // $kbButton = [];
+            // $kbButton = [
+            //     [
+            //         'text' => 'Посмотреть на карте 🌎',
+            //         'url' => $link,
+            //     ]
+            // ];
+        }
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];
