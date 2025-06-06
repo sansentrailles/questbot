@@ -393,7 +393,6 @@ error_log('quest has tasks');
 
     private function sendNextTask($chatId, $questId)
     {
-        error_log("sendNextTask");
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
 
@@ -409,21 +408,20 @@ error_log('quest has tasks');
     // Показать задание
     private function showTask($chatId, $task, $progress)
     {
-        error_log("showTask");
         $message = $task->question;
 
+        $kbButton = [];
         if ($task->place_show == Task::PLACE_SHOW) {
             $message .= "\n\nМесто: ".$task->place."\n";
             $message .= "Адрес: ".$task->address."\n";
-            // $baseUrl = "https://yandex.ru/maps/"; 
-            // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-            // $kbButton = [];
-            // $kbButton = [
-            //     [
-            //         'text' => 'Посмотреть на карте 🌎',
-            //         'url' => $link,
-            //     ]
-            // ];
+            $baseUrl = "https://yandex.ru/maps/"; 
+            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+            $kbButton = [
+                [
+                    'text' => 'Посмотреть на карте 🌎',
+                    'url' => $link,
+                ]
+            ];
         }
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
@@ -455,9 +453,9 @@ error_log('quest has tasks');
             ];
         }
 
-        // if (count($kbButton) > 0) {
-        //     $keyboard[] = $kbButton;
-        // }
+        if (count($kbButton) > 0) {
+            $keyboard[] = $kbButton;
+        }
 
         $options = [];
         if (count ($keyboard) > 0) {
