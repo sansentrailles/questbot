@@ -103,11 +103,79 @@ class DefaultController extends Controller
         $chatId = 215488627;
         $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
 
-        // $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
-        // $task = $taskService->find(2);
+        $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
+        $task = $taskService->find(2);
         // $message = $task->question;
         
         $bot = new TelegramBot($token);
+
+        $message = $task->question;
+
+        if ($task->place_show == 1) {
+            $message .= "\n\nМесто: ".$task->place."\n";
+            $message .= "Адрес: ".$task->address."\n";
+
+            $baseUrl = "https://yandex.ru/maps/"; 
+            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+            $kbButton = [];
+            $kbButton = [
+                [
+                    'text' => 'Посмотреть на карте 🌎',
+                    'url' => $link,
+                ]
+            ];
+        }
+
+        // Формирование вариантов ответов, если вопрос с выбором варианта
+        $keyboard = [];
+        $hints = $task->visibleHints;
+        $hintsCount = count($hints);
+
+        if ($task->type == \app\modules\quests\models\Task::TYPE_CHOICE) {
+            $answers = $task->answers;
+
+            foreach ($answers as $answer) {
+                $keyboard[] = [
+                    [
+                        'text' => $answer->title,
+                        'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
+                    ]
+                ];
+            }
+        } else {
+            $message .= "\n\nВведите ответ на вопрос: ";
+        }
+
+        if ($hintsCount > 0) {
+            $keyboard[] = [
+                [
+                    'text' => 'Подсказки (1/'.$hintsCount.') ℹ️',
+                    'callback_data' => 'show_hint:' . $task->quest_id,
+                ]
+            ];
+        }
+
+        if (count($kbButton) > 0) {
+            $keyboard[] = $kbButton;
+        }
+
+        $options = [];
+        if (count ($keyboard) > 0) {
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+
+            $options['reply_markup'] = json_encode($replyMarkup);
+            $options['parse_mode'] = 'html';
+        }
+
+        if ($task->image) {
+            $bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
+        }
+
+        $bot->sendMessage($chatId, $message, $options);
+
+        exit;
 
 //         $questService = Yii::$container->get(\app\modules\quests\services\QuestService::class);
 //         $questId = 2;
@@ -116,24 +184,24 @@ class DefaultController extends Controller
 
 // $message = StringHelper::escapeMarkdown($message);
 
-$message = "
-*bold \*text*
-_italic \*text_
-__underline__
-~strikethrough~
-||spoiler||
-*bold _italic bold ~italic bold strikethrough ||italic bold strikethrough spoiler||~ __underline italic bold___ bold*
-[inline URL](http://www.example.com/)
-[inline mention of a user](tg://user?id=123456789)
-![👍](tg://emoji?id=5368324170671202286)
-`inline fixed-width code`
-";
+// $message = "
+// *bold \*text*
+// _italic \*text_
+// __underline__
+// ~strikethrough~
+// ||spoiler||
+// *bold _italic bold ~italic bold strikethrough ||italic bold strikethrough spoiler||~ __underline italic bold___ bold*
+// [inline URL](http://www.example.com/)
+// [inline mention of a user](tg://user?id=123456789)
+// ![👍](tg://emoji?id=5368324170671202286)
+// `inline fixed-width code`
+// ";
 
 // $message = StringHelper::smartEscapeMarkdownV2($message);
 
-        $bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'markdownv2',
-        ]);
+        // $bot->sendMessage($chatId, $message, [
+        //     'parse_mode' => 'markdownv2',
+        // ]);
 
         
 

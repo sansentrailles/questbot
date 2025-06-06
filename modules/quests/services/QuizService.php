@@ -414,8 +414,14 @@ class QuizService
             $message .= "\n\nМесто: ".$task->place."\n";
             $message .= "Адрес: ".$task->address."\n";
             $baseUrl = "https://yandex.ru/maps/"; 
-            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->lattitude}&z=17";
-            $message .= "<a href='{$link}'>Посмотреть на карте</a>\n\n";
+            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+            $kbButton = [];
+            $kbButton = [
+                [
+                    'text' => 'Посмотреть на карте 🌎',
+                    'url' => $link,
+                ]
+            ];
         }
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
@@ -447,6 +453,10 @@ class QuizService
             ];
         }
 
+        if (count($kbButton) > 0) {
+            $keyboard[] = $kbButton;
+        }
+
         $options = [];
         if (count ($keyboard) > 0) {
             $replyMarkup = [
@@ -454,6 +464,7 @@ class QuizService
             ];
 
             $options['reply_markup'] = json_encode($replyMarkup);
+            $options['parse_mode'] = 'html';
         }
 
         if ($task->image) {
