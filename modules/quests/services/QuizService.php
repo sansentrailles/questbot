@@ -409,6 +409,7 @@ error_log('quest has tasks');
     // Показать задание
     private function showTask($chatId, $task, $progress)
     {
+        error_log("showTask");
         $message = $task->question;
 
         try {
@@ -472,7 +473,7 @@ error_log('quest has tasks');
             $options['reply_markup'] = json_encode($replyMarkup);
             $options['parse_mode'] = 'html';
         }
-
+error_log("Send task");
         if ($task->image) {
             return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
         }
