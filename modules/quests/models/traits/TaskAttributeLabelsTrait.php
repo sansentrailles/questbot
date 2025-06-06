@@ -23,6 +23,7 @@ trait TaskAttributeLabelsTrait
             'message'    => Module::t('common', 'TASK_MESSAGE'),
             'image'      => Module::t('common', 'TASK_IMAGE'),
             'imageFile'  => Module::t('common', 'TASK_IMAGE'),
+            'place_show' => Module::t('common', 'TASK_PLACE_SHOW'),
             'is_visible' => Module::t('common', 'IS_VISIBLE'),
             'ord'        => Module::t('common', 'ORDER'),
             'created_at' => Module::t('common', 'CREATED_AT'),

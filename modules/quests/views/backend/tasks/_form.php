@@ -26,6 +26,8 @@ $cityName = '';
     
         <?php echo $form->field($model, 'is_visible')->checkbox(); ?>
 
+        <?php echo $form->field($model, 'place_show')->checkbox(); ?>
+
         <?php echo $form->field($model, 'question')->textarea(['rows' => 5]); ?>
 
         <?php echo $form->field($model, 'type')->dropDownList(Task::getTypes(), [

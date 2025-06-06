@@ -27,6 +27,7 @@ use app\modules\quests\models\traits\TaskAttributeLabelsTrait;
  * @property string $longitude
  * @property string $latitude
  * @property string $message
+ * @property int $place_show
  * @property int $is_visible
  * @property int $created_at
  * @property int $updated_at
@@ -42,6 +43,9 @@ class Task extends ActiveRecord implements Sortable, Fileable
 
     public const TYPE_INPUT = 1;
     public const TYPE_CHOICE = 2;
+
+    public const PLACE_SHOW = 1;
+    public const PLACE_NOT_SHOW = 0;
 
     public const BUCKET_NAME_IMAGE = 'taskImage';
 
@@ -81,6 +85,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
         $model->latitude   = $form->latitude;
         $model->message    = $form->message;
         $model->is_visible = $form->is_visible;
+        $model->place_show = $form->place_show;
 
         return $model;
     }
@@ -98,6 +103,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
         $this->latitude   = $form->latitude;
         $this->message    = $form->message;
         $this->is_visible = $form->is_visible;
+        $this->place_show = $form->place_show;
     }
 
     public function getImageFiles()

@@ -410,6 +410,14 @@ class QuizService
     {
         $message = $task->question;
 
+        if ($task->place_show == Task::PLACE_SHOW) {
+            $message .= "\n\nМесто: ".$task->place."\n";
+            $message .= "Адрес: ".$task->address."\n";
+            $baseUrl = "https://yandex.ru/maps/"; 
+            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->lattitude}&z=17";
+            $message .= "<a href='{$link}'>Посмотреть на карте</a>\n\n";
+        }
+
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];
         $hints = $task->visibleHints;
@@ -465,7 +473,7 @@ class QuizService
         // Сделать проверку выбора правильного ответа
         // сохранить прогресс
 
-        $this->handeNextAnswer($chatId, $currentTask, $progress);
+        $this->handleNextAnswer($chatId, $currentTask, $progress);
 
         // $nextTask = $this->taskService->getNext($currentTask);
         // if ($nextTask) {
@@ -488,7 +496,7 @@ class QuizService
         
         // Сохранить ответ $progress->answer
 
-        $this->handeNextAnswer($chatId, $currentTask, $progress);
+        $this->handleNextAnswer($chatId, $currentTask, $progress);
         // $nextTask = $this->taskService->getNext($currentTask);
         // if ($nextTask) {
         //     $progress->current_task_id = $nextTask->id;
@@ -503,7 +511,7 @@ class QuizService
         // }
     }
 
-    private function handeNextAnswer($chatId, $currentTask, $progress)
+    private function handleNextAnswer($chatId, $currentTask, $progress)
     {
         $nextTask = $this->taskService->getNext($currentTask);
         if ($nextTask) {
@@ -606,5 +614,10 @@ class QuizService
             'parse_mode' => 'markdownv2',
             'reply_markup' => json_encode($replyMarkup),
         ]);
+    }
+
+    private function showStat($chatId)
+    {
+        return $this->bot->sendMessage($chatId, 'Скоро будет статистика');
     }
 }

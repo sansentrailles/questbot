@@ -27,6 +27,7 @@ class TaskForm extends Model
     public $longitude;
     public $latitude;
     public $message;
+    public $place_show;
     public $image;
     public $imageFile;
 
@@ -59,13 +60,14 @@ class TaskForm extends Model
         $this->latitude   = $this->task->latitude;
         $this->message    = $this->task->message;
         $this->image      = $this->task->image;
+        $this->place_show = $this->task->place_show;
         $this->is_visible = $this->task->is_visible;
     }
 
     public function rules()
     {
         return [
-            [['is_visible'], 'integer'],
+            [['is_visible', 'place_show'], 'integer'],
             [['question', 'message', 'answer'], 'string'],
             [['place', 'address'], 'string'],
             [['question', 'type'], 'required', 'message' => 'Обязательно для заполнения'],
