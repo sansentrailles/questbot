@@ -71,12 +71,16 @@ class QuizService
             $buttonData = $this->parseButtonData($data);
             // Обрабатываем действие в зависимости от данных кнопки
             switch ($buttonData['action']) {
-                case 'show_text':
+                case 'quests':
                     $this->bot->sendMessage($chatId, "Вы нажали кнопку: {$buttonData['value']}");
                     break;
 
                 case 'show_quest':
-                    $this->showQuestInfo($chatId, (int) $buttonData['value']);
+                    $this->showQuests($chatId);
+                    break;
+
+                case 'show_stat':
+                    $this->showStat($chatId);
                     break;
 
                 case 'start_quest':
@@ -148,11 +152,6 @@ class QuizService
             case '/start':
                 $this->sendStartMessage($chatId);
                 break;
-                
-            case '/menu':
-                $this->sendMenu($chatId);
-                break;
-
             case '/quests':
                 $this->showQuests($chatId);
                 break;
@@ -166,16 +165,31 @@ class QuizService
      * Отправка стартового сообщения
      * @param int $chatId - ID чата
      */
+    // protected function sendStartMessage($chatId) {
+    //     $keyboard = [
+    //         'inline_keyboard' => [
+    //             [
+    //                 ['text' => 'Кнопка 1', 'callback_data' => 'show_text:Button1'],
+    //                 ['text' => 'Кнопка 2', 'callback_data' => 'show_text:Button2']
+    //             ],
+    //             [
+    //                 ['text' => 'Удалить это сообщение', 'callback_data' => 'delete_message']
+    //             ]
+    //         ]
+    //     ];
+        
+    //     $this->bot->sendMessage($chatId, "Добро пожаловать! Выберите действие:", [
+    //         'reply_markup' => json_encode($keyboard)
+    //     ]);
+    // }
+
     protected function sendStartMessage($chatId) {
         $keyboard = [
             'inline_keyboard' => [
                 [
-                    ['text' => 'Кнопка 1', 'callback_data' => 'show_text:Button1'],
-                    ['text' => 'Кнопка 2', 'callback_data' => 'show_text:Button2']
+                    ['text' => 'Прогулки 🚶‍♂️', 'callback_data' => 'show_quest'],
+                    ['text' => 'Статистика 📊', 'callback_data' => 'show_stat']
                 ],
-                [
-                    ['text' => 'Удалить это сообщение', 'callback_data' => 'delete_message']
-                ]
             ]
         ];
         
@@ -419,7 +433,7 @@ class QuizService
         if ($hintsCount > 0) {
             $keyboard[] = [
                 [
-                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.')',
+                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️',
                     'callback_data' => 'show_hint:' . $task->quest_id,
                 ]
             ];
