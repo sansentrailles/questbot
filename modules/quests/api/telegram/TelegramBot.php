@@ -98,6 +98,19 @@ class TelegramBot
         return $this->request('sendPhoto', $params);
     }
 
+    public function sendVenue($chatId, $latitude, $longitude, $title, $address, $options = []) 
+    {
+        $params = array_merge([
+            'chat_id' => $chatId,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'title' => $title,
+            'address' => $address
+        ], $options);
+
+        return $this->request('sendVenue', $params);
+    }
+
     /**
      * Отправка голосования (опроса)
      * @param int $chatId - ID чата

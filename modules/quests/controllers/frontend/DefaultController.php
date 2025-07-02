@@ -109,20 +109,24 @@ class DefaultController extends Controller
         $questId = 1;
         $taskId = 2;
 
-        $task = $taskService->find($taskId);
-        $correctAnswer = $task->answerText;
-        print_r($correctAnswer);
+        // $task = $taskService->find($taskId);
+        // $correctAnswer = $task->answerText;
+        // print_r($correctAnswer);
 
-        // $stat = $statService->createStat($chatId, $questId);
-        $actualStat = $statService->getActualStat($chatId, $questId);
-        // if ($actualStat) {
+        // // $stat = $statService->createStat($chatId, $questId);
+        // $actualStat = $statService->getActualStat($chatId, $questId);
+        // // if ($actualStat) {
 
-        // }
+        // // }
 
-        print_r($actualStat);
-        
+        $latitude = 55.158051;  // широта, например Москва
+        $longitude = 61.408743; // долгота
+        $title = "Кинотеатр им. А. С. Пушкина";
+        $address = "ул. ​Пушкина, 64";
 
-        echo 'Ok';
+        $bot = new TelegramBot($token);
+        $bot->sendVenue($chatId, $latitude, $longitude, $title, $address);
+        // echo 'Ok';
         // $bot = new TelegramBot($token);
         // $message = "";
         // $options = [];

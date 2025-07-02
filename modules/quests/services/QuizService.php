@@ -119,6 +119,10 @@ class QuizService
                     $this->handleHint($chatId, (int) $buttonData['value']);
                     break;
 
+                case 'task_show_place':
+                    $this->showPlaceForTask($chatId, (int) $buttonData['value']);
+                    break;
+
                 default:
                     $this->processCustomButtonAction($chatId, $messageId, $buttonData);
             }
@@ -416,14 +420,14 @@ class QuizService
 
         $kbButton = [];
         if ($task->place_show == Task::PLACE_SHOW) {
-            $message .= "\n\nМесто: ".$task->place."\n";
-            $message .= "Адрес: ".$task->address."\n";
-            $baseUrl = "https://yandex.ru/maps/"; 
-            $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+            // $message .= "\n\nМесто: ".$task->place."\n";
+            // $message .= "Адрес: ".$task->address."\n";
+            // $baseUrl = "https://yandex.ru/maps/"; 
+            // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
             $kbButton = [
                 [
-                    'text' => 'Посмотреть на карте 🌎',
-                    'url' => $link,
+                    'text' => 'Посмотреть место',
+                    'callback_data' => 'task_show_place:'.$task->id
                 ]
             ];
         }
@@ -475,6 +479,45 @@ class QuizService
         }
 
         return $this->bot->sendMessage($chatId, $message, $options);
+    }
+
+    public function showPlaceForTask($chatId, $taskId)
+    {
+        $task = $this->taskService->find((int) $taskId);
+        if ($task === null) {
+            $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟');
+        }
+
+        if ($task->show_place == Task::PLACE_NOT_SHOW) {
+            return;
+        }
+
+        $message = "Задание: ".$task->question."\n\n";
+        $message .= "Место: ".$task->place."\n";
+        $message .= "Адрес: ".$task->address."\n";
+
+        $baseUrl = "https://yandex.ru/maps/"; 
+        $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+        $kbButton = [
+            [
+                'text' => 'Посмотреть на карте 🌐',
+                'url' => $link
+            ]
+        ];
+
+        $keyboard[] = $kbButton;
+
+        $options = [];
+        if (count ($keyboard) > 0) {
+            $replyMarkup = [
+                'inline_keyboard' => $keyboard
+            ];
+
+            $options['reply_markup'] = json_encode($replyMarkup);
+            $options['parse_mode'] = 'markdown';
+        }
+
+        $this->bot->sendMessage($chatId, $message, $options);
     }
 
     // Обработка выбора ответа
