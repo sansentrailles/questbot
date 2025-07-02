@@ -488,7 +488,7 @@ class QuizService
             $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟');
         }
 
-        if ($task->show_place == Task::PLACE_NOT_SHOW) {
+        if ($task->place_show == Task::PLACE_NOT_SHOW) {
             return;
         }
 
