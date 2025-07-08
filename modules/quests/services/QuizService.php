@@ -565,9 +565,9 @@ hint_used
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
 
-        if ($stat) {
-            $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
-        }
+        // if ($stat) {
+        //     $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
+        // }
 
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
@@ -591,11 +591,7 @@ hint_used
 
     private function saveChoicedAnswer($stat, $task, $answer)
     {
-        try {
-            $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
-        } catch (\Exception $e) {
-            error_log($e->getMessage());
-        }
+        $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
         
     }
 
@@ -606,11 +602,7 @@ hint_used
             $isCorrect = true;
         }
 
-        try {
-            $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
-        } catch (\Exception $e) {
-            error_log($e->getMessage());
-        }
+        $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
     }
 
     private function finalizeQuiz($chatId, $progress)
