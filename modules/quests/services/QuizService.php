@@ -522,23 +522,6 @@ class QuizService
         $this->bot->sendMessage($chatId, $message, $options);
     }
 
-    /*
-    __quest_stats
-user_id
-quest_id
-start
-finish
-
-__quest_stat_items
-stat_id
-task_id
-question
-task_answer
-user_answer
-is_correct
-hint_used
- */
-
     // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
@@ -565,9 +548,9 @@ hint_used
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
 
-        // if ($stat) {
-        //     $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
-        // }
+        if ($stat) {
+            $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
+        }
 
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
@@ -591,7 +574,7 @@ hint_used
 
     private function saveChoicedAnswer($stat, $task, $answer)
     {
-        $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
+        $this->statItemService->saveItem($stat->id, $task, $answer->title, (bool) $answer->is_right);
         
     }
 

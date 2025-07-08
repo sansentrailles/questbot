@@ -105,10 +105,32 @@ class DefaultController extends Controller
 
         $statService = Yii::$container->get(\app\modules\quests\services\StatService::class);
         $taskService = Yii::$container->get(\app\modules\quests\services\TaskService::class);
+        $answerService = Yii::$container->get(\app\modules\quests\services\AnswerService::class);
 
-        $questId = 1;
-        $taskId = 2;
+        $questId = 2;
+        // $taskId = 2; // Ввод ответа
+        $taskId = 3; // Выбор отввета
 
+        $answerId = 5; // Правильный ответ
+        // $answerId = 4; // Неравильный ответ
+
+        $stat = $statService->getOrCreateStat($chatId, $questId);
+        $answer = $answerService->find($answerId);
+
+        $task = $taskService->find($taskId);
+
+        $this->statItemService->saveItem($stat->id, $task, $answer->title, (bool) $answer->is_right);
+
+        // $answer = "Пушкин";
+
+        // $isCorrect = false;
+        // if (mb_strtolower($answer) == mb_strtolower($task->answer)) {
+        //     $isCorrect = true;
+        // }
+
+        // $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
+
+        exit;
         // $task = $taskService->find($taskId);
         // $correctAnswer = $task->answerText;
         // print_r($correctAnswer);

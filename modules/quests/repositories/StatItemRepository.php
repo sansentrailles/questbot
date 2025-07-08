@@ -13,4 +13,9 @@ class StatItemRepository extends BaseRepository
     {
         $this->model = Model::class;
     }
+
+    public function getItem($statId, $taskId)
+    {
+        return $this->model::findOne(['stat_id' => $statId, 'task_id' => $taskId]);
+    }
 }

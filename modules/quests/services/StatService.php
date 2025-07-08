@@ -33,6 +33,16 @@ class StatService extends BaseService
         return Repository::class;
     }
 
+    public function getorCreateStat($userId, $questId)
+    {
+        $stat = $this->getActualStat($userId, $questId);
+        if ($stat) {
+            return $stat;
+        }
+
+        return $this->createStat($userId, $questId);
+    }
+
     public function createStat($userId, $questId)
     {
         $form = new StatForm();
