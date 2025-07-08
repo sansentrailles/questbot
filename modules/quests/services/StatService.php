@@ -43,6 +43,11 @@ class StatService extends BaseService
         return $this->save($form);
     }
 
+    public function getStat($userId, $questId)
+    {
+        return $this->repository->getStat($userId, $questId);
+    }
+
     public function updateStat($id)
     {
 

@@ -39,4 +39,18 @@ class StatItemService extends BaseService
 
         return $this->save($form);
     }
+
+    public function saveItem($stat_id, $task, string $answer, bool $is_correct)
+    {
+        $statItem = $this->repository->getItem($stat_id, $task);
+        $form = new StatItemForm($statItem);
+
+        $form->stat_id = $stat_id;
+        $form->task_id = $task->id;
+        $form->task_answer = $task->correctAnswer;
+        $form->user_answer = $answer;
+        $form->is_correct = $is_correct;
+
+        return $this->save($form);
+    }
 }

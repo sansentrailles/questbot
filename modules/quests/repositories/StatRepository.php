@@ -26,4 +26,22 @@ class StatRepository extends BaseRepository
 
         return $query->one();
     }
+
+    public function getStat($userId, $questId)
+    {
+        $query = $this->model::find()
+            ->andWhere([
+                'user_id' => $userId,
+            ]);
+
+        if ((int) $questId > 0) {
+            $query->andWhere([
+                'quest_id' => $questId,
+            ]);
+        }
+
+        $query->andWhere('`finish` is null');
+        
+        return $query->one();
+    }
 }

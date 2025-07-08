@@ -15,7 +15,6 @@ use app\modules\quests\models\traits\StatAttributeLabelsTrait;
  * @property int $user_id
  * @property int $start
  * @property int $finish
- * @property string $place
  */
 class Stat extends ActiveRecord
 {

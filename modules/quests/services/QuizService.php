@@ -15,6 +15,7 @@ class QuizService
     private $answerService;
     private $hintService;
     private $statService;
+    private $statItemService;
 
     public function __construct(TelegramBot $bot)
     {
@@ -25,6 +26,7 @@ class QuizService
         $this->answerService = $container->get(AnswerService::class);
         $this->hintService = $container->get(HintService::class);
         $this->statService = $container->get(StatService::class);
+        $this->statItemService = $container->get(StatItemService::class);
         $this->bot = $bot;
     }
 
@@ -520,58 +522,54 @@ class QuizService
         $this->bot->sendMessage($chatId, $message, $options);
     }
 
+    /*
+    __quest_stats
+user_id
+quest_id
+start
+finish
+
+__quest_stat_items
+stat_id
+task_id
+question
+task_answer
+user_answer
+is_correct
+hint_used
+ */
+
     // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
+        $stat = $this->statService->getStat($chatId, $questId);
         $currentTask = $progress->task;
 
         $answer = $this->answerService->find($answerId);
+        if ($stat) {
+            $this->saveChoicedAnswer($stat, $currentTask, $answer);
+        }
+        
         // Сделать проверку выбора правильного ответа
         // сохранить прогресс
 
         $this->handleNextAnswer($chatId, $currentTask, $progress);
-
-        // $nextTask = $this->taskService->getNext($currentTask);
-        // if ($nextTask) {
-        //     $progress->current_task_id = $nextTask->id;
-        //     $progress->answer = null;
-        //     $progress->hint_id = null;
-        //     $progress->hint_used = null;
-        //     $this->userProgressService->updateProgress($progress);
-        //     $this->sendNextTask($chatId, $questId);
-        // } else {
-        //     $this->userProgressService->completeQuest($progress);
-        //     $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
-        // }
     }
 
     public function handleInputAnswer($chatId, $taskId)
     {
         $progress = $this->userProgressService->getProgress($chatId);
+        $stat = $this->statService->getStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
-        
-        // Сохранить ответ $progress->answer
+
+        if ($stat) {
+            $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
+        }
+
 
         $this->handleNextAnswer($chatId, $currentTask, $progress);
-        // $nextTask = $this->taskService->getNext($currentTask);
-        // if ($nextTask) {
-        //     $progress->current_task_id = $nextTask->id;
-        //     $progress->answer = null;
-        //     $progress->hint_id = null;
-        //     $progress->hint_used = null;
-        //     $this->userProgressService->updateProgress($progress);
-        //     $this->sendNextTask($chatId, $progress->quest_id);
-        // } else {
-        //     $this->userProgressService->completeQuest($progress);
-        //     $this->bot->sendMessage($chatId, "Все задания выполнены! Спасибо за участие!");
-        // }
     }
-
-    // private function saveStat($chatId, $progress)
-    // {
-    //     $stat = $this->statService->
-    // }
 
     private function handleNextAnswer($chatId, $currentTask, $progress)
     {
@@ -588,6 +586,21 @@ class QuizService
         }
     }
 
+    private function saveChoicedAnswer($stat, $task, $answer)
+    {
+        $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
+    }
+
+    private function saveInputedAnswer($stat, $task, $answer)
+    {
+        $isCorrect = false;
+        if (mb_strtolower($answer) == mb_strtolower($task->answer)) {
+            $isCorrect = true;
+        }
+
+        $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
+    }
+
     private function finalizeQuiz($chatId, $progress)
     {
         $quest = $progress->quest;
@@ -597,7 +610,7 @@ class QuizService
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
-error_log($message);
+
         if ($quest->image_final) {
             return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
                 'parse_mode' => 'html',
