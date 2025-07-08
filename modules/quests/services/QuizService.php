@@ -569,7 +569,6 @@ hint_used
             $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
         }
 
-
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
 
@@ -592,7 +591,12 @@ hint_used
 
     private function saveChoicedAnswer($stat, $task, $answer)
     {
-        $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
+        try {
+            $this->statItemService->saveItem($stat->id, $task, $answer->title, $answer->is_correct);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+        }
+        
     }
 
     private function saveInputedAnswer($stat, $task, $answer)
@@ -602,7 +606,11 @@ hint_used
             $isCorrect = true;
         }
 
-        $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
+        try {
+            $this->statItemService->saveItem($stat->id, $task, $answer, $isCorrect);
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+        }
     }
 
     private function finalizeQuiz($chatId, $progress)
