@@ -543,7 +543,8 @@ hint_used
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
-        $stat = $this->statService->getStat($chatId, $questId);
+        // $stat = $this->statService->getStat($chatId, $questId);
+        $stat = $this->statService->getActualStat($chatId, $questId);
         $currentTask = $progress->task;
 
         $answer = $this->answerService->find($answerId);
@@ -560,7 +561,8 @@ hint_used
     public function handleInputAnswer($chatId, $taskId)
     {
         $progress = $this->userProgressService->getProgress($chatId);
-        $stat = $this->statService->getStat($chatId, $progress->quest_id);
+        // $stat = $this->statService->getStat($chatId, $progress->quest_id);
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
 
         if ($stat) {
@@ -574,6 +576,7 @@ hint_used
     private function handleNextAnswer($chatId, $currentTask, $progress)
     {
         $nextTask = $this->taskService->getNext($currentTask);
+        $stat = $this->statService->getStat($chatId, $progress->quest_id);
         if ($nextTask) {
             $progress->current_task_id = $nextTask->id;
             $progress->answer = null;
@@ -583,6 +586,7 @@ hint_used
             $this->sendNextTask($chatId, $progress->quest_id);
         } else {
             $this->finalizeQuiz($chatId, $progress);
+            $this->statService->finishStat($stat);
         }
     }
 

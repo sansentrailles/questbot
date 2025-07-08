@@ -48,9 +48,11 @@ class StatService extends BaseService
         return $this->repository->getStat($userId, $questId);
     }
 
-    public function updateStat($id)
+    public function finishStat(Model $model)
     {
-
+        $form = new StatForm($model);
+        $form->finish = time();
+        return $this->save($form);
     }
 
     public function getActualStat($userId, $questId)
