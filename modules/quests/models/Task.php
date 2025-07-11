@@ -188,7 +188,6 @@ class Task extends ActiveRecord implements Sortable, Fileable
 
         return '';
     }
-
     public function getCorrectAnswer()
     {
         return $this->getAnswers()

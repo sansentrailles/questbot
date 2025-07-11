@@ -52,6 +52,50 @@ class StatItemService extends BaseService
         $form->user_answer = $answer;
         $form->is_correct = $is_correct;
 
+        if ($task->image) {
+            $this->prepareFiles($task->imagePath);
+        }
+
+        if ($statItem == null) {
+            $hints = $task->visibleHints;
+            $form->hint_count = count($hints);
+        }
+
         return $this->save($form);
     }
+
+    public function incrementHints($statId, $taskId)
+    {
+        $statItem = $this->repository->getItem($statId, $taskId);
+        $form = new StatItemForm($statItem);
+
+        $form->hint_count += 1;
+
+        return $this->save($form);
+    }
+
+    private function prepareFiles(string $path)
+    {
+        $fullpath = \Yii::getAlias("@webroot").$path;
+
+        $formName = 'StatItemForm';
+        $attribute = 'taskImageFile';
+
+
+        $_FILES[$formName]['name'][$attribute] = pathinfo($fullpath, PATHINFO_BASENAME);
+        $_FILES[$formName]['type'][$attribute] = mime_content_type($fullpath);
+        $_FILES[$formName]['tmp_name'][$attribute] = $fullpath;
+        $_FILES[$formName]['error'][$attribute] = 0;
+        $_FILES[$formName]['size'][$attribute] = filesize($fullpath);
+    }
+
+    /*
+    $options['name'][$attribute] = pathinfo($path, PATHINFO_BASENAME);
+        $options['type'][$attribute] = mime_content_type($path);
+        // $options['tmp_name'][$attribute] = str_replace("/", "\\", $path);
+        $options['tmp_name'][$attribute] = str_replace("\\", "/", $path);
+        // $options['tmp_name'][$attribute] = $path;
+        $options['error'][$attribute] = 0;
+        $options['size'][$attribute] = filesize($path);
+     */
 }

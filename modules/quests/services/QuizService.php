@@ -575,7 +575,6 @@ class QuizService
     private function saveChoicedAnswer($stat, $task, $answer)
     {
         $this->statItemService->saveItem($stat->id, $task, $answer->title, (bool) $answer->is_right);
-        
     }
 
     private function saveInputedAnswer($stat, $task, $answer)
@@ -614,6 +613,7 @@ class QuizService
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $currentTask = $progress->task;
         $hints = $currentTask->visibleHints;
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
 
         if (count($hints) == 0) {
             return $this->bot->sendMessage($chatId, "Подсказки не найдены ❌");
@@ -631,6 +631,7 @@ class QuizService
             $progress->hint_used = (int) $progress->hint_used + 1;
             $this->userProgressService->updateProgress($progress);
             $this->showHint($chatId, $nextHint, $progress);
+            $this->statItemService->incrementHints($stat->id, $progress->task_id);
         } else {
             // Вроде бы этот код не нужен
             $this->sendNextTask($chatId, $questId);
