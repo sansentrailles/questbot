@@ -69,7 +69,7 @@ class StatItemService extends BaseService
         $statItem = $this->repository->getItem($statId, $taskId);
         $form = new StatItemForm($statItem);
 
-        $form->hint_count += 1;
+        $form->hint_used += 1;
 
         return $this->save($form);
     }
