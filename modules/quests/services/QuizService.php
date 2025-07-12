@@ -119,6 +119,7 @@ class QuizService
                 // Открыть следующие задание послие инфомрационного соощения текущего выполненного задания
                 case 'next_task':
                     $this->sendNextTaskAfterShowMessage($chatId, (int) $buttonData['value']);
+                    break;
 
                 // Показать подсказку
                 case 'show_hint':
