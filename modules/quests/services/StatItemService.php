@@ -52,9 +52,9 @@ class StatItemService extends BaseService
         $form->user_answer = $answer;
         $form->is_correct = $is_correct;
 
-        if ($task->image) {
-            $this->prepareFiles($task->imagePath);
-        }
+        // if ($task->image) {
+        //     $this->prepareFiles($task->imagePath);
+        // }
 
         if ($statItem == null) {
             $hints = $task->visibleHints;
