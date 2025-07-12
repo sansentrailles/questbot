@@ -508,8 +508,8 @@ class QuizService
             return;
         }
 
-        $message = "Задание: ".$task->question."\n\n";
-        $message .= "Место: ".$task->place."\n";
+        // $message = "Задание: ".$task->question."\n\n";
+        $message = "Место: ".$task->place."\n";
         $message .= "Адрес: ".$task->address."\n";
 
         $baseUrl = "https://yandex.ru/maps/"; 
@@ -540,7 +540,6 @@ class QuizService
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
-        // $stat = $this->statService->getStat($chatId, $questId);
         $stat = $this->statService->getActualStat($chatId, $questId);
         $currentTask = $progress->task;
 
@@ -549,7 +548,7 @@ class QuizService
             $this->saveChoicedAnswer($stat, $currentTask, $answer);
         }
 
-        if ($currentTask->message) {
+        if ($currentTask->message && mb_strlen($currentTask->message) > 0) {
             return $this->sendMessageAfterAnswer($chatId, $currentTask);
         } else {
             $this->handleNextAnswer($chatId, $currentTask, $progress);
@@ -559,7 +558,6 @@ class QuizService
     public function handleInputAnswer($chatId, $taskId)
     {
         $progress = $this->userProgressService->getProgress($chatId);
-        // $stat = $this->statService->getStat($chatId, $progress->quest_id);
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
 
@@ -567,10 +565,27 @@ class QuizService
             $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
         }
 
-        if ($currentTask->message) {
+        if ($currentTask->message && mb_strlen($currentTask->message) > 0) {
             return $this->sendMessageAfterAnswer($chatId, $currentTask);
         } else {
             $this->handleNextAnswer($chatId, $currentTask, $progress);
+        }
+    }
+
+    private function handleNextAnswer($chatId, $currentTask, $progress)
+    {
+        $nextTask = $this->taskService->getNext($currentTask);
+        $stat = $this->statService->getStat($chatId, $progress->quest_id);
+        if ($nextTask) {
+            $progress->current_task_id = $nextTask->id;
+            $progress->answer = null;
+            $progress->hint_id = null;
+            $progress->hint_used = null;
+            $this->userProgressService->updateProgress($progress);
+            $this->sendNextTask($chatId, $progress->quest_id);
+        } else {
+            $this->finalizeQuiz($chatId, $progress);
+            $this->statService->finishStat($stat);
         }
     }
 
@@ -613,23 +628,6 @@ class QuizService
         error_log("next answer handler");
         $progress = $this->userProgressService->getProgress($chatId);
         $this->handleNextAnswer($chatId, $currentTask, $progress);
-    }
-
-    private function handleNextAnswer($chatId, $currentTask, $progress)
-    {
-        $nextTask = $this->taskService->getNext($currentTask);
-        $stat = $this->statService->getStat($chatId, $progress->quest_id);
-        if ($nextTask) {
-            $progress->current_task_id = $nextTask->id;
-            $progress->answer = null;
-            $progress->hint_id = null;
-            $progress->hint_used = null;
-            $this->userProgressService->updateProgress($progress);
-            $this->sendNextTask($chatId, $progress->quest_id);
-        } else {
-            $this->finalizeQuiz($chatId, $progress);
-            $this->statService->finishStat($stat);
-        }
     }
 
     private function saveChoicedAnswer($stat, $task, $answer)
@@ -692,9 +690,9 @@ class QuizService
             $this->userProgressService->updateProgress($progress);
             $this->showHint($chatId, $nextHint, $progress);
             $this->statItemService->incrementHints($stat->id, $progress->current_task_id);
-        } else {
-            // Вроде бы этот код не нужен
-            $this->sendNextTask($chatId, $questId);
+        // } else {
+        //     // Вроде бы этот код не нужен
+        //     $this->sendNextTask($chatId, $questId);
         }
     }
 
