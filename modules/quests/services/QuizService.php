@@ -118,7 +118,7 @@ class QuizService
 
                 // Открыть следующие задание послие инфомрационного соощения текущего выполненного задания
                 case 'next_task':
-                    $this->sentNextTaskAfterShowMessage($chatId, (int) $buttonData['value']);
+                    $this->sendNextTaskAfterShowMessage($chatId, (int) $buttonData['value']);
 
                 // Показать подсказку
                 case 'show_hint':
@@ -602,8 +602,14 @@ class QuizService
     }
 
     // Обработать следующее задание квеста после отображения информации, котороая отображается после ответа
-    private function sentNextTaskAfterShowMessage($chatId, $currentTask)
+    private function sendNextTaskAfterShowMessage($chatId, $taskId)
     {
+        $currentTask = $this->taskService->find((int) $taskId);
+        if ($currentTask == null)  {
+            $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟 (Ошибка 1-10)');
+        }
+
+        error_log("next answer handler");
         $progress = $this->userProgressService->getProgress($chatId);
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
