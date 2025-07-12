@@ -314,6 +314,12 @@ class QuizService
         }
     }
 
+    /**
+     * Отобразить информацию прогулки, описания и кнопки: Начать прогулку и Справка / Рекомендации
+     * @param mixed $chatId
+     * @param int $questId
+     * @return array
+     */
     protected function showQuestInfo($chatId, int $questId)
     {
         $quest = $this->questService->find((int) $questId);
@@ -366,7 +372,6 @@ class QuizService
         }
 
         $message = $quest->help;
-        // $message = StringHelper::escapeMarkdown($quest->help);
         $keyboard = [
             'inline_keyboard' => [
                 [
@@ -476,9 +481,13 @@ class QuizService
             $options['reply_markup'] = json_encode($replyMarkup);
             $options['parse_mode'] = 'html';
         }
+
         if ($task->image) {
             return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
         }
+
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
+        $this->statItemService->saveItem($stat->id, $task, null, false);
 
         return $this->bot->sendMessage($chatId, $message, $options);
     }
