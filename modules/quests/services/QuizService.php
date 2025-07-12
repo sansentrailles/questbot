@@ -482,12 +482,13 @@ class QuizService
             $options['parse_mode'] = 'html';
         }
 
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
+        $this->statItemService->saveItem($stat->id, $task, null, false);
+        error_log("show taks");
+
         if ($task->image) {
             return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
         }
-
-        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
-        $this->statItemService->saveItem($stat->id, $task, null, false);
 
         return $this->bot->sendMessage($chatId, $message, $options);
     }
