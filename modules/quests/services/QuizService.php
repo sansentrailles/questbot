@@ -116,6 +116,10 @@ class QuizService
                     $this->sendNextTask($chatId, (int) $buttonData['value']);
                     break;
 
+                // Открыть следующие задание послие инфомрационного соощения текущего выполненного задания
+                case 'next_task':
+                    $this->sentNextTaskAfterShowMessage($chatId, (int) $buttonData['value']);
+
                 // Показать подсказку
                 case 'show_hint':
                     $this->handleHint($chatId, (int) $buttonData['value']);
@@ -484,7 +488,6 @@ class QuizService
 
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $this->statItemService->saveItem($stat->id, $task, null, false);
-        error_log("show taks");
 
         if ($task->image) {
             return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
@@ -544,11 +547,12 @@ class QuizService
         if ($stat) {
             $this->saveChoicedAnswer($stat, $currentTask, $answer);
         }
-        
-        // Сделать проверку выбора правильного ответа
-        // сохранить прогресс
 
-        $this->handleNextAnswer($chatId, $currentTask, $progress);
+        if ($currentTask->message) {
+            return $this->sendMessageAfterAnswer($chatId, $currentTask);
+        } else {
+            $this->handleNextAnswer($chatId, $currentTask, $progress);
+        }
     }
 
     public function handleInputAnswer($chatId, $taskId)
@@ -562,6 +566,45 @@ class QuizService
             $this->saveInputedAnswer($stat, $currentTask, $progress->answer);
         }
 
+        if ($currentTask->message) {
+            return $this->sendMessageAfterAnswer($chatId, $currentTask);
+        } else {
+            $this->handleNextAnswer($chatId, $currentTask, $progress);
+        }
+    }
+
+    // Показать инофрмацию задания после ответа
+    public function sendMessageAfterAnswer($chatId, $currentTask)
+    {
+        $keyboard[] = [
+            [
+                'text' => "Дальше ➡️",
+                'callback_data' => 'next_task:' . $currentTask->id
+            ]
+        ];
+
+        $replyMarkup = [
+            'inline_keyboard' => $keyboard
+        ];
+
+        // if ($currentTask->image_info) {
+        //     return $this->bot->sendPhoto($chatId, $hint->imageInoFullPath, $message, [
+        //         // 'show_caption_above_media' => true,
+        //         'parse_mode' => 'markdownv2',
+        //         'reply_markup' => json_encode($replyMarkup),
+        //     ]);
+        // }
+
+        return $this->bot->sendMessage($chatId, $currentTask->message, [
+            // 'parse_mode' => 'markdownv2',
+            'reply_markup' => json_encode($replyMarkup),
+        ]);
+    }
+
+    // Обработать следующее задание квеста после отображения информации, котороая отображается после ответа
+    private function sentNextTaskAfterShowMessage($chatId, $currentTask)
+    {
+        $progress = $this->userProgressService->getProgress($chatId);
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
 
