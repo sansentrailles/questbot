@@ -20,8 +20,6 @@ trait StatItemAttributeLabelsTrait
             'is_correct'    => Module::t('common', 'QUEST_STAT_ITEM_IS_CORRECT'),
             'hint_used'     => Module::t('common', 'QUEST_STAT_ITEM_HINT_USED'),
             'hint_count'    => Module::t('common', 'QUEST_STAT_ITEM_HINT_COUNT'),
-            'task_image'    => Module::t('common', 'QUEST_STAT_ITEM_TASK_IMAGE'),
-            'taskImageFile' => Module::t('common', 'QUEST_STAT_ITEM_TASK_IMAGE'),
         ];
     }
 }

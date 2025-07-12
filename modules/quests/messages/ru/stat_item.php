@@ -12,5 +12,4 @@ return [
     'QUEST_STAT_ITEM_IS_CORRECT' => 'Правильный ответ',
     'QUEST_STAT_ITEM_HINT_USED' => 'Количество использованных подсказок',
     'QUEST_STAT_ITEM_HINT_COUNT' => 'Количество подсказок',
-    'QUEST_STAT_ITEM_TASK_IMAGE' => 'Изображение задания',
 ];

@@ -15,7 +15,6 @@ use app\modules\quests\models\traits\StatItemAttributeLabelsTrait;
 class StatItemForm extends Model
 {
     use StatItemAttributeLabelsTrait;
-    use UploadFilesTrait;
 
     public $id;
     public $stat_id;
@@ -26,17 +25,11 @@ class StatItemForm extends Model
     public $is_correct;
     public $hint_used;
     public $hint_count;
-    public $task_image;
-    public $statItemTaskImageFile;
-
-    public $statItemTaskImage;
 
     private $statItem;
 
     public function __construct(?StatItem $statItem = null, $config = [])
     {
-        $this->statItemTaskImage = new BaseImageFile(StatItem::BUCKET_NAME_TASK_IMAGE);
-
         $this->statItem = $statItem;
         parent::__construct($config);
     }
@@ -56,7 +49,6 @@ class StatItemForm extends Model
         $this->is_correct  = $this->statItem->is_correct;
         $this->hint_used   = $this->statItem->hint_used;
         $this->hint_count  = $this->statItem->hint_count;
-        $this->task_image  = $this->statItem->task_image;
     }
 
     public function rules()
@@ -76,7 +68,6 @@ class StatItemForm extends Model
                 'targetClass' => Stat::class,
                 'targetAttribute' => ['stat_id' => 'id'],
             ],
-            [['imageFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -107,23 +98,5 @@ class StatItemForm extends Model
     {
         $this->stat_id = $statId;
         $this->task_id = $taskId;
-    }
-
-    public function getUploadOptions()
-    {
-        return [
-            'taskImageFile' => [
-                'task_image' => [
-                    'transform' => [
-                        $this->statItemTaskImage->save(),
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    public function getTaskImagePath()
-    {
-        return $this->statItem->taskImagePath;
     }
 }
