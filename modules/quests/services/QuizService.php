@@ -631,7 +631,7 @@ class QuizService
             $progress->hint_used = (int) $progress->hint_used + 1;
             $this->userProgressService->updateProgress($progress);
             $this->showHint($chatId, $nextHint, $progress);
-            $this->statItemService->incrementHints($stat->id, $progress->task_id);
+            $this->statItemService->incrementHints($stat->id, $progress->current_task_id);
         } else {
             // Вроде бы этот код не нужен
             $this->sendNextTask($chatId, $questId);
