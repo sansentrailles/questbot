@@ -260,7 +260,7 @@ class QuizService
             
             $this->bot->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard),
-                'parse_mode' => 'HTML'
+                'parse_mode' => 'html'
             ]);
         }
 
@@ -540,18 +540,22 @@ class QuizService
     // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
+        error_log('handleChoiceAnswer');
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $stat = $this->statService->getActualStat($chatId, $questId);
         $currentTask = $progress->task;
 
         $answer = $this->answerService->find($answerId);
         if ($stat) {
+            error_log('save stat');
             $this->saveChoicedAnswer($stat, $currentTask, $answer);
         }
 
         if ($currentTask->message && mb_strlen($currentTask->message) > 0) {
+            error_log('send message after answer');
             return $this->sendMessageAfterAnswer($chatId, $currentTask);
         } else {
+            error_log('handle next answer');
             $this->handleNextAnswer($chatId, $currentTask, $progress);
         }
     }
