@@ -612,6 +612,7 @@ class QuizService
         ];
 
         if ($currentTask->image_info) {
+            error_log(__METHOD__.": Show image info");
             return $this->bot->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
                 // 'show_caption_above_media' => true,
                 'parse_mode' => 'html',
@@ -619,8 +620,9 @@ class QuizService
             ]);
         }
 
+        error_log(__METHOD__.": Show message without image");
         return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'html    ',
+            'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
         ]);
     }
