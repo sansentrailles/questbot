@@ -312,7 +312,7 @@ class QuizService
             $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
             return $this->bot->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard),
-                'parse_mode' => 'markdownv2'
+                'parse_mode' => 'html'
             ]);
         } else {
             return $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
@@ -484,8 +484,8 @@ class QuizService
             ];
 
             $options['reply_markup'] = json_encode($replyMarkup);
-            // $options['parse_mode'] = 'html';
-            $options['parse_mode'] = 'markdownv2';
+            $options['parse_mode'] = 'html';
+            // $options['parse_mode'] = 'markdownv2';
         }
 
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
@@ -532,7 +532,7 @@ class QuizService
 
         //     $options['reply_markup'] = json_encode($replyMarkup);
         // }
-        $options['parse_mode'] = 'markdownv2';
+        $options['parse_mode'] = 'html';
 
         $this->bot->sendMessage($chatId, $message, $options);
     }
@@ -610,13 +610,13 @@ class QuizService
         if ($currentTask->image_info) {
             return $this->bot->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
                 // 'show_caption_above_media' => true,
-                'parse_mode' => 'markdownv2',
+                'parse_mode' => 'html',
                 'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'markdownv2',
+            'parse_mode' => 'html    ',
             'reply_markup' => json_encode($replyMarkup),
         ]);
     }
@@ -724,17 +724,17 @@ class QuizService
             ];
         }
 
-        $message = "**Держите подсказку:**\n\n".StringHelper::escapeMarkdown($hint->text);
+        $message = "<b>Подсказка:</b>\n\n".StringHelper::escapeMarkdown($hint->text);
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
                 'show_caption_above_media' => true,
-                'parse_mode' => 'markdownv2',
+                'parse_mode' => 'html',
                 'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'markdownv2',
+            'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
         ]);
     }
