@@ -218,4 +218,48 @@ class StringHelper
         }
         return $text;
     }
+
+    public static function numberToEmojiDigits($number) {
+    // Маппинг цифр к эмодзи
+    $emojiDigits = [
+        '0' => '0️⃣',
+        '1' => '1️⃣',
+        '2' => '2️⃣',
+        '3' => '3️⃣',
+        '4' => '4️⃣',
+        '5' => '5️⃣',
+        '6' => '6️⃣',
+        '7' => '7️⃣',
+        '8' => '8️⃣',
+        '9' => '9️⃣'
+    ];
+
+    // Преобразуем число в строку
+    $numberStr = (string)$number;
+
+    // Заменяем каждую цифру на эмодзи
+    $result = '';
+    for ($i = 0; $i < strlen($numberStr); $i++) {
+        $digit = $numberStr[$i];
+        if (isset($emojiDigits[$digit])) {
+            $result .= $emojiDigits[$digit];
+        } else {
+            $result .= '?'; // Если символ не цифра — ставим знак вопроса
+        }
+    }
+
+    return $result;
+}
+
+    public static function getEmojiNum($num)
+    {
+        $nums = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"];
+
+        if (isset($nums[$num])) {
+            return $nums[$num];
+        }
+
+        return '';
+    }
+
 }

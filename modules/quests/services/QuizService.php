@@ -451,11 +451,12 @@ class QuizService
 
         if ($task->type == Task::TYPE_CHOICE) {
             $answers = $task->answers;
+            shuffle($answers);
 
-            foreach ($answers as $answer) {
+            foreach ($answers as $key => $answer) {
                 $keyboard[] = [
                     [
-                        'text' => $answer->title. ' 🔎',
+                        'text' => StringHelper::numberToEmojiDigits($key + 1).' '. $answer->title,
                         'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
                     ]
                 ];
@@ -485,7 +486,6 @@ class QuizService
 
             $options['reply_markup'] = json_encode($replyMarkup);
             $options['parse_mode'] = 'html';
-            // $options['parse_mode'] = 'markdownv2';
         }
 
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
