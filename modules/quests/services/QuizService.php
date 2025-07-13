@@ -438,7 +438,7 @@ class QuizService
             // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
             $kbButton = [
                 [
-                    'text' => 'Посмотреть место',
+                    'text' => 'Посмотреть место 🌐',
                     'callback_data' => 'task_show_place:'.$task->id
                 ]
             ];
@@ -455,7 +455,7 @@ class QuizService
             foreach ($answers as $answer) {
                 $keyboard[] = [
                     [
-                        'text' => $answer->title,
+                        'text' => $answer->title. ' 🔎',
                         'callback_data' => 'task_answer:' . $answer->id.'@'.$task->quest_id
                     ]
                 ];
@@ -484,7 +484,8 @@ class QuizService
             ];
 
             $options['reply_markup'] = json_encode($replyMarkup);
-            $options['parse_mode'] = 'html';
+            // $options['parse_mode'] = 'html';
+            $options['parse_mode'] = 'markdownv2';
         }
 
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
@@ -512,26 +513,26 @@ class QuizService
         $message = "Место: ".$task->place."\n";
         $message .= "Адрес: ".$task->address."\n";
 
-        $baseUrl = "https://yandex.ru/maps/"; 
-        $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-        $kbButton = [
-            [
-                'text' => 'Посмотреть на карте 🌐',
-                'url' => $link
-            ]
-        ];
+        // $baseUrl = "https://yandex.ru/maps/"; 
+        // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
+        // $kbButton = [
+        //     [
+        //         'text' => 'Посмотреть на карте 🌐',
+        //         'url' => $link
+        //     ]
+        // ];
 
-        $keyboard[] = $kbButton;
+        // $keyboard[] = $kbButton;
 
         $options = [];
-        if (count ($keyboard) > 0) {
-            $replyMarkup = [
-                'inline_keyboard' => $keyboard
-            ];
+        // if (count ($keyboard) > 0) {
+        //     $replyMarkup = [
+        //         'inline_keyboard' => $keyboard
+        //     ];
 
-            $options['reply_markup'] = json_encode($replyMarkup);
-            $options['parse_mode'] = 'markdown';
-        }
+        //     $options['reply_markup'] = json_encode($replyMarkup);
+        // }
+        $options['parse_mode'] = 'markdownv2';
 
         $this->bot->sendMessage($chatId, $message, $options);
     }
@@ -599,20 +600,23 @@ class QuizService
             ]
         ];
 
+        $message = $currentTask->message;
+        $message .= "\n\n Нажмите кнопку \"Дальше  ➡️\" для продолжения";
+
         $replyMarkup = [
             'inline_keyboard' => $keyboard
         ];
 
-        // if ($currentTask->image_info) {
-        //     return $this->bot->sendPhoto($chatId, $hint->imageInoFullPath, $message, [
-        //         // 'show_caption_above_media' => true,
-        //         'parse_mode' => 'markdownv2',
-        //         'reply_markup' => json_encode($replyMarkup),
-        //     ]);
-        // }
+        if ($currentTask->image_info) {
+            return $this->bot->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
+                // 'show_caption_above_media' => true,
+                'parse_mode' => 'markdownv2',
+                'reply_markup' => json_encode($replyMarkup),
+            ]);
+        }
 
-        return $this->bot->sendMessage($chatId, $currentTask->message, [
-            // 'parse_mode' => 'markdownv2',
+        return $this->bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'markdownv2',
             'reply_markup' => json_encode($replyMarkup),
         ]);
     }
@@ -625,7 +629,6 @@ class QuizService
             $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟 (Ошибка 1-10)');
         }
 
-        error_log("next answer handler");
         $progress = $this->userProgressService->getProgress($chatId);
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
@@ -696,6 +699,7 @@ class QuizService
         }
     }
 
+    // Показать подксказку
     private function showHint($chatId, $hint, $progress)
     {
         $task = $progress->task;

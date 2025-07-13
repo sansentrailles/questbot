@@ -13,6 +13,11 @@ return [
         'fileSubDirTemplate' => '{^name}{^^name}/{^^^name}{^^^^name}',
     ],
 
+    'taskImageInfo' => [
+        'baseSubPath' => 'images/quests/info',
+        'fileSubDirTemplate' => '{^name}{^^name}/{^^^name}{^^^^name}',
+    ],
+
     'questImage' => [
         'baseSubPath' => 'images/quests/image',
         'fileSubDirTemplate' => '{^name}{^^name}/{^^^name}{^^^^name}',

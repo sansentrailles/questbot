@@ -116,6 +116,25 @@ class TasksController extends Controller
         ];
     }
 
+    public function actionDeleteImageInfo($id)
+    {
+        $this->guardRequestPostAjax();
+
+        try {
+            $this->taskService->deleteImageInfo($id);
+        } catch (Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'cannot remove the requested file',
+            ];
+        }
+
+        return [
+            'status' => 'ok',
+            'message' => 'The requested file has been deleted successfully',
+        ];
+    }
+
     public function actionSort()
     {
         $request = Yii::$app->request;

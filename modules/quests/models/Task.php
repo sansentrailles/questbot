@@ -20,6 +20,7 @@ use app\modules\quests\models\traits\TaskAttributeLabelsTrait;
  * @property int $quest_id
  * @property string $question
  * @property string $image
+ * @property string $image_info
  * @property string $answer
  * @property int $type
  * @property string $place
@@ -48,12 +49,15 @@ class Task extends ActiveRecord implements Sortable, Fileable
     public const PLACE_NOT_SHOW = 0;
 
     public const BUCKET_NAME_IMAGE = 'taskImage';
+    public const BUCKET_NAME_IMAGE_INFO = 'taskImageInfo';
 
     private $imageFile;
+    private $imageInfoFile;
 
     public function __construct($config = [])
     {
         $this->imageFile = new BaseImageFile(self::BUCKET_NAME_IMAGE);
+        $this->imageInfoFile = new BaseImageFile(self::BUCKET_NAME_IMAGE_INFO);
 
         parent::__construct($config);
     }
@@ -78,6 +82,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
         $model->address    = $form->address;
         $model->question   = $form->question;
         $model->image      = $form->image;
+        $model->image_info = $form->image_info;
         $model->answer     = $form->answer;
         $model->type       = $form->type;
         $model->place      = $form->place;
@@ -96,6 +101,7 @@ class Task extends ActiveRecord implements Sortable, Fileable
         $this->address    = $form->address;
         $this->question   = $form->question;
         $this->image      = $form->image;
+        $this->image_info = $form->image_info;
         $this->answer     = $form->answer;
         $this->type       = $form->type;
         $this->place      = $form->place;
@@ -118,11 +124,24 @@ class Task extends ActiveRecord implements Sortable, Fileable
         return $files;
     }
 
+    public function getImageInfoFiles()
+    {
+        $files = [];
+        if ($this->image_info) {
+            $files[] = [
+                'bucket' => $this->imageInfoFile->getBucket(),
+                'file' => $this->image_info,
+            ];
+        }
+        return $files;
+    }
+
 
     public function getNestedFiles(): array
     {
         $files = [];
         $files = array_merge($files, $this->getImageFiles());
+        $files = array_merge($files, $this->getImageInfoFiles());
         return $files;
     }
 
@@ -130,6 +149,15 @@ class Task extends ActiveRecord implements Sortable, Fileable
     {
         if ($this->image) {
             return $this->imageFile->getPath($this->image);
+        }
+
+        return null;
+    }
+
+    public function getImageInfoPath()
+    {
+        if ($this->image_info) {
+            return $this->imageInfoFile->getPath($this->image_info);
         }
 
         return null;
@@ -152,6 +180,15 @@ class Task extends ActiveRecord implements Sortable, Fileable
     {
         if ($this->image) {
             return \Yii::getAlias("@webroot")."/".$this->imagePath;
+        }
+
+        return null;
+    }
+
+    public function getImageInfoFullPath()
+    {
+        if ($this->image_info) {
+            return \Yii::getAlias("@webroot")."/".$this->imageInfoPath;
         }
 
         return null;

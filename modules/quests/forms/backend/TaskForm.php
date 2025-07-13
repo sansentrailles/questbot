@@ -30,14 +30,18 @@ class TaskForm extends Model
     public $place_show;
     public $image;
     public $imageFile;
+    public $image_info;
+    public $imageInfoFile;
 
     public $taskImage;
+    public $taskImageInfo;
 
     private $task;
 
     public function __construct(?Task $task = null, $config = [])
     {
         $this->taskImage = new BaseImageFile(Task::BUCKET_NAME_IMAGE);
+        $this->taskImageInfo = new BaseImageFile(Task::BUCKET_NAME_IMAGE_INFO);
 
         $this->task = $task;
         parent::__construct($config);
@@ -60,6 +64,7 @@ class TaskForm extends Model
         $this->latitude   = $this->task->latitude;
         $this->message    = $this->task->message;
         $this->image      = $this->task->image;
+        $this->image_info = $this->task->image_info;
         $this->place_show = $this->task->place_show;
         $this->is_visible = $this->task->is_visible;
     }
@@ -79,7 +84,7 @@ class TaskForm extends Model
                 'targetAttribute' => ['quest_id' => 'id'],
             ],
             [['longitude', 'latitude'], 'string', 'max' => 255],
-            [['imageFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['imageFile', 'imageInfoFile'], 'image', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -111,12 +116,24 @@ class TaskForm extends Model
                     ],
                 ],
             ],
+            'imageInfoFile' => [
+                'image_info' => [
+                    'transform' => [
+                        $this->taskImageInfo->save(),
+                    ],
+                ],
+            ],
         ];
     }
 
     public function getImagePath()
     {
         return $this->task->imagePath;
+    }
+
+    public function getImageInfoPath()
+    {
+        return $this->task->imageInfoPath;
     }
 
     public function setQuest($id)

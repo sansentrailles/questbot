@@ -44,6 +44,15 @@ class TaskService extends BaseService
         $this->repository->save($model);
     }
 
+    public function deleteImageInfo($id): void
+    {
+        $model = $this->repository->find($id);
+        $files = $model->getImageInfoFiles();
+        StorageFileHelper::removeFiles($files);
+        $model->image_info = null;
+        $this->repository->save($model);
+    }
+
     public function toggleVisible($id)
     {
         $model = $this->repository->find($id);

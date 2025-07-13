@@ -40,8 +40,6 @@ $cityName = '';
 
         <?php echo $form->field($model, 'address')->textInput(['maxlength' => true]); ?>
 
-        <?php echo $form->field($model, 'message')->textarea(['rows' => 5]); ?>
-
         <div class="form-group">
             <div class="row">
                 <div class="col-md-6">
@@ -55,6 +53,31 @@ $cityName = '';
                             <div class="col-md-6">
                                 <?php echo Delete::widget([
                                     'url' => Url::to(['/admin/quests/tasks/delete-image', 'id' => $model->id]),
+                                ]); ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+
+        <?php echo $form->field($model, 'message')->textarea(['rows' => 5]); ?>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <?php echo $form->field($model, 'imageInfoFile')->fileInput(); ?>
+
+                    <?php if ($model->image_info) { ?>
+                        <div class="row" data-removable>
+                            <div class="col-md-6">
+                                <img src="<?php echo $model->imageInfoPath; ?>" alt="" class='img-responsive'>
+                            </div>
+                            <div class="col-md-6">
+                                <?php echo Delete::widget([
+                                    'url' => Url::to(['/admin/quests/tasks/delete-image-info', 'id' => $model->id]),
                                 ]); ?>
                             </div>
                         </div>
