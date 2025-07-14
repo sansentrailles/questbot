@@ -69,7 +69,7 @@ $correctsCount = 0;
                 <?php } ?>
 
                 <p class="text-gray-300 mb-2">
-                    <strong>Ответ пользователя:</strong> <?= $item->user_answer ?>
+                    <strong>Ответ участника:</strong> <?= $item->user_answer ?>
                 </p>
 
                 <?php if ($item->is_correct) { ?>

@@ -523,22 +523,18 @@ class QuizService
     // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
-        error_log('handleChoiceAnswer');
         $progress = $this->userProgressService->getProgress($chatId, $questId);
         $stat = $this->statService->getActualStat($chatId, $questId);
         $currentTask = $progress->task;
 
         $answer = $this->answerService->find($answerId);
         if ($stat) {
-            error_log('save stat');
             $this->saveChoicedAnswer($stat, $currentTask, $answer);
         }
 
         if ($currentTask->message && mb_strlen($currentTask->message) > 0) {
-            error_log('send message after answer');
             return $this->sendMessageAfterAnswer($chatId, $currentTask);
         } else {
-            error_log('handle next answer');
             $this->handleNextAnswer($chatId, $currentTask, $progress);
         }
     }
@@ -757,9 +753,9 @@ class QuizService
         $items = $stat->items;
 
         $message = "Статистика по прогулке:\n <b>{$quest->title}</b>\n\n";
-        $message .= "<b>Начало:</b> " . DateHelper::formatTimestampRu($stat->start);
-        $message .= "<b>Завершение:</b> " . DateHelper::formatTimestampRu($stat->finish);
-        $message .= "<b>Продолжительность:</b> " . DateHelper::formatTimeDiffImproved((int) $stat->start, (int) $stat->finish);
+        $message .= "<b>Начало:</b> " . DateHelper::formatTimestampRu($stat->start)."\n";
+        $message .= "<b>Завершение:</b> " . DateHelper::formatTimestampRu($stat->finish)."\n";
+        $message .= "<b>Продолжительность:</b> " . DateHelper::formatTimeDiffImproved((int) $stat->start, (int) $stat->finish)."\n";
         $message .= "<b>Количество точек:</b> ". count($items);
         $message .= "\n\nНажмите кнопк \"Подробная статистика ↗️\", чтобы открыть страницы с подробной статистикой прохождения прогулки";
 
