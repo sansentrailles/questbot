@@ -14,7 +14,7 @@ class TaskSearch extends SearchModel
     public function rules()
     {
         return [
-            [['id'], 'integer'],
+            [['id', 'type'], 'integer'],
             [['question', 'place', 'address'], 'string'],
         ];
     }
@@ -57,6 +57,7 @@ class TaskSearch extends SearchModel
         $query->andFilterWhere([
             'id' => $this->id,
             'quest_id' => $this->quest_id,
+            'type' => $this->type,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);

@@ -63,6 +63,18 @@ $seoSection = 'quests';
                 ],
 
                 [
+                    'attribute' => 'type',
+                    'filter' => Task::getTypes(),
+                    'value' => function ($model) {
+                        if (isset(Task::getTypes()[$model->type])) {
+                            return Task::getTypes()[$model->type];
+                        }
+
+                        return [];
+                    }
+                ],
+
+                [
                     'headerOptions' => ['width' => '10%'],
                     'label' => Module::t('common', 'TASK_ANSWERS'),
                     'format' => 'raw',
