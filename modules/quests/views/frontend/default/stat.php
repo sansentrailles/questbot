@@ -39,16 +39,18 @@ use app\modules\quests\models\Task;
         ?>
         <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 overflow-hidden animate-fade-in" style="animation-delay: 0s;">
             <div class="p-6">
-                <h3 class="text-xl font-semibold text-pink-300 mb-3"><?= $item->question ?></h3>
+                <p class="text-xl font-semibold text-pink-300 mb-3"><?= $item->question ?></p>
 
                 <?php if ($task->image) { ?>
-                    <img src="<?= $task->imagePath ?>" alt="Изображение вопроса" class="w-full h-32 object-cover rounded-lg my-4">
+                    <img src="<?= $task->imagePath ?>" alt="Изображение вопроса" class="h-32 object-cover rounded-lg my-4 mx-auto">
                 <?php } ?>
                 
                 <?php if ($task->type == Task::TYPE_CHOICE) { ?>
                     <?= $this->render('inner/answers', [
                         'answers' => $task->answers,
                     ]) ?>
+                <?php } else { ?>
+                `   <p class="text-gray-300 mb-2"><strong>Правильный ответ:</strong> <?= $item->task_answer ?></p>
                 <?php } ?>
 
                 <p class="text-gray-300 mb-2">
@@ -66,7 +68,7 @@ use app\modules\quests\models\Task;
                     <strong>Время ответа:</strong> <?= date("H:i", $item->created_at) ?>
                 </p>
                 <?php if ((int) $item->hint_count > 0) { ?>
-                    <p class="text-gray-400 text-sm">Подсказки использовано: <?= $item->hint_used ?> из <?= $item->hint_count ?></p>
+                    <p class="text-gray-400 text-sm">Подсказки использовано: <?= (int) $item->hint_used ?> из <?= $item->hint_count ?></p>
                 <?php } ?>
             </div>
         </div>
