@@ -20,7 +20,9 @@ $correctsCount = 0;
                 <a href="quest-details.html" class="self-start text-sm text-blue-400 hover:underline">
                     Посмотреть описание квеста
                 </a>
+                <?php /*
                 <span class="inline-block px-3 py-1 bg-blue-900/50 rounded-full text-xs text-blue-300 mt-2">Городской квест</span>
+                */ ?>
             </div>
 
             <?php if ($quest->image) { ?>
@@ -91,7 +93,7 @@ $correctsCount = 0;
     <section class="max-w-4xl mx-auto mt-10">
         <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 p-6 text-center animate-fade-in" style="animation-delay: 0.4s;">
             <h2 class="text-2xl font-bold text-green-400 mb-2">Итог прохождения</h2>
-            <p class="text-gray-300 text-lg"> Верных ответов: <span class="font-semibold">2</span> из <span class="font-semibold"><?= count($items) ?></span>
+            <p class="text-gray-300 text-lg"> Верных ответов: <span class="font-semibold"><?= $correctsCount ?></span> из <span class="font-semibold"><?= count($items) ?></span>
             </p>
         </div>
     </section>

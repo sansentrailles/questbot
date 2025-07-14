@@ -301,7 +301,7 @@ class QuizService
         // Если есть прогулка в процессе, показываем следующее задание этой прогулки
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
-            $this->bot->sendMessage($chatId, "Вы находитесь на прогулке: " . $progress->quest->title. "\nАктуальное задание" );
+            $this->bot->sendMessage($chatId, "Вы находитесь на прогулке:\n" . $progress->quest->title. "\n\nАктуальное задание" );
             return $this->sendNextTask($chatId, $progress->quest_id);
         }
 
@@ -403,8 +403,8 @@ class QuizService
             return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
 
-        $progress = $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
-        $stat = $this->statService->createStat($chatId, $questId);
+        $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
+        $this->statService->createStat($chatId, $questId);
 
         $this->sendNextTask($chatId, $questId);
 
