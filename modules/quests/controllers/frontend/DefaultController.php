@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace app\modules\quests\controllers\frontend;
 
-use app\custom\helpers\StringHelper;
 use Yii;
 use app\modules\quests\services\QuizService;
 use app\modules\quests\api\telegram\TelegramBot;
 use app\modules\quests\controllers\common\Controller;
+use yii\web\HttpException;
 
 class DefaultController extends Controller
 {
@@ -16,16 +16,19 @@ class DefaultController extends Controller
 
     public function actionStat($uuid)
     {
-        // $stat = $this->statService->getByUuid($uuid);
+        $stat = $this->statService->getByUuid($uuid);
+        if ($stat == null) {
+            throw new HttpException(404, 'Статистика не найдена');
+        }
 
         $this->view->title = "Статистика прохождения прогулки";
         $this->layout = '@app/views/layouts/frontend/stat';
         
         // return $this->render('stat_static', [
         return $this->render('stat', [
-            // 'stat' => $stat,
-            // 'items' => $stat->items,
-            // 'quest' => $stat->quest,
+            'stat' => $stat,
+            'items' => $stat->items,
+            'quest' => $stat->quest,
         ]);
     }
 
