@@ -15,20 +15,18 @@ $correctsCount = 0;
 <section class="max-w-4xl mx-auto space-y-6 mb-10">
     <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 overflow-hidden animate-fade-in">
         <div class="p-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h2 class="text-2xl font-bold text-yellow-300 mb-2"><?= $quest->title ?></h2>
-                    <span class="inline-block px-3 py-1 bg-blue-900/50 rounded-full text-xs text-blue-300 mb-4">Городской квест</span>
-                </div>
-
-                <a href="quest-details.html" class="whitespace-nowrap inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition duration-300">
-                    Посмотреть описание
+            <div class="flex flex-col space-y-2">
+                <h2 class="text-2xl font-bold text-yellow-300"><?= $quest->title ?></h2>
+                <a href="quest-details.html" class="self-start text-sm text-blue-400 hover:underline">
+                    Посмотреть описание квеста
                 </a>
+                <span class="inline-block px-3 py-1 bg-blue-900/50 rounded-full text-xs text-blue-300 mt-2">Городской квест</span>
             </div>
 
             <?php if ($quest->image) { ?>
-                <img src="<?= $quest->imagePath ?>" alt="" class="w-full h-40 object-cover rounded-lg my-4">
+                <img src="<?= $quest->imagePath ?>" alt="" class="w-full object-contain rounded-lg my-4">
             <?php } ?>
+
             <p class="text-gray-300 leading-relaxed mb-3"><?= $quest->announce ?></p>
             <p class="text-gray-400 text-sm">
                 <strong>Начало:</strong> <?= DateHelper::formatTimestampRu($stat->start); ?>
