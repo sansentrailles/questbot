@@ -20,7 +20,7 @@ $correctsCount = 0;
             <?php if ($quest->image) { ?>
                 <img src="<?= $quest->imagePath ?>" alt="" class="w-full h-40 object-cover rounded-lg my-4">
             <?php } ?>
-            <p class="text-gray-300 leading-relaxed mb-3"> Исследуйте скрытые уголки исторического центра и разгадайте загадки прошлого. </p>
+            <p class="text-gray-300 leading-relaxed mb-3"><?= $quest->announce ?></p>
             <p class="text-gray-400 text-sm">
                 <strong>Начало:</strong> <?= DateHelper::formatTimestampRu($stat->start); ?>
             </p>

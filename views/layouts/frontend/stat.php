@@ -47,7 +47,7 @@ use yii\helpers\Html;
         <?php $this->beginBody(); ?>
             <?php echo $content; ?>
             <!-- Footer -->
-<footer class="max-w-4xl mx-auto mt-12 pt-6 border-t border-white/10 text-center text-sm text-gray-400"> &copy; <?= date('Y', time()) ?> Городской Квест Бот.</footer>
+            <footer class="max-w-4xl mx-auto mt-12 pt-6 border-t border-white/10 text-center text-sm text-gray-400"> &copy; <?= date('Y', time()) ?> Городской Квест Бот.</footer>
         <?php $this->endBody(); ?>
     </body>
 </html>

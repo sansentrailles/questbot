@@ -13,6 +13,7 @@ trait QuestAttributeLabelsTrait
         return [
             'id'             => Module::t('common', 'ID'),
             'title'          => Module::t('common', 'QUEST_TITLE'),
+            'announce'       => Module::t('common', 'QUEST_ANNOUNCE'),
             'desc'           => Module::t('common', 'QUEST_DESC'),
             'text_final'     => Module::t('common', 'QUEST_TEXT_FINAL'),
             'help'           => Module::t('common', 'QUEST_HELP'),

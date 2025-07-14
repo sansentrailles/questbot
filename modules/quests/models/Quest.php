@@ -17,6 +17,7 @@ use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
  *
  * @property int $id
  * @property string $title
+ * @property string $announce
  * @property string $code
  * @property string $image
  * @property string $image_final
@@ -25,6 +26,7 @@ use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
  * @property string $help
  * @property int $date
  * @property int $limit
+ * @property int $is_visible
  * @property int $created_at
  * @property int $updated_at
  */
@@ -67,6 +69,7 @@ class Quest extends ActiveRecord implements Fileable
         $model = new self();
 
         $model->title       = $form->title;
+        $model->announce    = $form->announce;
         $model->code        = $form->code;
         $model->desc        = $form->desc;
         $model->help        = $form->help;
@@ -83,6 +86,7 @@ class Quest extends ActiveRecord implements Fileable
     public function edit(Form $form): void
     {
         $this->title       = $form->title;
+        $this->announce    = $form->announce;
         $this->code        = $form->code;
         $this->desc        = $form->desc;
         $this->help        = $form->help;

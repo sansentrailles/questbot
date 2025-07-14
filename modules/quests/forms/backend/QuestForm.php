@@ -19,6 +19,7 @@ class QuestForm extends Model
 
     public $id;
     public $title;
+    public $announce;
     public $code;
     public $desc;
     public $text_final;
@@ -55,6 +56,7 @@ class QuestForm extends Model
 
         $this->id          = $this->quest->id;
         $this->title       = $this->quest->title;
+        $this->announce    = $this->quest->announce;
         $this->code        = $this->quest->code;
         $this->desc        = $this->quest->desc;
         $this->help        = $this->quest->help;
@@ -71,7 +73,7 @@ class QuestForm extends Model
         return [
             [['is_visible'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
-            [['desc', 'help', 'text_final'], 'string'],
+            [['desc', 'help', 'text_final', 'announce'], 'string'],
             [['title'], 'required', 'message' => 'Введите название'],
             [['code'], 'unique', 'targetClass' => Quest::class, 'filter' => function ($query): void {
                 if ($this->id) {

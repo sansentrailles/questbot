@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'QUESTS' => 'Квесты',
     'QUEST_TITLE' => 'Название',
+    'QUEST_ANNOUNCE' => 'Краткое описание',
     'QUEST_CODE' => 'Код',
     'QUEST_IMAGE' => 'Изображение при запуске прогулки',
     'QUEST_IMAGE_FINAL' => 'Изображение при завершении прогулки',

@@ -25,6 +25,8 @@ use app\custom\widgets\backend\delete\Delete;
 
         <?php echo $form->field($model, 'desc')->textarea(['rows' => 8]); ?>
 
+        <?php echo $form->field($model, 'announce')->textarea(['rows' => 5]); ?>
+
         <?php echo $form->field($model, 'help')->textarea(['rows' => 8]); ?>
 
         <?php echo $form->field($model, 'code')->textInput(['maxlength' => true]); ?>
