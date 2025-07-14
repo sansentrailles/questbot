@@ -3,6 +3,8 @@
 use app\custom\helpers\DateHelper;
 use app\modules\quests\models\Task;
 
+$correctsCount = 0;
+
 ?>
 
 <!-- Навигация -->
@@ -36,6 +38,10 @@ use app\modules\quests\models\Task;
 <main class="max-w-4xl mx-auto space-y-6">
     <?php foreach ($items as $item) {
             $task = $item->task;
+
+            if ($item->is_correct) {
+                $correctsCount += 1;
+            }
         ?>
         <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 overflow-hidden animate-fade-in" style="animation-delay: 0s;">
             <div class="p-6">
@@ -78,7 +84,7 @@ use app\modules\quests\models\Task;
     <section class="max-w-4xl mx-auto mt-10">
         <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 p-6 text-center animate-fade-in" style="animation-delay: 0.4s;">
             <h2 class="text-2xl font-bold text-green-400 mb-2">Итог прохождения</h2>
-            <p class="text-gray-300 text-lg"> Верных ответов: <span class="font-semibold">2</span> из <span class="font-semibold">3</span>
+            <p class="text-gray-300 text-lg"> Верных ответов: <span class="font-semibold">2</span> из <span class="font-semibold"><?= count($items) ?></span>
             </p>
         </div>
     </section>
