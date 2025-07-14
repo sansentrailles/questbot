@@ -2,8 +2,10 @@
 
 namespace app\modules\quests\services;
 
-use app\custom\helpers\StringHelper;
+use yii\helpers\Url;
+use app\custom\helpers\DateHelper;
 use app\modules\quests\models\Task;
+use app\custom\helpers\StringHelper;
 use app\modules\quests\api\telegram\TelegramBot;
 
 class QuizService
@@ -86,8 +88,11 @@ class QuizService
                     break;
 
                 // Отображение статистики
-                case 'show_stat':
-                    $this->showStat($chatId);
+                case 'show_stat_list':
+                    $this->showStatList($chatId);
+                    break;
+                case 'show_quest_stat':
+                    $this->showQuestStat($chatId, (int) $buttonData['value']);
                     break;
 
                 // Запуск прогулки
@@ -172,35 +177,13 @@ class QuizService
                 $this->bot->sendMessage($chatId, "Неизвестная команда: $command");
         }
     }
-    
-    /**
-     * Отправка стартового сообщения
-     * @param int $chatId - ID чата
-     */
-    // protected function sendStartMessage($chatId) {
-    //     $keyboard = [
-    //         'inline_keyboard' => [
-    //             [
-    //                 ['text' => 'Кнопка 1', 'callback_data' => 'show_text:Button1'],
-    //                 ['text' => 'Кнопка 2', 'callback_data' => 'show_text:Button2']
-    //             ],
-    //             [
-    //                 ['text' => 'Удалить это сообщение', 'callback_data' => 'delete_message']
-    //             ]
-    //         ]
-    //     ];
-        
-    //     $this->bot->sendMessage($chatId, "Добро пожаловать! Выберите действие:", [
-    //         'reply_markup' => json_encode($keyboard)
-    //     ]);
-    // }
 
     protected function sendStartMessage($chatId) {
         $keyboard = [
             'inline_keyboard' => [
                 [
                     ['text' => 'Прогулки 🚶‍♂️', 'callback_data' => 'quests'],
-                    ['text' => 'Статистика 📊', 'callback_data' => 'show_stat']
+                    ['text' => 'Статистика 📊', 'callback_data' => 'show_stat_list']
                 ],
             ]
         ];
@@ -612,7 +595,6 @@ class QuizService
         ];
 
         if ($currentTask->image_info) {
-            error_log(__METHOD__.": Show image info");
             return $this->bot->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
                 // 'show_caption_above_media' => true,
                 'parse_mode' => 'html',
@@ -620,7 +602,6 @@ class QuizService
             ]);
         }
 
-        error_log(__METHOD__.": Show message without image");
         return $this->bot->sendMessage($chatId, $message, [
             'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
@@ -658,20 +639,35 @@ class QuizService
     {
         $quest = $progress->quest;
         $this->userProgressService->completeQuest($progress);
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
 
         $message = "Все задания прогулки заданы!\n\n<b>Спасибо за участие!</b>";
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
 
+        
+        $keyboard[] = [
+            [
+                'text' => "Показать статистику 📊",
+                'callback_data' => 'show_quest_stat:'.$stat->id,
+            ]
+        ];
+
+        $replyMarkup = [
+            'inline_keyboard' => $keyboard
+        ];
+
         if ($quest->image_final) {
             return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
                 'parse_mode' => 'html',
+                'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
         return $this->bot->sendMessage($chatId, $message, [
             'parse_mode' => 'html',
+            'reply_markup' => json_encode($replyMarkup),
         ]);
     }
 
@@ -745,8 +741,44 @@ class QuizService
         ]);
     }
 
-    private function showStat($chatId)
+    private function showStatList($chatId)
     {
         return $this->bot->sendMessage($chatId, 'Скоро будет статистика');
+    }
+
+    private function showQuestStat($chatId, $statId)
+    {
+        $stat = $this->statService->find($statId);
+        if ($stat == null) {
+            $this->bot->sendMessage($chatId, 'Статистика не найдена 😟 (Ошибка 1-11)');
+        }
+
+        $quest = $stat->quest;
+        $items = $stat->items;
+
+        $message = "Статистика по прогулке:\n <b>{$quest->title}</b>\n\n";
+        $message .= "<b>Начало:</b> " . DateHelper::formatTimestampRu($stat->start);
+        $message .= "<b>Завершение:</b> " . DateHelper::formatTimestampRu($stat->finish);
+        $message .= "<b>Продолжительность:</b> " . DateHelper::formatTimeDiffImproved((int) $stat->start, (int) $stat->finish);
+        $message .= "<b>Количество точек:</b> ". count($items);
+        $message .= "\n\nНажмите кнопк \"Подробная статистика ↗️\", чтобы открыть страницы с подробной статистикой прохождения прогулки";
+
+        $link = Url::to(['/quests/default/stat', 'uuid' => $stat->uuid], true);
+
+        $keyboard[] = [
+            [
+                'text' => 'Подробная статистика ↗️',
+                'url' => $link
+            ]
+        ];
+
+        $replyMarkup = [
+            'inline_keyboard' => $keyboard
+        ];
+
+        $this->bot->sendMessage($chatId, $message, [
+            'parse_mode' => 'html',
+            'reply_markup' => json_encode($replyMarkup),
+        ]);
     }
 }
