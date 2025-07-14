@@ -52,4 +52,9 @@ class Stat extends ActiveRecord
     {
         return $this->hasOne(Quest::class, ['id' => 'quest_id']);
     }
+
+    public function getItems()
+    {
+        return $this->hasMany(StatItem::class, ['stat_id' => 'id']);
+    }
 }

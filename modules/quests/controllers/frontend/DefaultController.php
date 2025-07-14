@@ -16,8 +16,17 @@ class DefaultController extends Controller
 
     public function actionStat($uuid)
     {
-        $stat = $this->statService->getByUuid($uuid);
-        print_r($stat); exit;
+        // $stat = $this->statService->getByUuid($uuid);
+
+        $this->view->title = "Статистика прохождения прогулки";
+        $this->layout = '@app/views/layouts/frontend/stat';
+        
+        // return $this->render('stat_static', [
+        return $this->render('stat', [
+            // 'stat' => $stat,
+            // 'items' => $stat->items,
+            // 'quest' => $stat->quest,
+        ]);
     }
 
     public function actionHandler()
