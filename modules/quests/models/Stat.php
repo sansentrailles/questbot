@@ -15,6 +15,7 @@ use app\modules\quests\models\traits\StatAttributeLabelsTrait;
  * @property int $user_id
  * @property int $start
  * @property int $finish
+ * @property string $uuid
  */
 class Stat extends ActiveRecord
 {
@@ -33,6 +34,7 @@ class Stat extends ActiveRecord
         $model->user_id  = $form->user_id;
         $model->start    = $form->start;
         $model->finish   = $form->finish;
+        $model->uuid     = $form->uuid;
 
         return $model;
     }
@@ -43,6 +45,7 @@ class Stat extends ActiveRecord
         $this->user_id  = $form->user_id;
         $this->start    = $form->start;
         $this->finish   = $form->finish;
+        $this->uuid     = $form->uuid;
     }
 
     public function getQuest()

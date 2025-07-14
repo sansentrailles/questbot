@@ -8,4 +8,5 @@ return [
     'QUEST_STAT_USER_ID' => 'Пользователь',
     'QUEST_STAT_START' => 'Начала прохождения',
     'QUEST_STAT_FINISH' => 'Окончание прохождения',
+    'QUEST_STAT_UUID' => 'UUID',
 ];

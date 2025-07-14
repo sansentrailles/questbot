@@ -18,6 +18,7 @@ class StatForm extends Model
     public $user_id;
     public $start;
     public $finish;
+    public $uuid;
 
     private $stat;
 
@@ -38,11 +39,13 @@ class StatForm extends Model
         $this->user_id  = $this->stat->user_id;
         $this->start    = $this->stat->start;
         $this->finish   = $this->stat->finish;
+        $this->uuid     = $this->stat->uuid;
     }
 
     public function rules()
     {
         return [
+            [['uuid'], 'string'],
             [['start', 'finish'], 'integer'],
             [['user_id'], 'integer'],
             [['quest_id'],

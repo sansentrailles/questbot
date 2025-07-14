@@ -44,4 +44,9 @@ class StatRepository extends BaseRepository
         
         return $query->one();
     }
+
+    public function getByUuid(string $uuid)
+    {
+        return $this->model::findOne(['uuid' => $uuid]);
+    }
 }

@@ -16,6 +16,7 @@ trait StatAttributeLabelsTrait
             'user_id'  => Module::t('common', 'QUEST_STAT_USER_ID'),
             'start'    => Module::t('common', 'QUEST_STAT_START'),
             'finish'   => Module::t('common', 'QUEST_STAT_FINISH'),
+            'uuid'     => Module::t('common', 'QUEST_STAT_UUID'),
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\modules\quests\services;
 
 use yii\base\Model as Form;
+use app\custom\helpers\StringHelper;
 use app\custom\services\base\BaseService;
 use app\modules\quests\models\Stat as Model;
 use app\modules\quests\forms\backend\StatForm;
@@ -33,7 +34,7 @@ class StatService extends BaseService
         return Repository::class;
     }
 
-    public function getorCreateStat($userId, $questId)
+    public function getOrCreateStat($userId, $questId)
     {
         $stat = $this->getActualStat($userId, $questId);
         if ($stat) {
@@ -49,8 +50,25 @@ class StatService extends BaseService
         $form->user_id = $userId;
         $form->quest_id = $questId;
         $form->start = time();
+        $form->uuif = $this->getUuid();
 
         return $this->save($form);
+    }
+
+    private function getUuid()
+    {
+        $uuid = StringHelper::generateUuidV4();
+        $stat = $this->getByUuid($uuid);
+        if ($stat) {
+            return $this->getUuid();
+        }
+
+        return $uuid;
+    }
+
+    public function getByUuid(string $uuid)
+    {
+        return $this->repository->getByUuid($uuid);
     }
 
     public function getStat($userId, $questId)
