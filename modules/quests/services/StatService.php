@@ -50,7 +50,7 @@ class StatService extends BaseService
         $form->user_id = $userId;
         $form->quest_id = $questId;
         $form->start = time();
-        $form->uuif = $this->getUuid();
+        $form->uuid = $this->getUuid();
 
         return $this->save($form);
     }
