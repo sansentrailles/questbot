@@ -52,7 +52,7 @@ $correctsCount = 0;
         ?>
         <div class="bg-black/30 backdrop-blur-md rounded-xl shadow-lg border border-white/10 overflow-hidden animate-fade-in" style="animation-delay: 0s;">
             <div class="p-6">
-                <p class="text-xl font-semibold text-pink-300 mb-3"><?= str_replace("\n", "<br>", $item->question) ?></p>
+                <p class="text-lg font-medium text-gray-200 mb-3"><?= str_replace("\n", "<br>", $item->question) ?></p>
 
                 <?php if ($task->image) { ?>
                     <img src="<?= $task->imagePath ?>" alt="Изображение вопроса" class="h-32 object-cover rounded-lg my-4 mx-auto">
