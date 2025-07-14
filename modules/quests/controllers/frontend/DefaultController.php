@@ -14,11 +14,11 @@ class DefaultController extends Controller
 {
     public $enableCsrfValidation = false;
 
-    // public function actionIndex(): void
-    // {
-    //     echo 123;
-    //     exit;
-    // }
+    public function actionStat($uuid)
+    {
+        $stat = $this->statService->getByUuid($uuid);
+        print_r($stat); exit;
+    }
 
     public function actionHandler()
     {
