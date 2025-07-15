@@ -1,3 +1,5 @@
+<h2 class="text-3xl font-bold text-yellow-300 mt-10 mb-4">Контрольные точки прогулки</h2>
+
 <section id="questions-section" class="space-y-6">
     <?php foreach ($tasks as $task) {
         $question = str_replace("\n\n", "<br>", $task->question);

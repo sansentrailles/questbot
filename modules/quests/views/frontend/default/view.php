@@ -57,9 +57,6 @@ $helpParts = explode("\n", $quest->help);
     </div>
 </section>
 
-<!-- Заголовок перед вопросами -->
-<h2 class="text-3xl font-bold text-yellow-300 mt-10 mb-4">Контрольные точки прогулки</h2>
-
 <?php if($quest->is_active) { ?>
     <?= $this->render('inner/_quest_tasks', [
         'tasks' => $tasks,
