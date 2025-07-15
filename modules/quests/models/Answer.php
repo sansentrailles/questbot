@@ -68,8 +68,13 @@ class Answer extends ActiveRecord implements Sortable
         return $this->is_right = $this->is_right ? self::STATE_WRONG : self::STATE_RIGHT;
     }
 
-    public static function dropRightStates(): void
+    public static function dropRightStates($taskId): void
     {
-        self::updateAll(['is_right' => self::STATE_WRONG], ['=', 'is_right', self::STATE_RIGHT]);
+        // self::updateAll(['is_right' => self::STATE_WRONG], [['=', 'is_right', self::STATE_RIGHT], ['=', 'task_id', $taskId]]);
+        self::updateAll(['is_right' => self::STATE_WRONG], [
+            'and',
+                ['=', 'is_right', self::STATE_RIGHT],
+                ['task_id' => 2]
+        ]);
     }
 }

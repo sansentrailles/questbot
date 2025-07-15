@@ -17,7 +17,7 @@ class AnswerService extends BaseService
         $transaction = $this->transactionManager->begin();
         try {
             if ($model->is_right) {
-                Model::dropRightStates();
+                Model::dropRightStates($model->task_id);
             }
             $this->repository->add($model);
             $transaction->commit();
@@ -37,7 +37,7 @@ class AnswerService extends BaseService
         $transaction = $this->transactionManager->begin();
         try {
             if ($model->is_right) {
-                Model::dropRightStates();
+                Model::dropRightStates($model->task_id);
             }
             $this->repository->save($model);
             $transaction->commit();
@@ -65,7 +65,7 @@ class AnswerService extends BaseService
         $state = $model->toggleRight();
         $transaction = $this->transactionManager->begin();
         try {
-            Model::dropRightStates();
+            Model::dropRightStates($model->task_id);
             $this->repository->save($model);
             $transaction->commit();
         } catch (\Exception $e) {

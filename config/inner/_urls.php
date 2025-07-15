@@ -42,6 +42,7 @@ return [
 
         '/quests/handler' => 'quests/default/handler',
         '/quests/help' => 'quests/default/help',
+        '/quests/<id:\d+>' => 'quests/default/view',
         '/quests/stat/<uuid:[\w_\/-]+>' => 'quests/default/stat',
 
         // '<pageUri:[\w_\/-]+>'=>'page/default/view',

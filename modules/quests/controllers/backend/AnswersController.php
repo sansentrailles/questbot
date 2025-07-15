@@ -73,7 +73,7 @@ class AnswersController extends Controller
         if ($model->load($post) && $model->validate()) {
             $this->answerService->save($model);
 
-            return $this->redirect(['index', 'taskId' => $model->quest_id]);
+            return $this->redirect(['index', 'taskId' => $model->task_id]);
         }
 
         return $this->render('update', [

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\modules\quests\controllers\frontend;
 
+use app\modules\quests\models\Quest;
 use Yii;
 use app\modules\quests\services\QuizService;
 use app\modules\quests\api\telegram\TelegramBot;
@@ -29,6 +30,21 @@ class DefaultController extends Controller
             'stat' => $stat,
             'items' => $stat->items,
             'quest' => $stat->quest,
+        ]);
+    }
+
+    public function actionView($id)
+    {
+        $quest = $this->questService->find((int) $id);
+        if ($quest == null || $quest->is_visible == Quest::STATUS_INVISIBLE) {
+            throw new HttpException(404, 'Квест не найден');
+        }
+
+        $this->layout = '@app/views/layouts/frontend/stat';
+        $this->view->title = "Прогулка - " . $quest->title;
+        return $this->render('view', [
+            'quest' => $quest,
+            'tasks' => $quest->visibleTasks,
         ]);
     }
 

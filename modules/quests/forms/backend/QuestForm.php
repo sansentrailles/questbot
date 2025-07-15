@@ -27,6 +27,7 @@ class QuestForm extends Model
     public $date;
     public $limit;
     public $is_visible;
+    public $is_active;
     public $image;
     public $imageFile;
     public $image_final;
@@ -66,12 +67,13 @@ class QuestForm extends Model
         $this->image_final = $this->quest->image_final;
         $this->text_final  = $this->quest->text_final;
         $this->is_visible  = $this->quest->is_visible;
+        $this->is_active   = $this->quest->is_active;
     }
 
     public function rules()
     {
         return [
-            [['is_visible'], 'integer'],
+            [['is_visible', 'is_active'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
             [['desc', 'help', 'text_final', 'announce'], 'string'],
             [['title'], 'required', 'message' => 'Введите название'],

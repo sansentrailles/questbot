@@ -1,0 +1,61 @@
+// Переключение вкладок
+function openTab(evt, tabName) {
+    const tabs = document.querySelectorAll('.tab-content');
+    const tabButtons = document.querySelectorAll('.tab-button');
+
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.display = 'none';
+    });
+
+    tabButtons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = '';
+        btn.style.color = '#9ca3af';
+    });
+
+    const targetTab = document.getElementById(tabName);
+    targetTab.classList.add('active');
+    targetTab.style.display = 'block';
+
+    evt.currentTarget.classList.add('active');
+    evt.currentTarget.style.background = 'rgba(59, 130, 246, 0.5)';
+    evt.currentTarget.style.color = 'white';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('info').classList.add('active');
+    document.getElementById('info').style.display = 'block';
+});
+
+// Отображение подсказок по одной
+function toggleHint(button) {
+    const container = button.nextElementSibling;
+    const hints = container.querySelectorAll('.hint');
+    let allShown = true;
+
+    for (let i = 0; i < hints.length; i++) {
+        if (hints[i].style.display === 'none') {
+            hints[i].style.display = 'block';
+            allShown = false;
+            button.textContent = i === 0 ? 'Показать ещё подсказку' : 'Подсказки закончились';
+            break;
+        }
+    }
+
+    if (allShown) {
+        button.textContent = 'Подсказки закончились';
+        button.disabled = true;
+        button.style.color = '#6b7280';
+        button.style.cursor = 'default';
+    }
+}
+
+// Отображение места
+function toggleLocation(button) {
+    const locationBox = button.nextElementSibling;
+    const isVisible = locationBox.style.display !== 'none';
+
+    locationBox.style.display = isVisible ? 'none' : 'block';
+    button.textContent = isVisible ? 'Показать место' : 'Скрыть место';
+}

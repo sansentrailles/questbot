@@ -1,0 +1,207 @@
+/* Цвета */
+:root {
+  --primary-color: #60a5fa;
+  --accent-color: #fcd34d;
+  --correct-color: #4ade80;
+  --background-card: rgba(0, 0, 0, 0.3);
+  --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Базовые стили */
+body {
+  background: linear-gradient(to bottom right, #111827, #1e3a8a);
+  padding: 1.5rem;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.container {
+  max-width: 48rem;
+  margin: auto;
+}
+
+/* Карты с вопросами и квестами */
+.card {
+  background-color: var(--background-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tag {
+  display: inline-block;
+  background-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.question-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1rem auto;
+  border-radius: 0.75rem;
+}
+
+/* Вкладки */
+.tab-buttons {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-weight: 500;
+  cursor: pointer;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.tab-button.active {
+  background-color: rgba(59, 130, 246, 0.5);
+  color: white;
+}
+
+.tab-button:hover {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Подсказки */
+.hint-box .hint {
+  display: none;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  color: #d1d5db;
+}
+
+.show-hint-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.show-hint-btn:hover {
+  text-decoration: underline;
+}
+
+/* Место */
+.location {
+  display: none;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: rgba(55, 65, 81, 0.3);
+  border: 1px solid #4b5563;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #d1d5db;
+}
+
+.show-location-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.show-location-btn:hover {
+  text-decoration: underline;
+}
+
+/* Текст и заголовки */
+.text-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background-image: linear-gradient(to right, #fcd34d, #fda4af, #f87171);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.correct-answer {
+  color: var(--correct-color);
+  font-weight: 500;
+}
+
+/* Отступы */
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-6 { margin-top: 1.5rem; }
+
+.mt-2, .mb-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Флекс и текст */
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.list-disc {
+  list-style-type: disc;
+}
+
+.ml-5 {
+  margin-left: 1.25rem;
+}
+
+/* Стили для кнопок */
+.back-link {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.border-t {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}

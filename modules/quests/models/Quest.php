@@ -27,6 +27,7 @@ use app\modules\quests\models\traits\QuestAttributeLabelsTrait;
  * @property int $date
  * @property int $limit
  * @property int $is_visible
+ * @property int $is_active
  * @property int $created_at
  * @property int $updated_at
  */
@@ -37,6 +38,9 @@ class Quest extends ActiveRecord implements Fileable
 
     public const STATUS_INVISIBLE = 0;
     public const STATUS_VISIBLE = 1;
+
+    public const STATE_ACTIVE = 1;
+    public const STATE_INCTIVE = 0;
 
     public const BUCKET_NAME_IMAGE = 'questImage';
     public const BUCKET_NAME_IMAGE_FINAL = 'questImageFinal';
@@ -79,6 +83,7 @@ class Quest extends ActiveRecord implements Fileable
         $model->text_final  = $form->text_final;
         $model->limit       = $form->limit;
         $model->is_visible  = $form->is_visible;
+        $model->is_active   = $form->is_active;
 
         return $model;
     }
@@ -96,6 +101,7 @@ class Quest extends ActiveRecord implements Fileable
         $this->text_final  = $form->text_final;
         $this->limit       = $form->limit;
         $this->is_visible  = $form->is_visible;
+        $this->is_active   = $form->is_active;
     }
 
 

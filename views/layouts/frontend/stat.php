@@ -1,6 +1,9 @@
 <?php
 
+use app\assets\AppAsset;
 use yii\helpers\Html;
+
+AppAsset::register($this);
 
 ?>
 
@@ -44,6 +47,7 @@ use yii\helpers\Html;
         </style>
     </head>
     <body class="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white min-h-screen p-6 transition-all duration-500">
+        <?php /*class="bg-gradient text-white font-sans" */?>
         <?php $this->beginBody(); ?>
             <?php echo $content; ?>
             <!-- Footer -->

@@ -722,7 +722,8 @@ class QuizService
             ];
         }
 
-        $message = "<b>Подсказка:</b>\n\n".StringHelper::escapeMarkdown($hint->text);
+        // $message = "<b>Подсказка:</b>\n\n".StringHelper::escapeMarkdown($hint->text);
+        $message = "<b>Подсказка:</b>\n".$hint->text;
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
                 'show_caption_above_media' => true,
@@ -757,7 +758,7 @@ class QuizService
         $message .= "<b>Завершение:</b> " . DateHelper::formatTimestampRu($stat->finish)."\n";
         $message .= "<b>Продолжительность:</b> " . DateHelper::formatTimeDiffImproved((int) $stat->start, (int) $stat->finish)."\n";
         $message .= "<b>Количество точек:</b> ". count($items);
-        $message .= "\n\nНажмите кнопк \"Подробная статистика ↗️\", чтобы открыть страницы с подробной статистикой прохождения прогулки";
+        $message .= "\n\nНажмите кнопк \"Подробная статистика ↗️\", чтобы открыть страницу с подробной статистикой прохождения прогулки";
 
         $link = Url::to(['/quests/default/stat', 'uuid' => $stat->uuid], true);
 
