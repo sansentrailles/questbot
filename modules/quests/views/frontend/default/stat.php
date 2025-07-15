@@ -18,7 +18,7 @@ $correctsCount = 0;
         <div class="p-6">
             <div class="flex flex-col space-y-2">
                 <h2 class="text-2xl font-bold text-yellow-300"><?= $quest->title ?></h2>
-                <a href="<?= Url::to(['/quests/default/view', ['id' => $quest->id]]) ?>" class="self-start text-sm text-blue-400 hover:underline">
+                <a href="<?= Url::to(['/quests/default/view', 'id' => $quest->id]) ?>" class="self-start text-sm text-blue-400 hover:underline">
                     Посмотреть описание прогулки
                 </a>
                 <?php /*
