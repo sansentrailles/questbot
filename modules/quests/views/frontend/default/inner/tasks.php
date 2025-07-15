@@ -10,9 +10,9 @@
     <div class="card">
     */ ?>
         <div class="p-6">
-            <h3>Загадка Старой Площади</h3>
-            <p style="margin-bottom: 1rem;"> Найдите каменную плиту с выбитыми символами и прочитайте надпись. </p>
             <img src=" https://placehold.co/600x200/ef4444/ffffff?text=Плитка+с+символами" alt="Изображение вопроса" class="h-auto rounded-lg my-4 mx-auto">
+
+            <p style="margin-bottom: 1rem;" class="text-white-500 text-lg"> Найдите каменную плиту с выбитыми символами и прочитайте надпись. </p>
             <!-- Варианты ответов -->
             <div style="margin-bottom: 1.5rem;">
                 <p style="color: #9ca3af; margin-bottom: 0.5rem;">Варианты ответов:</p>
@@ -20,7 +20,7 @@
                 <?php /*
                 <ul style="list-style: disc inside; padding-left: 1.5rem; font-size: 0.875rem; line-height: 1.5;">
                 */ ?>
-                <ul class="list-disc list-inside">
+                <ul class="list-disc list-inside text-base">
                     <li>"Свет Забвения"</li>
                     <li>"Дыхание Прошлого"</li>
                     <li>"Путь Молчания"</li>
@@ -28,7 +28,7 @@
             </div>
 
             <!-- Подсказки -->
-            <div class="mt-6 hint-group">
+            <div class="mt-3 hint-group">
                 <button onclick="showNextHint(this)" class="show-hint-btn text-blue-300"> Показать подсказку </button>
                 <ul class="hints-container list-disc list-inside">
                     <li class="hint hidden text-gray-100 text-sm">Подсказка 1: Обратите внимание на резьбу слева.</li>
@@ -37,7 +37,7 @@
             </div>
 
             <!-- Место -->
-            <div class="mt-6 location-wrapper">
+            <div class="mt-2 location-wrapper">
                 <button onclick="toggleLocation(this)" class="show-location-btn text-blue-300"> Показать место </button>
                 <div class="hidden mt-2 rounded-md border-gray-400 border-solid border p-2 text-sm color-gray-500 bg-gray-100/25">
                     <p>Место: У памятника "Старая Площадь", у южной арки.</p>

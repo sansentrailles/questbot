@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use app\custom\helpers\DateHelper;
 use app\modules\quests\models\Task;
 
@@ -17,8 +18,8 @@ $correctsCount = 0;
         <div class="p-6">
             <div class="flex flex-col space-y-2">
                 <h2 class="text-2xl font-bold text-yellow-300"><?= $quest->title ?></h2>
-                <a href="quest-details.html" class="self-start text-sm text-blue-400 hover:underline">
-                    Посмотреть описание квеста
+                <a href="<?= Url::to(['/quests/default/view', ['id' => $quest->id]]) ?>" class="self-start text-sm text-blue-400 hover:underline">
+                    Посмотреть описание прогулки
                 </a>
                 <?php /*
                 <span class="inline-block px-3 py-1 bg-blue-900/50 rounded-full text-xs text-blue-300 mt-2">Городской квест</span>

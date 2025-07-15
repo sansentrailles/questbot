@@ -40,11 +40,16 @@ class DefaultController extends Controller
             throw new HttpException(404, 'Квест не найден');
         }
 
-        $this->layout = '@app/views/layouts/frontend/stat';
+        // $this->layout = '@app/views/layouts/frontend/stat';
+        $this->layout = '@app/views/layouts/frontend/quest';
         $this->view->title = "Прогулка - " . $quest->title;
+
+        $tasks = $quest->visibleTasks;
+
         return $this->render('view', [
             'quest' => $quest,
-            'tasks' => $quest->visibleTasks,
+            'tasks' => $tasks,
+            'tasksCount' => count($tasks),
         ]);
     }
 

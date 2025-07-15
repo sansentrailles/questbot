@@ -445,7 +445,7 @@ class QuizService
                 ];
             }
         } else {
-            $message .= "\n\nВведите ответ на вопрос: ";
+            $message .= "\n\nНапишите ответ в поле ввода сообщения: ";
         }
 
         if ($hintsCount > 0) {
@@ -758,7 +758,7 @@ class QuizService
         $message .= "<b>Завершение:</b> " . DateHelper::formatTimestampRu($stat->finish)."\n";
         $message .= "<b>Продолжительность:</b> " . DateHelper::formatTimeDiffImproved((int) $stat->start, (int) $stat->finish)."\n";
         $message .= "<b>Количество точек:</b> ". count($items);
-        $message .= "\n\nНажмите кнопк \"Подробная статистика ↗️\", чтобы открыть страницу с подробной статистикой прохождения прогулки";
+        $message .= "\n\nНажмите кнопку \"Подробная статистика ↗️\", чтобы открыть страницу с подробной статистикой прохождения прогулки";
 
         $link = Url::to(['/quests/default/stat', 'uuid' => $stat->uuid], true);
 
