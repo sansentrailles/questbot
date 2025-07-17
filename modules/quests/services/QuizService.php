@@ -410,7 +410,7 @@ class QuizService
 
     // Показать задание
     private function showTask($chatId, $task, $progress)
-    {  
+    {
         $message = $task->question;
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
@@ -438,8 +438,10 @@ class QuizService
         if ($hintsCount > 0) {
             if ($progress->hint_used == $hintsCount) {
                 $keyboard[] = [
-                    'text' => 'Посмотреть место 🌐',
-                    'callback_data' => 'task_show_place:'.$task->id
+                    [
+                        'text' => 'Посмотреть место 🌐',
+                        'callback_data' => 'task_show_place:'.$task->id
+                    ]
                 ];
             } else {
                 $keyboard[] = [
