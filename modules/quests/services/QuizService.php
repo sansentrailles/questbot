@@ -410,7 +410,7 @@ class QuizService
 
     // Показать задание
     private function showTask($chatId, $task, $progress)
-    {
+    {  
         $message = $task->question;
 
         // Формирование вариантов ответов, если вопрос с выбором варианта
@@ -434,13 +434,21 @@ class QuizService
             $message .= "\n\nНапишите ответ в поле ввода сообщения: ";
         }
 
+        // TODO: refactor it
         if ($hintsCount > 0) {
-            $keyboard[] = [
-                [
-                    'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️',
-                    'callback_data' => 'show_hint:' . $task->quest_id,
-                ]
-            ];
+            if ($progress->hint_used == $hintsCount) {
+                $keyboard[] = [
+                    'text' => 'Посмотреть место 🌐',
+                    'callback_data' => 'task_show_place:'.$task->id
+                ];
+            } else {
+                $keyboard[] = [
+                    [
+                        'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️',
+                        'callback_data' => 'show_hint:' . $task->quest_id,
+                    ]
+                ];
+            }
         }
 
         $options = [];
@@ -474,29 +482,10 @@ class QuizService
             return;
         }
 
-        // $message = "Задание: ".$task->question."\n\n";
         $message = "Место: ".$task->place."\n";
         $message .= "Адрес: ".$task->address."\n";
 
-        // $baseUrl = "https://yandex.ru/maps/"; 
-        // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-        // $kbButton = [
-        //     [
-        //         'text' => 'Посмотреть на карте 🌐',
-        //         'url' => $link
-        //     ]
-        // ];
-
-        // $keyboard[] = $kbButton;
-
         $options = [];
-        // if (count ($keyboard) > 0) {
-        //     $replyMarkup = [
-        //         'inline_keyboard' => $keyboard
-        //     ];
-
-        //     $options['reply_markup'] = json_encode($replyMarkup);
-        // }
         $options['parse_mode'] = 'html';
 
         $this->bot->sendMessage($chatId, $message, $options);
@@ -692,14 +681,13 @@ class QuizService
             'callback_data' => 'show_hint:' . $task->quest_id,
         ];
 
-        // Если последняя подсказка показать кнопку "Показать место"
+        // Если последняя подсказка, показать кнопку "Показать место"
         if ($progress->hint_used == $hintsCount) {
             $firstButton = [
                 'text' => 'Посмотреть место 🌐',
                 'callback_data' => 'task_show_place:'.$task->id
             ];
         }
-
 
         $keyboard[] = [
             $firstButton,

@@ -20,12 +20,14 @@ AppAsset::register($this);
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
         <link rel="manifest" href="/site.webmanifest">
+        <?php /*
         <!-- Open Graph -->
         <meta property="og:title" content="Статистика квеста — Городской Квест Бот">
         <meta property="og:description" content="Детальная статистика прохождения квеста пользователем.">
         <meta property="og:image" content="https://placehold.co/600x400/3b82f6/ffffff?text=Quest+Statistics">
         <meta property="og:url" content=" https://your-quest-bot-site.com/quest-statistics.html ">
         <meta property="og:type" content="website">
+        */?>
         <!-- TailwindCSS CDN -->
         <script src="https://cdn.tailwindcss.com "></script>
         <style>

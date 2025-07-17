@@ -2,8 +2,10 @@
 
 use yii\helpers\Html;
 
-$descParts = explode("\n", $quest->desc);
-$helpParts = explode("\n", $quest->help);
+$desc = str_replace("\n\n", "<br>", $quest->desc);
+$descParts = explode("\n", $desc);
+$help = str_replace("\n\n", "<br>", $quest->help);
+$helpParts = explode("\n", $help);
 
 ?>
 
