@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace app\modules\main\controllers\frontend;
 
 use app\modules\main\controllers\common\Controller;
-use OpenApi\Attributes as OA;
-use Yii;
 
 class DefaultController extends Controller
 {
-    public function actionError(): void
+    public function actionError()
     {
-        echo 'error';
-        $exception  =   Yii::$app->getErrorHandler()->exception;
-        print_r($exception);
-        exit;
+        $this->layout = '@app/views/layouts/frontend/error';
+        $exception  = \Yii::$app->getErrorHandler()->exception;
+        return $this->render('error', [
+            'exception' => $exception,
+        ]);
     }
 }

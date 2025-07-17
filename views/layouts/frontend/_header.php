@@ -3,5 +3,3 @@
 use app\modules\catalog\widgets\frontend\selector\CatalogSelector;
 
 ?>
-
-<?php echo CatalogSelector::widget(); ?>

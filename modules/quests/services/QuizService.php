@@ -413,20 +413,6 @@ class QuizService
     {
         $message = $task->question;
 
-        $kbButton = [];
-        if ($task->place_show == Task::PLACE_SHOW) {
-            // $message .= "\n\nМесто: ".$task->place."\n";
-            // $message .= "Адрес: ".$task->address."\n";
-            // $baseUrl = "https://yandex.ru/maps/"; 
-            // $link = "{$baseUrl}?ll={$task->longitude}%2C{$task->latitude}&z=17";
-            $kbButton = [
-                [
-                    'text' => 'Посмотреть место 🌐',
-                    'callback_data' => 'task_show_place:'.$task->id
-                ]
-            ];
-        }
-
         // Формирование вариантов ответов, если вопрос с выбором варианта
         $keyboard = [];
         $hints = $task->visibleHints;
@@ -455,10 +441,6 @@ class QuizService
                     'callback_data' => 'show_hint:' . $task->quest_id,
                 ]
             ];
-        }
-
-        if (count($kbButton) > 0) {
-            $keyboard[] = $kbButton;
         }
 
         $options = [];
@@ -704,11 +686,23 @@ class QuizService
 
         $hints = $task->visibleHints;
         $hintsCount = count($hints);
+
+        $firstButton = [
+            'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️ ',
+            'callback_data' => 'show_hint:' . $task->quest_id,
+        ];
+
+        // Если последняя подсказка показать кнопку "Показать место"
+        if ($progress->hint_used == $hintsCount) {
+            $firstButton = [
+                'text' => 'Посмотреть место 🌐',
+                'callback_data' => 'task_show_place:'.$task->id
+            ];
+        }
+
+
         $keyboard[] = [
-            [
-                'text' => 'Подсказки ('.(int) $progress->hint_used.'/'.$hintsCount.') ℹ️ ',
-                'callback_data' => 'show_hint:' . $task->quest_id,
-            ],
+            $firstButton,
             [
                 'text' => 'Вернуться к вопросу ⬅️',
                 'callback_data' => 'to_task:' . $task->quest_id,
@@ -722,7 +716,6 @@ class QuizService
             ];
         }
 
-        // $message = "<b>Подсказка:</b>\n\n".StringHelper::escapeMarkdown($hint->text);
         $message = "<b>Подсказка:</b>\n".$hint->text;
         if ($hint->image) {
             return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
