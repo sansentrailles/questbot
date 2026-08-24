@@ -40,3 +40,5 @@ tests/_support/_generated
 
 #vagrant folder
 /.vagrant
+error_log
+error_log.*.gz
