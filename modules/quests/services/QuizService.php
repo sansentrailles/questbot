@@ -121,7 +121,7 @@ class QuizService
                     $this->sendNextTask($chatId, (int) $buttonData['value']);
                     break;
 
-                // Открыть следующие задание послие инфомрационного соощения текущего выполненного задания
+                // Открыть следующие задание послие инфомрационного сообщения текущего выполненного задания
                 case 'next_task':
                     $this->sendNextTaskAfterShowMessage($chatId, (int) $buttonData['value']);
                     break;
@@ -160,7 +160,7 @@ class QuizService
     }
 
     /**
-     * Обработка команд (можно переопределить в дочернем классе)
+     * Обработка команд
      * @param int $chatId - ID чата
      * @param string $command - команда (например, "/start")
      */
@@ -194,29 +194,6 @@ class QuizService
     }
     
     /**
-     * Отправка меню
-     * @param int $chatId - ID чата
-     */
-    protected function sendMenu($chatId) {
-        $keyboard = [
-            'inline_keyboard' => [
-                [
-                    ['text' => 'Информация', 'callback_data' => 'menu:info'],
-                    ['text' => 'Настройки', 'callback_data' => 'menu:settings']
-                ],
-                [
-                    ['text' => 'Помощь', 'callback_data' => 'menu:help'],
-                    ['text' => 'Закрыть', 'callback_data' => 'menu:close']
-                ]
-            ]
-        ];
-        
-        $this->bot->sendMessage($chatId, "Главное меню:", [
-            'reply_markup' => json_encode($keyboard)
-        ]);
-    }
-    
-    /**
      * TODO: Вынести обработку ответа в отдельный метод
      * Обработка обычных сообщений (можно переопределить в дочернем классе)
      * @param int $chatId - ID чата
@@ -229,7 +206,6 @@ class QuizService
             
             $progress->answer = $text;
             $this->userProgressService->updateProgress($progress);
-            // $this->statService->getActualStat($chatId, $progress->quest_id);
 
             $message =  "Ваш ответ: \n". $text."\n\nНажмите \"Принять ✅\" для подтверждения или введите новый ответ";
 
@@ -250,35 +226,6 @@ class QuizService
         // $this->bot->sendMessage($chatId, "Вы написали: $text");
     }
     
-    /**
-     * Обработка пользовательских действий кнопок (можно переопределить)
-     * @param int $chatId - ID чата
-     * @param int $messageId - ID сообщения
-     * @param array $buttonData - данные кнопки
-     */
-    protected function processCustomButtonAction($chatId, $messageId, $buttonData) {
-        // Пример обработки меню
-        if ($buttonData['action'] === 'menu') {
-            switch ($buttonData['value']) {
-                case 'info':
-                    $this->bot->sendMessage($chatId, "Это информационное сообщение.");
-                    break;
-                    
-                case 'settings':
-                    $this->bot->sendMessage($chatId, "Настройки бота...");
-                    break;
-                    
-                case 'help':
-                    $this->bot->sendMessage($chatId, "Помощь по боту...");
-                    break;
-                    
-                case 'close':
-                    $this->bot->deleteMessage($chatId, $messageId);
-                    break;
-            }
-        }
-    }
-
     private function showQuests($chatId)
     {
         // Если есть прогулка в процессе, показываем следующее задание этой прогулки
@@ -310,7 +257,7 @@ class QuizService
      */
     protected function showQuestInfo($chatId, int $questId)
     {
-        $quest = $this->questService->find((int) $questId);
+        $quest = $this->questService->find($questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению прогулка не найдена или неактивна 😟');
         }
@@ -331,13 +278,6 @@ class QuizService
         ];
 
         $message = $quest->desc;
-        // $keyboard = [
-        //     'inline_keyboard' => [
-        //         [
-        //             ['text' => 'Начать прогулку ▶️', 'callback_data' => 'start_quest:'.$quest->id],
-        //         ],
-        //     ]
-        // ];
 
         if ($quest->image) {
             return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
@@ -354,7 +294,7 @@ class QuizService
 
     protected function showQuestHelp($chatId, int $questId)
     {
-        $quest = $this->questService->find($questId);
+        $quest = $this->questService->find((int) $questId);
         if ($quest == null) {
             return $this->bot->sendMessage($chatId, 'К сожалению, данная прогулка не найдена или неактивна 😟');
         }
