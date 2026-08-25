@@ -330,8 +330,6 @@ class QuizService
         $this->statService->createStat($chatId, $questId);
 
         $this->sendNextTask($chatId, $questId);
-
-        // $progress = $this->userProgressService->getProgress($chatId, $questId);
     }
 
     private function sendNextTask($chatId, $questId)
