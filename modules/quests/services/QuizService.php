@@ -36,6 +36,11 @@ class QuizService
      * Обработка входящего обновления с роутингом команд и кнопок
      */
     public function handleUpdate($update) {
+        // Пропуск повторно доставленных обновлений (Telegram ретраит webhook, если не получил ответ)
+        if (!$this->checkUpdateId($update)) {
+            return;
+        }
+
         // Обработка callback-запросов от inline кнопок
         if (isset($update['callback_query'])) {
             $this->handleCallbackQuery($update['callback_query']);
@@ -53,9 +58,93 @@ class QuizService
                 $this->handleCommand($chatId, $text);
                 return;
             }
+
+            // Сообщения без текста (фото, стикеры и т.д.) не являются ответом
+            if ($text === '') {
+                return;
+            }
             
             // Обработка обычных сообщений
-            $this->handleMessage($chatId, $text);
+            try {
+                $this->handleMessage($chatId, $text);
+            } catch (\Throwable $e) {
+                error_log("Error processing message: " . $e->getMessage());
+                $this->sendErrorMessage($chatId);
+            }
+        }
+    }
+
+    /**
+     * Защита от повторной обработки одного и того же обновления Telegram
+     * @param array $update
+     * @return bool true - обновление новое, false - уже обрабатывалось
+     */
+    private function checkUpdateId($update): bool
+    {
+        $updateId = $update['update_id'] ?? null;
+        if ($updateId === null) {
+            return true;
+        }
+
+        $cache = \Yii::$app->cache;
+        $cacheKey = 'telegram_update_' . $updateId;
+        if ($cache->get($cacheKey)) {
+            return false;
+        }
+        $cache->set($cacheKey, true, 3600);
+
+        return true;
+    }
+
+    /**
+     * Уведомление пользователя о внутренней ошибке
+     */
+    private function sendErrorMessage($chatId)
+    {
+        try {
+            $this->sendMessage($chatId, 'Произошла ошибка 😟 Попробуйте ещё раз. Если проблема повторяется, отправьте /quests');
+        } catch (\Throwable $e) {
+            error_log("Error sending error message: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Отправка сообщения с fallback: если Telegram отклонил HTML-разметку
+     * ("can't parse entities"), текст очищается от тегов и отправляется без parse_mode
+     */
+    private function sendMessage($chatId, $text, $options = [])
+    {
+        try {
+            return $this->bot->sendMessage($chatId, $text, $options);
+        } catch (\Throwable $e) {
+            if (stripos($e->getMessage(), 'can\'t parse entities') === false) {
+                throw $e;
+            }
+
+            error_log("Telegram HTML parse error, retrying without parse_mode: " . $e->getMessage());
+            unset($options['parse_mode']);
+
+            return $this->bot->sendMessage($chatId, strip_tags($text), $options);
+        }
+    }
+
+    /**
+     * Отправка фото с fallback: если Telegram отклонил HTML-разметку подписи,
+     * подпись очищается от тегов и отправляется без parse_mode
+     */
+    private function sendPhoto($chatId, $photo, $caption = '', $options = [])
+    {
+        try {
+            return $this->bot->sendPhoto($chatId, $photo, $caption, $options);
+        } catch (\Throwable $e) {
+            if (stripos($e->getMessage(), 'can\'t parse entities') === false) {
+                throw $e;
+            }
+
+            error_log("Telegram HTML parse error, retrying without parse_mode: " . $e->getMessage());
+            unset($options['parse_mode']);
+
+            return $this->bot->sendPhoto($chatId, $photo, strip_tags($caption), $options);
         }
     }
     
@@ -70,9 +159,15 @@ class QuizService
         $callbackQueryId = $callbackQuery['id'];
         
         try {
-            // Ответим на callback (чтобы убрать "часики" у кнопки)
-            $this->bot->answerCallbackQuery($callbackQueryId);
-            
+            // Ответим на callback (чтобы убрать "часики" у кнопки).
+            // Ошибка здесь (например, "query is too old" при повторной доставке
+            // обновления) не должна прерывать обработку нажатия кнопки
+            try {
+                $this->bot->answerCallbackQuery($callbackQueryId);
+            } catch (\Throwable $e) {
+                error_log("Error answering callback query: " . $e->getMessage());
+            }
+
             // Разбираем данные кнопки (можно использовать JSON или разделители)
             $buttonData = $this->parseButtonData($data);
             // Обрабатываем действие в зависимости от данных кнопки
@@ -136,11 +231,12 @@ class QuizService
                     break;
 
                 default:
-                    $this->processCustomButtonAction($chatId, $messageId, $buttonData);
+                    $this->sendMessage($chatId, 'Неизвестное действие кнопки 😟 Отправьте /quests для начала работы');
             }
             
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log("Error processing callback: " . $e->getMessage());
+            $this->sendErrorMessage($chatId);
         }
     }
     
@@ -165,6 +261,10 @@ class QuizService
      * @param string $command - команда (например, "/start")
      */
     protected function handleCommand($chatId, $command) {
+        // Нормализация: "/start@BotName arg" -> "/start"
+        $parts = explode(' ', trim($command));
+        $command = strtolower(explode('@', $parts[0])[0]);
+
         switch ($command) {
             case '/start':
                 $this->sendStartMessage($chatId);
@@ -174,7 +274,7 @@ class QuizService
                 break;
                 
             default:
-                $this->bot->sendMessage($chatId, "Неизвестная команда: $command");
+                $this->sendMessage($chatId, "Неизвестная команда: $command");
         }
     }
 
@@ -188,7 +288,7 @@ class QuizService
             ]
         ];
         
-        $this->bot->sendMessage($chatId, "Добро пожаловать! Выберите действие:", [
+        $this->sendMessage($chatId, "Добро пожаловать! Выберите действие:", [
             'reply_markup' => json_encode($keyboard)
         ]);
     }
@@ -217,13 +317,13 @@ class QuizService
                 ]
             ];
             
-            $this->bot->sendMessage($chatId, $message, [
+            $this->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard),
                 'parse_mode' => 'html'
             ]);
         }
 
-        // $this->bot->sendMessage($chatId, "Вы написали: $text");
+        // $this->sendMessage($chatId, "Вы написали: $text");
     }
     
     private function showQuests($chatId)
@@ -231,7 +331,7 @@ class QuizService
         // Если есть прогулка в процессе, показываем следующее задание этой прогулки
         $progress = $this->userProgressService->getProgress($chatId);
         if ($progress) {
-            $this->bot->sendMessage($chatId, "Вы находитесь на прогулке:\n" . $progress->quest->title. "\n\nАктуальное задание" );
+            $this->sendMessage($chatId, "Вы находитесь на прогулке:\n" . $progress->quest->title. "\n\nАктуальное задание" );
             return $this->sendNextTask($chatId, $progress->quest_id);
         }
 
@@ -240,12 +340,12 @@ class QuizService
             $keyboard = $this->questService->generateQuestKeyboard($quests);
 
             $message = StringHelper::escapeMarkdown("Вас приветствует бот городских прогулок-викторин!\n\nСписок доступных прогулок:");
-            return $this->bot->sendMessage($chatId, $message, [
+            return $this->sendMessage($chatId, $message, [
                 'reply_markup' => json_encode($keyboard),
                 'parse_mode' => 'html'
             ]);
         } else {
-            return $this->bot->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
+            return $this->sendMessage($chatId, 'В данный момент нет активных прогулок 😟');
         }
     }
 
@@ -259,7 +359,7 @@ class QuizService
     {
         $quest = $this->questService->find($questId);
         if ($quest == null) {
-            return $this->bot->sendMessage($chatId, 'К сожалению прогулка не найдена или неактивна 😟');
+            return $this->sendMessage($chatId, 'К сожалению прогулка не найдена или неактивна 😟');
         }
 
 
@@ -280,13 +380,13 @@ class QuizService
         $message = $quest->desc;
 
         if ($quest->image) {
-            return $this->bot->sendPhoto($chatId, $quest->imageFullPath, $message, [
+            return $this->sendPhoto($chatId, $quest->imageFullPath, $message, [
                 'reply_markup' => json_encode($keyboard),
                 'parse_mode' => 'html',
             ]);
         }
 
-        return $this->bot->sendMessage($chatId, $message, [
+        return $this->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
             'parse_mode' => 'html',
         ]);
@@ -296,7 +396,7 @@ class QuizService
     {
         $quest = $this->questService->find((int) $questId);
         if ($quest == null) {
-            return $this->bot->sendMessage($chatId, 'К сожалению, данная прогулка не найдена или неактивна 😟');
+            return $this->sendMessage($chatId, 'К сожалению, данная прогулка не найдена или неактивна 😟');
         }
 
         $message = $quest->help;
@@ -308,7 +408,7 @@ class QuizService
             ]
         ];
 
-        return $this->bot->sendMessage($chatId, $message, [
+        return $this->sendMessage($chatId, $message, [
             'reply_markup' => json_encode($keyboard),
             'parse_mode' => 'html',
         ]);
@@ -318,12 +418,12 @@ class QuizService
     {
         $quest = $this->questService->find($questId);
         if ($quest == null) {
-            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
+            return $this->sendMessage($chatId, 'К сожалению данная прогулка не найдена или неактивна 😟');
         }
 
         $tasks = $quest->visibleTasks;
         if (count($tasks) == 0) {
-            return $this->bot->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
+            return $this->sendMessage($chatId, 'К сожалению данная прогулка не содержит заданий 😟');
         }
 
         $this->userProgressService->createProgress($chatId, $questId, $tasks[0]->id);
@@ -335,6 +435,10 @@ class QuizService
     private function sendNextTask($chatId, $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
+        if ($progress == null) {
+            return $this->sendMessage($chatId, 'Прогулка не найдена или уже завершена. Отправьте /quests, чтобы начать новую.');
+        }
+
         $currentTask = $progress->task;
 
         return $this->showTask($chatId, $currentTask, $progress);
@@ -402,20 +506,22 @@ class QuizService
         }
 
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
-        $this->statItemService->saveItem($stat->id, $task, null, false);
-
-        if ($task->image) {
-            return $this->bot->sendPhoto($chatId, $task->imageFullPath, $message, $options);
+        if ($stat) {
+            $this->statItemService->saveItem($stat->id, $task, null, false);
         }
 
-        return $this->bot->sendMessage($chatId, $message, $options);
+        if ($task->image) {
+            return $this->sendPhoto($chatId, $task->imageFullPath, $message, $options);
+        }
+
+        return $this->sendMessage($chatId, $message, $options);
     }
 
     public function showPlaceForTask($chatId, $taskId)
     {
         $task = $this->taskService->find((int) $taskId);
         if ($task === null) {
-            $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟');
+            return $this->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟');
         }
 
         if ($task->place_show == Task::PLACE_NOT_SHOW) {
@@ -428,17 +534,25 @@ class QuizService
         $options = [];
         $options['parse_mode'] = 'html';
 
-        $this->bot->sendMessage($chatId, $message, $options);
+        $this->sendMessage($chatId, $message, $options);
     }
 
     // Обработка выбора ответа
     protected function handleChoiceAnswer($chatId, int $answerId, int $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
-        $stat = $this->statService->getActualStat($chatId, $questId);
+        if ($progress == null) {
+            return $this->sendMessage($chatId, 'Прогулка не найдена или уже завершена. Отправьте /quests, чтобы начать новую.');
+        }
+
         $currentTask = $progress->task;
+        $stat = $this->statService->getActualStat($chatId, $questId);
 
         $answer = $this->answerService->find($answerId);
+        if ($answer == null) {
+            return $this->sendMessage($chatId, 'К сожалению, данный вариант ответа не найден 😟');
+        }
+
         if ($stat) {
             $this->saveChoicedAnswer($stat, $currentTask, $answer);
         }
@@ -453,6 +567,10 @@ class QuizService
     public function handleInputAnswer($chatId, $taskId)
     {
         $progress = $this->userProgressService->getProgress($chatId);
+        if ($progress == null) {
+            return $this->sendMessage($chatId, 'Прогулка не найдена или уже завершена. Отправьте /quests, чтобы начать новую.');
+        }
+
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
         $currentTask = $progress->task;
 
@@ -470,7 +588,6 @@ class QuizService
     private function handleNextAnswer($chatId, $currentTask, $progress)
     {
         $nextTask = $this->taskService->getNext($currentTask);
-        $stat = $this->statService->getStat($chatId, $progress->quest_id);
         if ($nextTask) {
             $progress->current_task_id = $nextTask->id;
             $progress->answer = null;
@@ -480,7 +597,11 @@ class QuizService
             $this->sendNextTask($chatId, $progress->quest_id);
         } else {
             $this->finalizeQuiz($chatId, $progress);
-            $this->statService->finishStat($stat);
+
+            $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
+            if ($stat) {
+                $this->statService->finishStat($stat);
+            }
         }
     }
 
@@ -502,14 +623,14 @@ class QuizService
         ];
 
         if ($currentTask->image_info) {
-            return $this->bot->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
+            return $this->sendPhoto($chatId, $currentTask->imageInfoFullPath, $message, [
                 // 'show_caption_above_media' => true,
                 'parse_mode' => 'html',
                 'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
-        return $this->bot->sendMessage($chatId, $message, [
+        return $this->sendMessage($chatId, $message, [
             'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
         ]);
@@ -520,10 +641,14 @@ class QuizService
     {
         $currentTask = $this->taskService->find((int) $taskId);
         if ($currentTask == null)  {
-            $this->bot->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟 (Ошибка 1-10)');
+            return $this->sendMessage($chatId, 'К сожалению, данное задание не найдено 😟 (Ошибка 1-10)');
         }
 
         $progress = $this->userProgressService->getProgress($chatId);
+        if ($progress == null) {
+            return $this->sendMessage($chatId, 'Прогулка не найдена или уже завершена. Отправьте /quests, чтобы начать новую.');
+        }
+
         $this->handleNextAnswer($chatId, $currentTask, $progress);
     }
 
@@ -546,47 +671,47 @@ class QuizService
     {
         $quest = $progress->quest;
         $this->userProgressService->completeQuest($progress);
-        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
 
         $message = "Все задания прогулки заданы!\n\n<b>Спасибо за участие!</b>";
         if ($quest->text_final) {
             $message = $quest->text_final;
         }
 
-        
-        $keyboard[] = [
-            [
-                'text' => "Показать статистику 📊",
-                'callback_data' => 'show_quest_stat:'.$stat->id,
-            ]
-        ];
-
-        $replyMarkup = [
-            'inline_keyboard' => $keyboard
-        ];
-
-        if ($quest->image_final) {
-            return $this->bot->sendPhoto($chatId, $quest->imageFinalFullPath, $message, [
-                'parse_mode' => 'html',
-                'reply_markup' => json_encode($replyMarkup),
+        $options = ['parse_mode' => 'html'];
+        $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
+        if ($stat) {
+            $options['reply_markup'] = json_encode([
+                'inline_keyboard' => [
+                    [
+                        [
+                            'text' => "Показать статистику 📊",
+                            'callback_data' => 'show_quest_stat:'.$stat->id,
+                        ]
+                    ]
+                ]
             ]);
         }
 
-        return $this->bot->sendMessage($chatId, $message, [
-            'parse_mode' => 'html',
-            'reply_markup' => json_encode($replyMarkup),
-        ]);
+        if ($quest->image_final) {
+            return $this->sendPhoto($chatId, $quest->imageFinalFullPath, $message, $options);
+        }
+
+        return $this->sendMessage($chatId, $message, $options);
     }
 
     private function handleHint($chatId, $questId)
     {
         $progress = $this->userProgressService->getProgress($chatId, $questId);
+        if ($progress == null) {
+            return $this->sendMessage($chatId, 'Прогулка не найдена или уже завершена. Отправьте /quests, чтобы начать новую.');
+        }
+
         $currentTask = $progress->task;
         $hints = $currentTask->visibleHints;
         $stat = $this->statService->getActualStat($chatId, $progress->quest_id);
 
         if (count($hints) == 0) {
-            return $this->bot->sendMessage($chatId, "Подсказки не найдены ❌");
+            return $this->sendMessage($chatId, "Подсказки не найдены ❌");
         }
 
         $currentHint = $progress->hint;
@@ -601,7 +726,9 @@ class QuizService
             $progress->hint_used = (int) $progress->hint_used + 1;
             $this->userProgressService->updateProgress($progress);
             $this->showHint($chatId, $nextHint, $progress);
-            $this->statItemService->incrementHints($stat->id, $progress->current_task_id);
+            if ($stat) {
+                $this->statItemService->incrementHints($stat->id, $progress->current_task_id);
+            }
         // } else {
         //     // Вроде бы этот код не нужен
         //     $this->sendNextTask($chatId, $questId);
@@ -646,14 +773,14 @@ class QuizService
 
         $message = "<b>Подсказка:</b>\n".$hint->text;
         if ($hint->image) {
-            return $this->bot->sendPhoto($chatId, $hint->imageFullPath, $message, [
+            return $this->sendPhoto($chatId, $hint->imageFullPath, $message, [
                 'show_caption_above_media' => true,
                 'parse_mode' => 'html',
                 'reply_markup' => json_encode($replyMarkup),
             ]);
         }
 
-        return $this->bot->sendMessage($chatId, $message, [
+        return $this->sendMessage($chatId, $message, [
             'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
         ]);
@@ -661,14 +788,14 @@ class QuizService
 
     private function showStatList($chatId)
     {
-        return $this->bot->sendMessage($chatId, 'Скоро будет статистика');
+        return $this->sendMessage($chatId, 'Скоро будет статистика');
     }
 
     private function showQuestStat($chatId, $statId)
     {
         $stat = $this->statService->find($statId);
         if ($stat == null) {
-            $this->bot->sendMessage($chatId, 'Статистика не найдена 😟 (Ошибка 1-11)');
+            return $this->sendMessage($chatId, 'Статистика не найдена 😟 (Ошибка 1-11)');
         }
 
         $quest = $stat->quest;
@@ -694,7 +821,7 @@ class QuizService
             'inline_keyboard' => $keyboard
         ];
 
-        $this->bot->sendMessage($chatId, $message, [
+        $this->sendMessage($chatId, $message, [
             'parse_mode' => 'html',
             'reply_markup' => json_encode($replyMarkup),
         ]);

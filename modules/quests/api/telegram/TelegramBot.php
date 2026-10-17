@@ -33,19 +33,27 @@ class TelegramBot
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: multipart/form-data']);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         
         $response = curl_exec($ch);
         
         if (curl_errno($ch)) {
-            throw new \Exception('Curl error: ' . curl_error($ch));
+            $error = curl_error($ch);
+            curl_close($ch);
+            throw new \Exception('Curl error: ' . $error);
         }
         
         curl_close($ch);
         
         $result = json_decode($response, true);
         
+        if (!is_array($result) || !isset($result['ok'])) {
+            throw new \Exception('Invalid API response: ' . substr((string) $response, 0, 200));
+        }
+        
         if (!$result['ok']) {
-            throw new \Exception('API error: ' . $result['description']);
+            throw new \Exception('API error: ' . ($result['description'] ?? 'unknown error'));
         }
         
         return $result['result'];

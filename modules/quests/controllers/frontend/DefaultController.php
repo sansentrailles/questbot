@@ -54,7 +54,6 @@ class DefaultController extends Controller
 
     public function actionHandler()
     {
-        // $token = "8141427100:AAHPCcqQvOd5SByBZIe1UtaKc3bXk-A9Bu4";
         $token = Yii::$app->setting->get('telegram.token');
 
         $bot = new TelegramBot($token);
@@ -64,5 +63,13 @@ class DefaultController extends Controller
 
         Yii::$app->response->setStatusCode(200);
         return 'ok';
+    }
+
+    public function actionSendMessage()
+    {
+        $token = Yii::$app->setting->get('telegram.token');
+        $bot = new TelegramBot($token);
+        print_r($bot->getMe());
+        // $bot->sendMessage()
     }
 }

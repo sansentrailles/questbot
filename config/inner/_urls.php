@@ -41,6 +41,7 @@ return [
         '<_a:error>' => 'main/default/<_a>',
 
         '/quests/handler' => 'quests/default/handler',
+        '/quests/send-message' => 'quests/default/send-message',
         '/quests/help' => 'quests/default/help',
         '/quests/<id:\d+>' => 'quests/default/view',
         '/quests/stat/<uuid:[\w_\/-]+>' => 'quests/default/stat',
